@@ -68,7 +68,7 @@ HRESULT CGame::Init(HWND hWnd)
 	m_pPlayer = CPlayer::Create(D3DXVECTOR3(0.0f, 105.0f, 0.0f), 4);
 
 	// 敵の生成
-	m_pEnemy = CEnemy::Create(D3DXVECTOR3(0.0f, 105.0f, 100.0f), 4);
+	m_pEnemy = CEnemy::Create(D3DXVECTOR3(0.0f, 305.0f, 500.0f), 4);
 
 	// ポーズの生成
 	m_pPause = CPause::Create(6);
@@ -119,18 +119,18 @@ void CGame::Update(void)
 		}
 	}
 
-#if _DEBUG
+//#if _DEBUG
 	if (m_bPause == true && CManager::GetKeyboardInput()->GetTrigger(DIK_F3) == true)
 	{// ポーズ中カメラ操作
 		m_bPauseCamera = m_bPauseCamera ? false : true;		// ポーズ状態切り替え
 	}
 
 	if (CManager::GetKeyboardInput()->GetTrigger(DIK_BACKSPACE) == true
-		|| CManager::GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_BACK, 0) == true)
+		|| CManager::GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_BACK, 0) == true || m_pPlayer->GetPos().z > 600.0f)
 	{// BackSpace
 		CRenderer::GetFade()->Set(CScene::MODE_RESULT);		// リザルト画面へ移動
 	}
-#endif
+//#endif
 
 	if (m_bStateReady == false)
 	{// 待機状態じゃない

@@ -32,6 +32,8 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 	{
 		STATE_NONE = 0,		// なし
 		STATE_NORMAL,		// 通常
+		STATE_MOVERIGHT,	// 右移動
+		STATE_MOVELEFT,		// 左移動
 		STATE_DASH,			// ダッシュ
 		STATE_ATTACK,		// 攻撃
 		STATE_DAMAGE,		// ダメージ

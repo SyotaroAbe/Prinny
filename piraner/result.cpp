@@ -47,7 +47,7 @@ CResult::~CResult()
 HRESULT CResult::Init(HWND hWnd)
 {
 	// îwåiÇÃê∂ê¨
-	//m_pBg = CBg::Create(CBg::TYPE_RESULT);
+	m_pBg = CBg::Create(CBg::TYPE_RESULT);
 
 	return S_OK;
 }

@@ -60,25 +60,12 @@ CCamera::~CCamera()
 HRESULT CCamera::Init(void)
 {
 	// 値を初期化
-	m_posV = D3DXVECTOR3(0.0f, HIGHT_CAMERA, 300.0f);
-	m_posR = D3DXVECTOR3(0.0f, 0.0f, -400.0f);
-
+	m_posV = D3DXVECTOR3(666.6f, 500.0f, 0.0f);
+	m_posR = D3DXVECTOR3(0.0f, 150.0f, 0.0f);
 	m_vecU = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 	m_rot = D3DXVECTOR3(0.0f, D3DX_PI * -0.5f, 0.0f);
 	m_fLength = LENTH_NORMAL;
 	m_nViewMapCounter = MAPVIEW_TIME;
-
-	D3DXVECTOR3 playerPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	D3DXVECTOR3 playerRot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-
-	// カメラの追従
-	// 目的の視点・注視点を設定
-	m_posRDest.x = playerPos.x + sinf(playerRot.y) * POSR_DEST;
-	m_posRDest.y = playerPos.y;
-	m_posRDest.z = playerPos.z + cosf(playerRot.y) * POSR_DEST;
-	m_posVDest.x = playerPos.x + sinf(m_rot.y) * LENGTH_CAMERA;
-	m_posVDest.y = playerPos.y;
-	m_posVDest.z = playerPos.z + cosf(m_rot.y) * LENGTH_CAMERA;
 
 	return S_OK;
 }

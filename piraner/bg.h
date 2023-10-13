@@ -24,6 +24,7 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 	enum TYPE
 	{
 		TYPE_TITLE = 0,		// タイトル画面
+		TYPE_TUTORIAL,		// チュートリアル画面
 		TYPE_RESULT,		// リザルト画面
 		TYPE_MAX
 	};

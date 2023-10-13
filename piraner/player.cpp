@@ -383,6 +383,11 @@ void CPlayer::Update(void)
 	// モーションの更新処理
 	m_pMotion->Update();
 
+	if (m_pos.y < -100.0f)
+	{// 落下死
+		
+	}
+
 	// デバッグ表示
 	CManager::GetDebugProc()->Print(" 移動          ：A D\n");
 	CManager::GetDebugProc()->Print(" ジャンプ      ：SPACE\n");
@@ -395,7 +400,7 @@ void CPlayer::Update(void)
 	
 	CManager::GetDebugProc()->Print(" カメラの向き：%f\n", CManager::GetCamera()->GetRot().y);
 	CManager::GetDebugProc()->Print(" 視点：（%f, %f, %f）\n", CManager::GetCamera()->GetPosV().x, CManager::GetCamera()->GetPosV().y, CManager::GetCamera()->GetPosV().z);
-	CManager::GetDebugProc()->Print(" 注視点：（%f, %f, %f）\n", CManager::GetCamera()->GetPosR().x, CManager::GetCamera()->GetPosR().y, CManager::GetCamera()->GetPosR().z);
+	CManager::GetDebugProc()->Print(" 注視点：（%f, %f, %f）\n\n", CManager::GetCamera()->GetPosR().x, CManager::GetCamera()->GetPosR().y, CManager::GetCamera()->GetPosR().z);
 }
 
 //===============================================
@@ -439,12 +444,12 @@ void CPlayer::Draw(void)
 //===============================================
 void CPlayer::CollisionObjX(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 vtxMax, D3DXVECTOR3 vtxMin)
 {
-	if (pPosOld->x + vtxMin.x - m_vtxMax.x <= m_pos.x && pPosOld->x + vtxMax.x - m_vtxMin.x >= m_pos.x
-		&& pPosOld->z + vtxMin.z - m_vtxMax.z <= m_pos.z && pPosOld->z + vtxMax.z - m_vtxMin.z >= m_pos.z
-		&& pPosOld->y + vtxMin.y - m_vtxMax.y <= m_pos.y && pPosOld->y + vtxMax.y - m_vtxMin.y >= m_pos.y)
+	if (pPos->x + vtxMin.x - m_vtxMax.x <= m_pos.x && pPos->x + vtxMax.x - m_vtxMin.x >= m_pos.x
+		&& pPos->z + vtxMin.z <= m_pos.z - m_vtxMin.z && pPos->z + vtxMax.z >= m_pos.z + m_vtxMin.z
+		&& pPos->y + vtxMin.y - m_vtxMax.y <= m_pos.y && pPos->y + vtxMax.y - m_vtxMin.y >= m_pos.y)
 	{// 範囲内にある
 		if (pPosOld->y + vtxMax.y <= m_posOld.y + m_vtxMin.y
-			&& pPosOld->y + vtxMax.y >= m_pos.y + m_vtxMin.y)
+			&& pPos->y + vtxMax.y >= m_pos.y + m_vtxMin.y)
 		{// 上からめり込んだ
 			// 上にのせる
 			m_pos.y = pPosOld->y - m_vtxMin.y + vtxMax.y;
@@ -458,20 +463,20 @@ void CPlayer::CollisionObjX(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3
 			}
 		}
 		else if (pPosOld->y + vtxMin.y >= m_posOld.y + m_vtxMax.y
-			&& pPosOld->y + vtxMin.y <= m_pos.y + m_vtxMax.y)
+			&& pPos->y + vtxMin.y <= m_pos.y + m_vtxMax.y)
 		{// 下からめり込んだ
 			// 下に戻す
 			m_pos.y = pPosOld->y - m_vtxMax.y + vtxMin.y;
 			m_move.y = 0.0f;
 		}
 		else if (pPosOld->z - vtxMax.z >= m_posOld.z + m_vtxMax.z
-			&& pPosOld->z - vtxMax.z <= m_pos.z + m_vtxMax.z)
+			&& pPos->z - vtxMax.z <= m_pos.z + m_vtxMax.z)
 		{// 左から右にめり込んだ
 			// 位置を戻す
 			m_pos.z = pPosOld->z - m_vtxMax.z - vtxMax.z;
 		}
 		else if (pPosOld->z - vtxMin.z <= m_posOld.z - m_vtxMax.z
-			&& pPosOld->z - vtxMin.z >= m_pos.z - m_vtxMax.z)
+			&& pPos->z - vtxMin.z >= m_pos.z - m_vtxMax.z)
 		{// 右から左にめり込んだ
 			// 位置を戻す
 			m_pos.z = pPosOld->z + m_vtxMax.z + vtxMax.z;
@@ -494,13 +499,17 @@ void CPlayer::CollisionEnemy(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR
 			if (m_state == STATE_HIPDROP)
 			{// ヒップドロップ中
 				m_state = STATE_NORMAL;
-				m_move.y = JUMP_PLAYER;
+				m_move.y = JUMP_HIPDROP;
 				m_bAirJump = false;
+			}
+			else
+			{
+				// ダメージ
 			}
 		}
 		else
 		{
-
+			// ダメージ
 		}
 	}
 }

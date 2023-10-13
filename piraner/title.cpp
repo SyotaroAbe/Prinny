@@ -50,8 +50,8 @@ HRESULT CTitle::Init(HWND hWnd)
 	// ÉJÉÅÉâÇÃèâä˙âªèàóù
 	CManager::GetCamera()->Init();
 
-	//// îwåiÇÃê∂ê¨
-	//m_pBg = CBg::Create(CBg::TYPE_TITLE, 6);
+	// îwåiÇÃê∂ê¨
+	m_pBg = CBg::Create(CBg::TYPE_TITLE, 6);
 
 	return S_OK;
 }

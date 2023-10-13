@@ -28,8 +28,8 @@
 //===============================================
 // マクロ定義
 //===============================================
-#define MOVE_PLAYER			(0.45f)		// 動く速度
-#define JUMP_PLAYER			(16.85f)	// ジャンプ力
+#define MOVE_ENEMY			(0.2f)		// 動く速度
+#define JUMP_ENEMY			(16.85f)	// ジャンプ力
 #define MOVE_GRAVITY		(0.75f)		// 重力
 
 #define JUMP_HIPDROP		(10.85f)	// ヒップドロップ初動の浮力
@@ -127,7 +127,7 @@ HRESULT CEnemy::Init(D3DXVECTOR3 pos)
 	m_pos = pos;
 
 	// 移動速度の初期化
-	m_fSpeed = MOVE_PLAYER;
+	m_fSpeed = MOVE_ENEMY;
 
 	const char *apModelFile[MAX_MODEL];		// モデルファイル名
 
@@ -209,7 +209,7 @@ HRESULT CEnemy::Init(D3DXVECTOR3 pos)
 	m_pMotion->Set(MOTIONTYPE_NEUTRAL);
 
 	// 初期状態設定
-	m_state = STATE_NORMAL;
+	m_state = STATE_MOVELEFT;
 
 	return S_OK;
 }
@@ -250,22 +250,27 @@ void CEnemy::Update(void)
 	// 前回の位置を保存
 	m_posOld = m_pos;
 
-	if (m_state == STATE_NORMAL)
-	{
-		//m_move.x += sinf(D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetCamera()->GetRot().y)) * m_fSpeed;
-		//m_move.z += cosf(D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetCamera()->GetRot().y)) * m_fSpeed;
-		//m_rotDest.y = D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetCamera()->GetRot().y);
-	}
-
 	switch (m_state)
 	{
 	case STATE_NORMAL:		// 通常
 		break;
 
+	case STATE_MOVERIGHT:	// 右移動
+		m_move.x += sinf(D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetCamera()->GetRot().y)) * m_fSpeed;
+		m_move.z += cosf(D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetCamera()->GetRot().y)) * m_fSpeed;
+		m_rotDest.y = D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetCamera()->GetRot().y);
+		break;
+
+	case STATE_MOVELEFT:	// 左移動
+		m_move.x += sinf(D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetCamera()->GetRot().y)) * m_fSpeed;
+		m_move.z += cosf(D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetCamera()->GetRot().y)) * m_fSpeed;
+		m_rotDest.y = D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetCamera()->GetRot().y);
+		break;
+
 	case STATE_DASH:		// ダッシュ
 		break;
 
-	case STATE_ATTACK:		// 空中攻撃
+	case STATE_ATTACK:		// 攻撃
 		break;
 	}
 
@@ -389,12 +394,14 @@ void CEnemy::CollisionObjX(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 
 		{// 左から右にめり込んだ
 			// 位置を戻す
 			m_pos.z = pPosOld->z - m_vtxMax.z - vtxMax.z;
+			m_state = STATE_MOVELEFT;
 		}
 		else if (pPosOld->z - vtxMin.z <= m_posOld.z - m_vtxMax.z
 			&& pPosOld->z - vtxMin.z >= m_pos.z - m_vtxMax.z)
 		{// 右から左にめり込んだ
 			// 位置を戻す
 			m_pos.z = pPosOld->z + m_vtxMax.z + vtxMax.z;
+			m_state = STATE_MOVERIGHT;
 		}
 	}
 }

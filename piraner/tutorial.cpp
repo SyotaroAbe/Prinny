@@ -12,6 +12,7 @@
 #include "input.h"
 #include "meshfield.h"
 #include "sound.h"
+#include "bg.h"
 
 //===============================================
 // マクロ定義
@@ -29,6 +30,7 @@
 CPlayer *CTutorial::m_pPlayer = NULL;			// プレイヤークラスのポインタ
 CNumber *CTutorial::m_pNumber = NULL;			// ナンバークラスのポインタ
 CMeshField *CTutorial::m_pMeshField = NULL;		// メッシュフィールドクラスのポインタ
+CBg *CTutorial::m_pBg = NULL;						// 背景クラスのポインタ
 
 //===============================================
 // コンストラクタ
@@ -55,6 +57,9 @@ HRESULT CTutorial::Init(HWND hWnd)
 {
 	// カメラの初期化処理
 	CManager::GetCamera()->Init();
+
+	// 背景の生成
+	m_pBg = CBg::Create(CBg::TYPE_TUTORIAL, 6);
 
 	// サウンドの再生
 	CManager::GetSound()->Play(CSound::LABEL_BGM_TUTORIAL);
