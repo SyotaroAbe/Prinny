@@ -1,0 +1,17 @@
+﻿  camera.cpp
+  enemy.cpp
+  game.cpp
+  manager.cpp
+  meshfield.cpp
+  object.cpp
+  objectX.cpp
+  pause.cpp
+  player.cpp
+  renderer.cpp
+  コード生成しています。
+  9 of 413 functions ( 2.2%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    19 functions had inline decision re-evaluated but remain unchanged
+  コード生成が終了しました。
+  FirstDirectX001.vcxproj -> C:\Users\student\Desktop\piraner\piraner\FirstDirectX001.exe
+  FirstDirectX001.vcxproj -> C:\Users\student\Desktop\piraner\piraner\FirstDirectX001.pdb (Full PDB)

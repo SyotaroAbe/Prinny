@@ -1,0 +1,450 @@
+#==============================================================================
+#
+# 『』スクリプトファイル [model.txt]
+# Author : 阿部翔大郎
+#
+#==============================================================================
+SCRIPT			# この行は絶対消さないこと！
+
+#------------------------------------------------------------------------------
+# テクスチャ数
+#------------------------------------------------------------------------------
+NUM_TEXTURE = 15
+
+#------------------------------------------------------------------------------
+# テクスチャファイル名
+#------------------------------------------------------------------------------
+TEXTURE_FILENAME = data\\TEXTURE\\field000.jpg			# [0]床テクスチャ
+TEXTURE_FILENAME = data\\TEXTURE\\field001.jpg			# [1]床テクスチャ
+TEXTURE_FILENAME = data\\TEXTURE\\field002.jpg			# [2]床テクスチャ
+TEXTURE_FILENAME = data\\TEXTURE\\field003.jpg			# [3]床テクスチャ
+TEXTURE_FILENAME = data\\TEXTURE\\field004.jpg			# [4]床テクスチャ
+TEXTURE_FILENAME = data\\TEXTURE\\field005.jpg			# [5]床テクスチャ
+TEXTURE_FILENAME = data\\TEXTURE\\field006.jpg			# [6]床テクスチャ
+TEXTURE_FILENAME = data\\TEXTURE\\field007.jpg			# [7]床テクスチャ
+TEXTURE_FILENAME = data\\TEXTURE\\field008.jpg			# [8]床テクスチャ
+TEXTURE_FILENAME = data\\TEXTURE\\field009.jpg			# [9]床テクスチャ
+TEXTURE_FILENAME = data\\TEXTURE\\field010.jpg			# [10]床テクスチャ
+TEXTURE_FILENAME = data\\TEXTURE\\field011.jpg			# [11]床テクスチャ
+TEXTURE_FILENAME = data\\TEXTURE\\field012.jpg			# [12]床テクスチャ
+TEXTURE_FILENAME = data\\TEXTURE\\field013.jpg			# [13]床テクスチャ
+TEXTURE_FILENAME = data\\TEXTURE\\field014.jpg			# [14]床テクスチャ
+
+#------------------------------------------------------------------------------
+# モデル数
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+# モデルファイル名
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+# カメラ情報
+#------------------------------------------------------------------------------
+CAMERASET
+	POS = 500.0 500.0 1500.0			# 視点
+	REF = 0.0 0.0 0.0				# 注視点
+END_CAMERASET
+
+#------------------------------------------------------------------------------
+# ライト情報
+#------------------------------------------------------------------------------
+LIGHTSET
+	DIRECTION = 0.22 -0.87 0.44		# 方向
+	DIFFUSE = 1.0 1.0 1.0			# 拡散光
+END_LIGHTSET
+
+LIGHTSET
+	DIRECTION = -0.18 0.88 -0.44	# 方向
+	DIFFUSE = 0.65 0.65 0.65		# 拡散光
+END_LIGHTSET
+
+LIGHTSET
+	DIRECTION = 0.89 -0.11 0.44		# 方向
+	DIFFUSE = 0.15 0.15 0.15		# 拡散光
+END_LIGHTSET
+
+#------------------------------------------------------------------------------
+# 空情報
+#------------------------------------------------------------------------------
+SKYSET
+	TEXTYPE = 0
+	MOVE = 0.00002
+END_SKYSET
+
+#------------------------------------------------------------------------------
+# 山情報
+#------------------------------------------------------------------------------
+MOUNTAINSET
+	TEXTYPE = 1
+END_MOUNTAINSET
+
+#------------------------------------------------------------------------------
+# 地面情報
+#------------------------------------------------------------------------------
+FIELDSET
+	TEXTYPE = 3
+	POS = 0.0 0.0 0.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 6
+	POS = -1000.0 0.0 0.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 6
+	POS = -2000.0 0.0 0.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 6
+	POS = -3000.0 0.0 0.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 6
+	POS = -4000.0 0.0 0.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 2
+	POS = -5000.0 0.0 0.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 0
+	POS = 0.0 0.0 -1000.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 13
+	POS = -1000.0 0.0 -1000.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 7
+	POS = -2000.0 0.0 -1000.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 10
+	POS = -3000.0 0.0 -1000.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 10
+	POS = -4000.0 0.0 -1000.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 9
+	POS = -5000.0 0.0 -1000.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 7
+	POS = 0.0 0.0 -2000.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 6
+	POS = -1000.0 0.0 -2000.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 10
+	POS = -2000.0 0.0 -2000.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 10
+	POS = -3000.0 0.0 -2000.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 10
+	POS = -4000.0 0.0 -2000.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 9
+	POS = -5000.0 0.0 -2000.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 7
+	POS = 0.0 0.0 -3000.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 10
+	POS = -1000.0 0.0 -3000.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 10
+	POS = -2000.0 0.0 -3000.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 10
+	POS = -3000.0 0.0 -3000.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 8
+	POS = -4000.0 0.0 -3000.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 9
+	POS = -5000.0 0.0 -3000.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 7
+	POS = 0.0 0.0 -4000.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 10
+	POS = -1000.0 0.0 -4000.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 10
+	POS = -2000.0 0.0 -4000.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 9
+	POS = -3000.0 0.0 -4000.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 3
+	POS = -4000.0 0.0 -4000.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 9
+	POS = -5000.0 0.0 -4000.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 4
+	POS = 0.0 0.0 -5000.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 8
+	POS = -1000.0 0.0 -5000.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 8
+	POS = -2000.0 0.0 -5000.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 8
+	POS = -3000.0 0.0 -5000.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 5
+	POS = -4000.0 0.0 -5000.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+FIELDSET
+	TEXTYPE = 13
+	POS = -5000.0 0.0 -5000.0
+	ROT = 0.0 0.0 0.0
+	BLOCK = 16 16
+	SIZE = 500.0 500.0
+END_FIELDSET
+
+#------------------------------------------------------------------------------
+# 壁情報
+#------------------------------------------------------------------------------
+WALLSET
+	TEXTYPE = 3
+	POS = 0 -80 640
+	ROT = 0 180 0
+	BLOCK = 16 1
+	SIZE = 80 80
+END_WALLSET
+
+#------------------------------------------------------------------------------
+# モデル配置情報
+#------------------------------------------------------------------------------
+MODELSET
+	TYPE = 1
+	POS = 0.0 0.0 0.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 0.0 100.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 0.0 200.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 0.0 300.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 0.0 400.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 0.0 500.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 300.0 0.0 150.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 100.0 300.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 200.0 400.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+END_SCRIPT		# この行は絶対消さないこと！
