@@ -48,7 +48,7 @@ CTitle::~CTitle()
 HRESULT CTitle::Init(HWND hWnd)
 {
 	// カメラの初期化処理
-	CManager::GetCamera()->Init();
+	CManager::GetInstance()->GetCamera()->Init();
 
 	// 背景の生成
 	m_pBg = CBg::Create(CBg::TYPE_TITLE, 6);
@@ -72,8 +72,8 @@ void CTitle::Update(void)
 {
 	m_nTimeFade++;		// 時間をカウント
 
-	if (/*m_pLogo->GetEndAnim() == true &&*/ (CManager::GetKeyboardInput()->GetTrigger(DIK_RETURN) == true
-		|| CManager::GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_A, 0) == true))
+	if (/*m_pLogo->GetEndAnim() == true &&*/ (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_RETURN) == true
+		|| CManager::GetInstance()->GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_A, 0) == true))
 	{
 		if (m_bFade == false)
 		{// フェードバグ防止
@@ -81,13 +81,13 @@ void CTitle::Update(void)
 			m_bFade = true;
 
 			// サウンドの再生
-			CManager::GetSound()->Play(CSound::LABEL_SE_TITLE_ENTER);
+			CManager::GetInstance()->GetSound()->Play(CSound::LABEL_SE_TITLE_ENTER);
 		}
 	}
-	else if (CManager::GetKeyboardInput()->GetPress(DIK_Q) == true || CManager::GetKeyboardInput()->GetPress(DIK_Z) == true
-		|| CManager::GetInputGamePad()->GetPress(CInputGamePad::BUTTON_LB, 0) || CManager::GetInputGamePad()->GetPress(CInputGamePad::BUTTON_LEFT, 0)
-		|| CManager::GetKeyboardInput()->GetPress(DIK_E) == true || CManager::GetKeyboardInput()->GetPress(DIK_C) == true
-		|| CManager::GetInputGamePad()->GetPress(CInputGamePad::BUTTON_RB, 0) || CManager::GetInputGamePad()->GetPress(CInputGamePad::BUTTON_RIGHT, 0))
+	else if (CManager::GetInstance()->GetKeyboardInput()->GetPress(DIK_Q) == true || CManager::GetInstance()->GetKeyboardInput()->GetPress(DIK_Z) == true
+		|| CManager::GetInstance()->GetInputGamePad()->GetPress(CInputGamePad::BUTTON_LB, 0) || CManager::GetInstance()->GetInputGamePad()->GetPress(CInputGamePad::BUTTON_LEFT, 0)
+		|| CManager::GetInstance()->GetKeyboardInput()->GetPress(DIK_E) == true || CManager::GetInstance()->GetKeyboardInput()->GetPress(DIK_C) == true
+		|| CManager::GetInstance()->GetInputGamePad()->GetPress(CInputGamePad::BUTTON_RB, 0) || CManager::GetInstance()->GetInputGamePad()->GetPress(CInputGamePad::BUTTON_RIGHT, 0))
 	{// プレイヤー（カメラ）を操作中
 		m_nTimeFade = 0;		//	カウントをリセット
 	}

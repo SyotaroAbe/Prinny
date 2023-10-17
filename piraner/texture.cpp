@@ -80,7 +80,7 @@ void CTexture::Delete(int nIdx)
 //===============================================
 int CTexture::Regist(const char *pFilename)
 {
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();   // デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();   // デバイスの取得
 
 	for (int nCntTexture = 0; nCntTexture < m_nNumAll; nCntTexture++)
 	{

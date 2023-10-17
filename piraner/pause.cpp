@@ -124,7 +124,7 @@ HRESULT CPause::Init(D3DXVECTOR3 pos)
 		m_apObject2D[nCntObj]->Init(m_aPos[nCntObj]);
 
 		// テクスチャの設定
-		m_aIdxTexture[nCntObj] = CManager::GetTexture()->Regist(m_apTextureData[nCntObj]);
+		m_aIdxTexture[nCntObj] = CManager::GetInstance()->GetTexture()->Regist(m_apTextureData[nCntObj]);
 
 		// テクスチャの割り当て
 		m_apObject2D[nCntObj]->BindTexture(m_aIdxTexture[nCntObj]);
@@ -149,7 +149,7 @@ void CPause::Update(void)
 	if (m_EnterFade == false)
 	{// ENTER入力されていない
 		// カーソルを動かす
-		if (CManager::GetKeyboardInput()->GetTrigger(DIK_W) == true || CManager::GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_UP, 0))
+		if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_W) == true || CManager::GetInstance()->GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_UP, 0))
 		{
 			m_nPosCursor--;
 
@@ -159,9 +159,9 @@ void CPause::Update(void)
 			}
 
 			// サウンドの再生
-			CManager::GetSound()->Play(CSound::LABEL_SE_PAUSE_CURSOR);
+			CManager::GetInstance()->GetSound()->Play(CSound::LABEL_SE_PAUSE_CURSOR);
 		}
-		else if (CManager::GetKeyboardInput()->GetTrigger(DIK_S) == true || CManager::GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_DOWN, 0))
+		else if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_S) == true || CManager::GetInstance()->GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_DOWN, 0))
 		{
 			m_nPosCursor++;
 
@@ -171,7 +171,7 @@ void CPause::Update(void)
 			}
 
 			// サウンドの再生
-			CManager::GetSound()->Play(CSound::LABEL_SE_PAUSE_CURSOR);
+			CManager::GetInstance()->GetSound()->Play(CSound::LABEL_SE_PAUSE_CURSOR);
 		}
 
 		for (int nCntPause = 0; nCntPause < MENU_MAX; nCntPause++)
@@ -188,14 +188,14 @@ void CPause::Update(void)
 			}
 		}
 
-		if (CManager::GetKeyboardInput()->GetTrigger(DIK_RETURN) == true || CManager::GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_A, 0))
+		if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_RETURN) == true || CManager::GetInstance()->GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_A, 0))
 		{// 決定キー（ENTERキー）が押された
 			if (m_nPosCursor == MENU_CONTINUE)
 			{
 				CGame::SetEnablePause(false);
 
 				// サウンドの再生
-				CManager::GetSound()->Play(CSound::LABEL_SE_PAUSE_CANCEL);
+				CManager::GetInstance()->GetSound()->Play(CSound::LABEL_SE_PAUSE_CANCEL);
 			}
 			else if (m_nPosCursor == MENU_RETRY)
 			{
@@ -205,7 +205,7 @@ void CPause::Update(void)
 				CRenderer::GetFade()->Set(CScene::MODE_GAME);
 
 				// サウンドの再生
-				CManager::GetSound()->Play(CSound::LABEL_SE_PAUSE_ENTER);
+				CManager::GetInstance()->GetSound()->Play(CSound::LABEL_SE_PAUSE_ENTER);
 			}
 			else if (m_nPosCursor == MENU_QUIT)
 			{
@@ -215,7 +215,7 @@ void CPause::Update(void)
 				CRenderer::GetFade()->Set(CScene::MODE_TITLE);
 
 				// サウンドの再生
-				CManager::GetSound()->Play(CSound::LABEL_SE_PAUSE_ENTER);
+				CManager::GetInstance()->GetSound()->Play(CSound::LABEL_SE_PAUSE_ENTER);
 			}
 		}
 	}

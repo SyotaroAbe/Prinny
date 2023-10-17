@@ -176,7 +176,7 @@ void CRenderer::Draw(void)
 		}
 
 		// デバッグ表示の描画処理
-		CManager::GetDebugProc()->Draw();
+		CManager::GetInstance()->GetDebugProc()->Draw();
 
 		// 描画終了
 		m_pD3DDevice->EndScene();

@@ -68,8 +68,8 @@ void CResult::Update(void)
 {
 	m_nTimeFade++;		// 時間をカウント
 
-	if (CManager::GetKeyboardInput()->GetTrigger(DIK_RETURN) == true
-		|| CManager::GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_A, 0) == true
+	if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_RETURN) == true
+		|| CManager::GetInstance()->GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_A, 0) == true
 		|| m_nTimeFade > TIME_FADE)
 	{// ENTER入力か一定時間経過
 		if (m_bFade == false)

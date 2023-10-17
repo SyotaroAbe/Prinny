@@ -121,7 +121,7 @@ HRESULT CEnemy::Init(D3DXVECTOR3 pos)
 	m_pMotion->Init();
 
 	// モデルの総数
-	m_nNumModel = CManager::GetLoad()->GetNumModel();
+	m_nNumModel = CManager::GetInstance()->GetLoad()->GetNumModel();
 
 	// 位置の設定
 	m_pos = pos;
@@ -137,9 +137,9 @@ HRESULT CEnemy::Init(D3DXVECTOR3 pos)
 		D3DXVECTOR3 pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		D3DXVECTOR3 rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
-		apModelFile[nCntModel] = CManager::GetLoad()->GetFileName(nCntModel);		// ファイル名取得
-		pos = CManager::GetLoad()->GetPos(nCntModel);								// 位置の取得
-		rot = CManager::GetLoad()->GetRot(nCntModel);								// 向きの取得
+		apModelFile[nCntModel] = CManager::GetInstance()->GetLoad()->GetFileName(nCntModel);		// ファイル名取得
+		pos = CManager::GetInstance()->GetLoad()->GetPos(nCntModel);								// 位置の取得
+		rot = CManager::GetInstance()->GetLoad()->GetRot(nCntModel);								// 向きの取得
 
 		m_apModel[nCntModel] = CModel::Create(apModelFile[nCntModel], pos, rot);	// 生成
 	}
@@ -153,7 +153,7 @@ HRESULT CEnemy::Init(D3DXVECTOR3 pos)
 	{
 		int nParent = 0;
 
-		nParent = CManager::GetLoad()->GetParent(nCntModel);	// 親を取得
+		nParent = CManager::GetInstance()->GetLoad()->GetParent(nCntModel);	// 親を取得
 
 		m_apModel[nCntModel]->SetParent(m_apModel[nParent]);
 	}
@@ -202,7 +202,7 @@ HRESULT CEnemy::Init(D3DXVECTOR3 pos)
 	for (int nCntMotion = 0; nCntMotion < MOTIONTYPE_MAX; nCntMotion++)
 	{// モーション数分繰り返す
 		m_pMotion->Set(nCntMotion);
-		m_pMotion->SetInfo(CManager::GetLoad()->GetInfo(nCntMotion));
+		m_pMotion->SetInfo(CManager::GetInstance()->GetLoad()->GetInfo(nCntMotion));
 	}
 
 	// 初期モーション設定
@@ -256,15 +256,15 @@ void CEnemy::Update(void)
 		break;
 
 	case STATE_MOVERIGHT:	// 右移動
-		m_move.x += sinf(D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetCamera()->GetRot().y)) * m_fSpeed;
-		m_move.z += cosf(D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetCamera()->GetRot().y)) * m_fSpeed;
-		m_rotDest.y = D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetCamera()->GetRot().y);
+		m_move.x += sinf(D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
+		m_move.z += cosf(D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
+		m_rotDest.y = D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y);
 		break;
 
 	case STATE_MOVELEFT:	// 左移動
-		m_move.x += sinf(D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetCamera()->GetRot().y)) * m_fSpeed;
-		m_move.z += cosf(D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetCamera()->GetRot().y)) * m_fSpeed;
-		m_rotDest.y = D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetCamera()->GetRot().y);
+		m_move.x += sinf(D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
+		m_move.z += cosf(D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
+		m_rotDest.y = D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y);
 		break;
 
 	case STATE_DASH:		// ダッシュ
@@ -326,7 +326,7 @@ void CEnemy::Update(void)
 	CGame::GetPlayer()->CollisionEnemy(&m_pos, &m_posOld, m_vtxMax, m_vtxMin);
 
 	// デバッグ表示
-	CManager::GetDebugProc()->Print(" 敵の位置：（%f, %f, %f）\n\n", m_pos.x, m_pos.y, m_pos.z);
+	CManager::GetInstance()->GetDebugProc()->Print(" 敵の位置：（%f, %f, %f）\n\n", m_pos.x, m_pos.y, m_pos.z);
 }
 
 //===============================================
@@ -336,7 +336,7 @@ void CEnemy::Draw(void)
 {
 	if (CManager::GetMode() != CScene::MODE_TITLE)
 	{// タイトルじゃない
-		LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();	// デバイスの取得
+		LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();	// デバイスの取得
 		D3DXMATRIX mtxRot, mtxTrans;										// 計算用マトリックス
 
 		// ワールドマトリックスの初期化

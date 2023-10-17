@@ -90,7 +90,7 @@ CObjectMesh *CObjectMesh::Create(D3DXVECTOR3 pos, float fSizeX, float fSizeZ, in
 	pObjectMesh->Init(pos);
 
 	// テクスチャの設定
-	m_nIdxTexture = CManager::GetTexture()->Regist("data\\TEXTURE\\field000.jpg");
+	m_nIdxTexture = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\field000.jpg");
 
 	// テクスチャの割り当て
 	pObjectMesh->BindTexture(m_nIdxTexture);
@@ -103,7 +103,7 @@ CObjectMesh *CObjectMesh::Create(D3DXVECTOR3 pos, float fSizeX, float fSizeZ, in
 //===============================================
 HRESULT CObjectMesh::Init(D3DXVECTOR3 pos)
 {
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();	// デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();	// デバイスの取得
 	int nMaxMesh = 9;
 
 	// 変数の初期化
@@ -243,7 +243,7 @@ void CObjectMesh::Update(void)
 //===============================================
 void CObjectMesh::Draw(void)
 {
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();	// デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();	// デバイスの取得
 	D3DXMATRIX mtxRot, mtxTrans;										// 計算用マトリックス
 
 	// ワールドマトリックスの初期化
@@ -284,7 +284,7 @@ void CObjectMesh::Draw(void)
 //===============================================
 void CObjectMesh::BindTexture(int nIdx)
 {
-	m_pTexture = CManager::GetTexture()->GetAddress(nIdx);
+	m_pTexture = CManager::GetInstance()->GetTexture()->GetAddress(nIdx);
 }
 
 //===============================================

@@ -59,7 +59,7 @@ HRESULT CGame::Init(HWND hWnd)
 	m_bPauseCamera = false;
 
 	// カメラの初期化処理
-	CManager::GetCamera()->Init();
+	CManager::GetInstance()->GetCamera()->Init();
 
 	// オブジェクトXファイルの生成
 	CObjectX::Load(hWnd);
@@ -78,7 +78,7 @@ HRESULT CGame::Init(HWND hWnd)
 	m_nCounterState = 0;
 
 	// サウンドの再生
-	CManager::GetSound()->Play(CSound::LABEL_BGM_GAME);
+	CManager::GetInstance()->GetSound()->Play(CSound::LABEL_BGM_GAME);
 
 	return S_OK;
 }
@@ -102,31 +102,31 @@ void CGame::Uninit(void)
 //===============================================
 void CGame::Update(void)
 {
-	if (CManager::GetKeyboardInput()->GetTrigger(DIK_P) == true
-		|| CManager::GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_START, 0) == true)
+	if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_P) == true
+		|| CManager::GetInstance()->GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_START, 0) == true)
 	{// ポーズ入力
 		m_bPause = m_bPause ? false : true;		// ポーズ状態切り替え
 
 		if (m_bPause == true)
 		{
 			// サウンドの再生
-			CManager::GetSound()->Play(CSound::LABEL_SE_PAUSE);
+			CManager::GetInstance()->GetSound()->Play(CSound::LABEL_SE_PAUSE);
 		}
 		else
 		{
 			// サウンドの再生
-			CManager::GetSound()->Play(CSound::LABEL_SE_PAUSE_CANCEL);
+			CManager::GetInstance()->GetSound()->Play(CSound::LABEL_SE_PAUSE_CANCEL);
 		}
 	}
 
 //#if _DEBUG
-	if (m_bPause == true && CManager::GetKeyboardInput()->GetTrigger(DIK_F3) == true)
+	if (m_bPause == true && CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_F3) == true)
 	{// ポーズ中カメラ操作
 		m_bPauseCamera = m_bPauseCamera ? false : true;		// ポーズ状態切り替え
 	}
 
-	if (CManager::GetKeyboardInput()->GetTrigger(DIK_BACKSPACE) == true
-		|| CManager::GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_BACK, 0) == true || m_pPlayer->GetPos().z > 600.0f)
+	if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_BACKSPACE) == true
+		|| CManager::GetInstance()->GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_BACK, 0) == true || m_pPlayer->GetPos().z > 600.0f)
 	{// BackSpace
 		CRenderer::GetFade()->Set(CScene::MODE_RESULT);		// リザルト画面へ移動
 	}
@@ -189,7 +189,7 @@ void CGame::Update(void)
 	}
 
 	// デバッグ表示
-	CManager::GetDebugProc()->Print(" 現在の状態：%d\n", m_state);
+	CManager::GetInstance()->GetDebugProc()->Print(" 現在の状態：%d\n", m_state);
 }
 
 //===============================================

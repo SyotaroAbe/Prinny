@@ -90,9 +90,9 @@ HRESULT CBg::Init(D3DXVECTOR3 pos)
 	CObject2D::Init(pos);
 
 	// テクスチャの設定
-	m_aIdxTexture[TYPE_TITLE] = CManager::GetTexture()->Regist(TEXTURE_TITLE);
-	m_aIdxTexture[TYPE_TUTORIAL] = CManager::GetTexture()->Regist(TEXTURE_TUTORIAL);
-	m_aIdxTexture[TYPE_RESULT] = CManager::GetTexture()->Regist(TEXTURE_RESULT);
+	m_aIdxTexture[TYPE_TITLE] = CManager::GetInstance()->GetTexture()->Regist(TEXTURE_TITLE);
+	m_aIdxTexture[TYPE_TUTORIAL] = CManager::GetInstance()->GetTexture()->Regist(TEXTURE_TUTORIAL);
+	m_aIdxTexture[TYPE_RESULT] = CManager::GetInstance()->GetTexture()->Regist(TEXTURE_RESULT);
 
 	return S_OK;
 }

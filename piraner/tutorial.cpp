@@ -56,13 +56,13 @@ CTutorial::~CTutorial()
 HRESULT CTutorial::Init(HWND hWnd)
 {
 	// カメラの初期化処理
-	CManager::GetCamera()->Init();
+	CManager::GetInstance()->GetCamera()->Init();
 
 	// 背景の生成
 	m_pBg = CBg::Create(CBg::TYPE_TUTORIAL, 6);
 
 	// サウンドの再生
-	CManager::GetSound()->Play(CSound::LABEL_BGM_TUTORIAL);
+	CManager::GetInstance()->GetSound()->Play(CSound::LABEL_BGM_TUTORIAL);
 
 	return S_OK;
 }
@@ -83,8 +83,8 @@ void CTutorial::Update(void)
 {
 	m_nTime++;	// 時間をカウント
 
-	if (CManager::GetKeyboardInput()->GetTrigger(DIK_RETURN) == true
-		|| CManager::GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_START, 0) == true)
+	if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_RETURN) == true
+		|| CManager::GetInstance()->GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_START, 0) == true)
 	{
 		if (m_bFade == false)
 		{// フェードバグ防止
@@ -92,8 +92,8 @@ void CTutorial::Update(void)
 			m_bFade = true;
 		}
 	}
-	else if (CManager::GetKeyboardInput()->GetTrigger(DIK_BACKSPACE) == true
-		|| CManager::GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_BACK, 0) == true)
+	else if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_BACKSPACE) == true
+		|| CManager::GetInstance()->GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_BACK, 0) == true)
 	{
 		if (m_bFade == false)
 		{// フェードバグ防止

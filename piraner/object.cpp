@@ -248,7 +248,7 @@ void CObject::UpdateAll()
 //===============================================
 void CObject::DrawAll()
 {
-	CCamera *m_pCamera = CManager::GetCamera();	// カメラへのポインタを取得
+	CCamera *m_pCamera = CManager::GetInstance()->GetCamera();	// カメラへのポインタを取得
 
 	if (m_pCamera != NULL)
 	{// カメラが使用されている

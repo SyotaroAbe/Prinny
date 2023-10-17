@@ -36,8 +36,8 @@ CCamera *CManager::m_pCamera = NULL;				// カメラクラスのポインタ
 CLight *CManager::m_pLight = NULL;					// ライトクラスのポインタ
 CTexture *CManager::m_pTexture = NULL;				// テクスチャクラスのポインタ
 CXFile *CManager::m_pXFile = NULL;					// Xファイルクラスのポインタ
-CScene * CManager::m_pScene = NULL;					// シーンクラスのポインタ
 CFileLoad *CManager::m_pFileLoad = NULL;			// ファイルロードクラスのポインタ
+CScene * CManager::m_pScene = NULL;					// シーンクラスのポインタ
 HWND CManager::m_hWnd = NULL;						// ウインドウ保存用
 
 CScene::MODE CScene::m_mode = CScene::MODE_TITLE;		// 現在の画面モード
@@ -79,9 +79,9 @@ CScene *CScene::Create(HWND hWnd, MODE mode)
 		if (m_mode == MODE_RESULT)
 		{
 			// サウンドの再生
-			CManager::GetSound()->Stop(CSound::LABEL_BGM_RANKING);
-			CManager::GetSound()->Stop(CSound::LABEL_BGM_TITLE);
-			CManager::GetSound()->Play(CSound::LABEL_BGM_TITLE);
+			CManager::GetInstance()->GetSound()->Stop(CSound::LABEL_BGM_RANKING);
+			CManager::GetInstance()->GetSound()->Stop(CSound::LABEL_BGM_TITLE);
+			CManager::GetInstance()->GetSound()->Play(CSound::LABEL_BGM_TITLE);
 
 			//if (CManager::GetSound()->GetPlay(CSound::LABEL_BGM_TITLE) == false)
 			//{// タイトルのBGMが再生されていない
@@ -92,10 +92,10 @@ CScene *CScene::Create(HWND hWnd, MODE mode)
 		else
 		{
 			// サウンドの停止
-			CManager::GetSound()->Stop();
+			CManager::GetInstance()->GetSound()->Stop();
 
 			// サウンドの再生
-			CManager::GetSound()->Play(CSound::LABEL_BGM_TITLE);
+			CManager::GetInstance()->GetSound()->Play(CSound::LABEL_BGM_TITLE);
 		}
 		break;
 
@@ -113,10 +113,10 @@ CScene *CScene::Create(HWND hWnd, MODE mode)
 		if (m_mode != MODE_TITLE)
 		{
 			// サウンドの停止
-			CManager::GetSound()->Stop();
+			CManager::GetInstance()->GetSound()->Stop();
 
 			// サウンドの再生
-			CManager::GetSound()->Play(CSound::LABEL_BGM_RANKING);
+			CManager::GetInstance()->GetSound()->Play(CSound::LABEL_BGM_RANKING);
 		}
 		break;
 	}
@@ -335,6 +335,11 @@ void CManager::Uninit(void)
 		// メモリを開放
 		delete m_pRenderer;
 		m_pRenderer = NULL;
+
+		if (m_pManager != NULL)
+		{
+			m_pManager = NULL;
+		}
 	}
 }
 
@@ -450,6 +455,21 @@ void CManager::SetFPS(int nCountFPS)
 }
 
 //===============================================
+// シングルトン
+//===============================================
+CManager* CManager::GetInstance(void)
+{
+	if (m_pManager == NULL)
+	{
+		return m_pManager = new CManager;
+	}
+	else
+	{
+		return m_pManager;
+	}
+}
+
+//===============================================
 // シーン設定処理
 //===============================================
 void CManager::SetMode(CScene::MODE mode)
@@ -460,7 +480,7 @@ void CManager::SetMode(CScene::MODE mode)
 	if (mode == CScene::MODE_TUTORIAL || mode == CScene::MODE_GAME)
 	{
 		// サウンドの停止
-		GetSound()->Stop();
+		GetInstance()->GetSound()->Stop();
 	}
 
 	// シーンを代入

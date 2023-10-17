@@ -78,20 +78,20 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 	void SetFPS(int nCountFPS);
 	HWND GetHWND(void) { return m_hWnd; }
 
+	static CManager* GetInstance(void);
 	static void SetMode(CScene::MODE mode);
 	static CScene::MODE GetMode(void);
 
-	static CManager *GetManager() { return m_pManager; }
-	static CRenderer *GetRenderer() { return m_pRenderer; }
-	static CInputKeyboard *GetKeyboardInput() { return m_pKeyboardInput; }
-	static CInputGamePad *GetInputGamePad() { return m_pInputGamePad; }
-	static CDebugProc *GetDebugProc() { return m_pDebugProc; }
-	static CSound *GetSound() { return m_pSound; }
-	static CCamera *GetCamera() { return m_pCamera; }
-	static CLight *GetLight() { return m_pLight; }
-	static CTexture *GetTexture() { return m_pTexture; }
-	static CXFile *GetXFile() { return m_pXFile; }
-	static CFileLoad *GetLoad() { return m_pFileLoad; }
+	CRenderer *GetRenderer() { return m_pRenderer; }
+	CInputKeyboard *GetKeyboardInput() { return m_pKeyboardInput; }
+	CInputGamePad *GetInputGamePad() { return m_pInputGamePad; }
+	CDebugProc *GetDebugProc() { return m_pDebugProc; }
+	CSound *GetSound() { return m_pSound; }
+	CCamera *GetCamera() { return m_pCamera; }
+	CLight *GetLight() { return m_pLight; }
+	CTexture *GetTexture() { return m_pTexture; }
+	CXFile *GetXFile() { return m_pXFile; }
+	CFileLoad *GetLoad() { return m_pFileLoad; }
 
 private:	// 自分のみアクセス可能 [アクセス指定子]
 	static CManager *m_pManager;					// マネージャクラスのポインタ
@@ -104,8 +104,8 @@ private:	// 自分のみアクセス可能 [アクセス指定子]
 	static CLight *m_pLight;						// ライトクラスのポインタ
 	static CTexture *m_pTexture;					// テクスチャクラスのポインタ
 	static CXFile *m_pXFile;						// Xファイルクラスのポインタ
-	static CScene *m_pScene;						// シーンクラスのポインタ
 	static CFileLoad *m_pFileLoad;					// ファイルロードクラスのポインタ
+	static CScene *m_pScene;						// シーンクラスのポインタ
 
 	static HWND m_hWnd;						// ウインドウ保存用
 	static CScene::MODE m_mode;				// 現在の画面モード

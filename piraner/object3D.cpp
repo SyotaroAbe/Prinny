@@ -77,7 +77,7 @@ CObject3D *CObject3D::Create(D3DXVECTOR3 pos, float m_fSizeX, float m_fSizeZ, in
 	pObject3D->Init(pos);
 
 	// テクスチャの設定
-	m_nIdxTexture = CManager::GetTexture()->Regist("data\\TEXTURE\\field000.jpg");
+	m_nIdxTexture = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\field000.jpg");
 
 	// テクスチャの割り当て
 	pObject3D->BindTexture(m_nIdxTexture);
@@ -90,7 +90,7 @@ CObject3D *CObject3D::Create(D3DXVECTOR3 pos, float m_fSizeX, float m_fSizeZ, in
 //===============================================
 HRESULT CObject3D::Init(D3DXVECTOR3 pos)
 {
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();	// デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();	// デバイスの取得
 
 	// 頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * 4,
@@ -189,7 +189,7 @@ void CObject3D::Update(void)
 //===============================================
 void CObject3D::Draw(void)
 {
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();	// デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();	// デバイスの取得
 	D3DXMATRIX mtxRot, mtxTrans;										// 計算用マトリックス
 
 	// ワールドマトリックスの初期化
@@ -224,7 +224,7 @@ void CObject3D::Draw(void)
 //===============================================
 void CObject3D::DrawShadow(void)
 {
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();	// デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();	// デバイスの取得
 	D3DXMATRIX mtxRot, mtxTrans;										// 計算用マトリックス
 
 	// 減算合成の設定
@@ -269,7 +269,7 @@ void CObject3D::DrawShadow(void)
 //===============================================
 void CObject3D::BindTexture(int nIdx)
 {
-	m_pTexture = CManager::GetTexture()->GetAddress(nIdx);
+	m_pTexture = CManager::GetInstance()->GetTexture()->GetAddress(nIdx);
 }
 
 //===============================================

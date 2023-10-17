@@ -95,7 +95,7 @@ HRESULT CObjectBillboard::Init(D3DXVECTOR3 pos)
 	// 位置を設定
 	m_pos = pos;
 
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();	// デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();	// デバイスの取得
 
 	// 頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * 4,
@@ -168,7 +168,7 @@ void CObjectBillboard::Update(void)
 //===============================================
 void CObjectBillboard::Draw(void)
 {
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();	// デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();	// デバイスの取得
 	D3DXMATRIX mtxTrans;												// 計算用マトリックス
 	D3DXMATRIX mtxView;													// ビューマトリックス取得用
 
@@ -229,7 +229,7 @@ void CObjectBillboard::Draw(void)
 //===============================================
 void CObjectBillboard::DrawEffect(void)
 {
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();	// デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();	// デバイスの取得
 	D3DXMATRIX mtxTrans;												// 計算用マトリックス
 	D3DXMATRIX mtxView;													// ビューマトリックス取得用
 
@@ -417,7 +417,7 @@ void CObjectBillboard::Brightness(float fBrightness)
 //===============================================
 void CObjectBillboard::BindTexture(int nIdx)
 {
-	m_pTexture = CManager::GetTexture()->GetAddress(nIdx);
+	m_pTexture = CManager::GetInstance()->GetTexture()->GetAddress(nIdx);
 }
 
 //===============================================

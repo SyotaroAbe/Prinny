@@ -131,7 +131,7 @@ HRESULT CPlayer::Init(D3DXVECTOR3 pos)
 	m_pMotion->Init();
 
 	// モデルの総数
-	m_nNumModel = CManager::GetLoad()->GetNumModel();
+	m_nNumModel = CManager::GetInstance()->GetLoad()->GetNumModel();
 
 	// 位置の設定
 	m_pos = pos;
@@ -150,9 +150,9 @@ HRESULT CPlayer::Init(D3DXVECTOR3 pos)
 		D3DXVECTOR3 pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		D3DXVECTOR3 rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
-		apModelFile[nCntModel] = CManager::GetLoad()->GetFileName(nCntModel);		// ファイル名取得
-		pos = CManager::GetLoad()->GetPos(nCntModel);								// 位置の取得
-		rot = CManager::GetLoad()->GetRot(nCntModel);								// 向きの取得
+		apModelFile[nCntModel] = CManager::GetInstance()->GetLoad()->GetFileName(nCntModel);		// ファイル名取得
+		pos = CManager::GetInstance()->GetLoad()->GetPos(nCntModel);								// 位置の取得
+		rot = CManager::GetInstance()->GetLoad()->GetRot(nCntModel);								// 向きの取得
 
 		m_apModel[nCntModel] = CModel::Create(apModelFile[nCntModel], pos, rot);	// 生成
 	}
@@ -166,7 +166,7 @@ HRESULT CPlayer::Init(D3DXVECTOR3 pos)
 	{
 		int nParent = 0;
 
-		nParent = CManager::GetLoad()->GetParent(nCntModel);	// 親を取得
+		nParent = CManager::GetInstance()->GetLoad()->GetParent(nCntModel);	// 親を取得
 
 		m_apModel[nCntModel]->SetParent(m_apModel[nParent]);
 	}
@@ -215,7 +215,7 @@ HRESULT CPlayer::Init(D3DXVECTOR3 pos)
 	for (int nCntMotion = 0; nCntMotion < MOTIONTYPE_MAX; nCntMotion++)
 	{// モーション数分繰り返す
 		m_pMotion->Set(nCntMotion);
-		m_pMotion->SetInfo(CManager::GetLoad()->GetInfo(nCntMotion));
+		m_pMotion->SetInfo(CManager::GetInstance()->GetLoad()->GetInfo(nCntMotion));
 	}
 
 	// 初期モーション設定
@@ -274,20 +274,20 @@ void CPlayer::Update(void)
 
 	if (m_state == STATE_NORMAL)
 	{
-		if (CManager::GetKeyboardInput()->GetPress(DIK_A) == true)
+		if (CManager::GetInstance()->GetKeyboardInput()->GetPress(DIK_A) == true)
 		{//左キーが押された
-			m_move.x += sinf(D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetCamera()->GetRot().y)) * m_fSpeed;
-			m_move.z += cosf(D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetCamera()->GetRot().y)) * m_fSpeed;
-			m_rotDest.y = D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetCamera()->GetRot().y);
+			m_move.x += sinf(D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
+			m_move.z += cosf(D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
+			m_rotDest.y = D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y);
 		}
-		else if (CManager::GetKeyboardInput()->GetPress(DIK_D) == true)
+		else if (CManager::GetInstance()->GetKeyboardInput()->GetPress(DIK_D) == true)
 		{//右キーが押された
-			m_move.x += sinf(D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetCamera()->GetRot().y)) * m_fSpeed;
-			m_move.z += cosf(D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetCamera()->GetRot().y)) * m_fSpeed;
-			m_rotDest.y = D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetCamera()->GetRot().y);
+			m_move.x += sinf(D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
+			m_move.z += cosf(D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
+			m_rotDest.y = D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y);
 		}
 
-		if (CManager::GetKeyboardInput()->GetTrigger(DIK_SPACE) == true && m_bAirJump == false)
+		if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_SPACE) == true && m_bAirJump == false)
 		{// SPACEキーが押された
 			if (m_bJump == true)
 			{// 2段ジャンプ
@@ -300,7 +300,7 @@ void CPlayer::Update(void)
 	}
 
 	// ヒップドロップ
-	if (CManager::GetKeyboardInput()->GetTrigger(DIK_S) == true && m_bJump == true && m_state != STATE_HIPDROP)
+	if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_S) == true && m_bJump == true && m_state != STATE_HIPDROP)
 	{// Sキーが押された
 		m_state = STATE_HIPDROP;
 		m_move.y = JUMP_HIPDROP;
@@ -309,7 +309,7 @@ void CPlayer::Update(void)
 	switch (m_state)
 	{
 	case STATE_NORMAL:		// 通常
-		CManager::GetCamera()->ScalingLenth(m_fLenthCamera, 0.1f);
+		CManager::GetInstance()->GetCamera()->ScalingLenth(m_fLenthCamera, 0.1f);
 		break;
 
 	case STATE_DASH:		// ダッシュ
@@ -324,7 +324,7 @@ void CPlayer::Update(void)
 
 	case STATE_LANDDROP:	// ヒップドロップ着地
 		// カメラ拡縮処理
-		if (CManager::GetCamera()->ScalingLenth(m_fLenthCamera, 0.1f) == true)
+		if (CManager::GetInstance()->GetCamera()->ScalingLenth(m_fLenthCamera, 0.1f) == true)
 		{// ある一定まで縮小した
 			m_state = STATE_NORMAL;
 			m_fLenthCamera = LENTH_NORMAL;
@@ -389,18 +389,18 @@ void CPlayer::Update(void)
 	}
 
 	// デバッグ表示
-	CManager::GetDebugProc()->Print(" 移動          ：A D\n");
-	CManager::GetDebugProc()->Print(" ジャンプ      ：SPACE\n");
-	CManager::GetDebugProc()->Print(" ヒップドロップ：S\n");
-	CManager::GetDebugProc()->Print(" リザルトへ    ：BACKSPACE\n\n");
+	CManager::GetInstance()->GetDebugProc()->Print(" 移動          ：A D\n");
+	CManager::GetInstance()->GetDebugProc()->Print(" ジャンプ      ：SPACE\n");
+	CManager::GetInstance()->GetDebugProc()->Print(" ヒップドロップ：S\n");
+	CManager::GetInstance()->GetDebugProc()->Print(" リザルトへ    ：BACKSPACE\n\n");
 
-	CManager::GetDebugProc()->Print(" プレイヤーの位置：（%f, %f, %f）\n", m_pos.x, m_pos.y, m_pos.z);
-	CManager::GetDebugProc()->Print(" プレイヤーの移動速度：%f\n", m_fSpeed);
-	CManager::GetDebugProc()->Print(" プレイヤーの向き：%f\n\n", m_rot.y);
+	CManager::GetInstance()->GetDebugProc()->Print(" プレイヤーの位置：（%f, %f, %f）\n", m_pos.x, m_pos.y, m_pos.z);
+	CManager::GetInstance()->GetDebugProc()->Print(" プレイヤーの移動速度：%f\n", m_fSpeed);
+	CManager::GetInstance()->GetDebugProc()->Print(" プレイヤーの向き：%f\n\n", m_rot.y);
 	
-	CManager::GetDebugProc()->Print(" カメラの向き：%f\n", CManager::GetCamera()->GetRot().y);
-	CManager::GetDebugProc()->Print(" 視点：（%f, %f, %f）\n", CManager::GetCamera()->GetPosV().x, CManager::GetCamera()->GetPosV().y, CManager::GetCamera()->GetPosV().z);
-	CManager::GetDebugProc()->Print(" 注視点：（%f, %f, %f）\n\n", CManager::GetCamera()->GetPosR().x, CManager::GetCamera()->GetPosR().y, CManager::GetCamera()->GetPosR().z);
+	CManager::GetInstance()->GetDebugProc()->Print(" カメラの向き：%f\n", CManager::GetInstance()->GetCamera()->GetRot().y);
+	CManager::GetInstance()->GetDebugProc()->Print(" 視点：（%f, %f, %f）\n", CManager::GetInstance()->GetCamera()->GetPosV().x, CManager::GetInstance()->GetCamera()->GetPosV().y, CManager::GetInstance()->GetCamera()->GetPosV().z);
+	CManager::GetInstance()->GetDebugProc()->Print(" 注視点：（%f, %f, %f）\n\n", CManager::GetInstance()->GetCamera()->GetPosR().x, CManager::GetInstance()->GetCamera()->GetPosR().y, CManager::GetInstance()->GetCamera()->GetPosR().z);
 }
 
 //===============================================
@@ -410,7 +410,7 @@ void CPlayer::Draw(void)
 {
 	if (CManager::GetMode() != CScene::MODE_TITLE)
 	{// タイトルじゃない
-		LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();	// デバイスの取得
+		LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();	// デバイスの取得
 		D3DXMATRIX mtxRot, mtxTrans;										// 計算用マトリックス
 
 		// ワールドマトリックスの初期化

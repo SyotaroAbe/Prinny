@@ -100,9 +100,9 @@ HRESULT CEffect::Init(D3DXVECTOR3 pos)
 	CObjectBillboard::Init(pos);
 
 	// テクスチャの設定
-	m_aIdxTexture[TYPE_NORMAL] = CManager::GetTexture()->Regist("data\\TEXTURE\\effect000.jpg");
-	m_aIdxTexture[TYPE_STEAM] = CManager::GetTexture()->Regist("data\\TEXTURE\\eff_steam_000.png");
-	m_aIdxTexture[TYPE_FIRE] = CManager::GetTexture()->Regist("data\\TEXTURE\\eff_Glow_001.png");
+	m_aIdxTexture[TYPE_NORMAL] = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\effect000.jpg");
+	m_aIdxTexture[TYPE_STEAM] = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\eff_steam_000.png");
+	m_aIdxTexture[TYPE_FIRE] = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\eff_Glow_001.png");
 
 	return S_OK;
 }

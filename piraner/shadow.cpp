@@ -59,7 +59,7 @@ CShadow *CShadow::Create(D3DXVECTOR3 pos, float m_fSizeX, float m_fSizeZ, int nP
 	pShadow->Init(pos);
 
 	// テクスチャの設定
-	m_nIdxTexture = CManager::GetTexture()->Regist("data\\TEXTURE\\shadow000.jpg");
+	m_nIdxTexture = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\shadow000.jpg");
 
 	// テクスチャの割り当て
 	pShadow->BindTexture(m_nIdxTexture);

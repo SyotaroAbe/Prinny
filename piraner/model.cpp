@@ -66,7 +66,7 @@ CModel *CModel::Create(const char *pFilename, D3DXVECTOR3 pos, D3DXVECTOR3 rot)
 //===============================================
 HRESULT CModel::Init(const char *pFilename, D3DXVECTOR3 pos, D3DXVECTOR3 rot)
 {
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();   // デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();   // デバイスの取得
 
 	// Ｘファイルに読み込み
 	D3DXLoadMeshFromX(pFilename,
@@ -122,7 +122,7 @@ void CModel::Uninit(void)
 		if (m_apIdxTexture[nCntMat] != NULL)
 		{// テクスチャファイルが存在する
 			// テクスチャの破棄
-			CManager::GetTexture()->Delete(m_apIdxTexture[nCntMat]);
+			CManager::GetInstance()->GetTexture()->Delete(m_apIdxTexture[nCntMat]);
 		}
 	}
 
@@ -147,12 +147,12 @@ void CModel::Update(void)
 //===============================================
 void CModel::Draw(void)
 {
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();	// デバイスの取得
-	D3DXMATRIX mtxRot, mtxTrans;										// 計算用マトリックス
-	D3DXMATRIX mtxParent;												// 親のマトリックス
-	//D3DXMATRIX mtxPlayer = CManager::GetPlayer()->GetMtxWorld();		// プレイヤーのマトリックス
-	D3DMATERIAL9 matDef;												// 現在のマテリアル保存用
-	D3DXMATERIAL *pMat;													// マテリアルデータ
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();	// デバイスの取得
+	D3DXMATRIX mtxRot, mtxTrans;														// 計算用マトリックス
+	D3DXMATRIX mtxParent;																// 親のマトリックス
+	//D3DXMATRIX mtxPlayer = CManager::GetPlayer()->GetMtxWorld();						// プレイヤーのマトリックス
+	D3DMATERIAL9 matDef;																// 現在のマテリアル保存用
+	D3DXMATERIAL *pMat;																	// マテリアルデータ
 
 	// ワールドマトリックスの初期化
 	D3DXMatrixIdentity(&m_mtxWorld);
@@ -215,7 +215,7 @@ void CModel::Draw(void)
 //===============================================
 void CModel::DrawShadowmtx(void)
 {
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();	// デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();	// デバイスの取得
 	D3DXMATRIX mtxShadow;		// シャドウマトリックス
 	D3DLIGHT9 light;			// ライト情報
 	D3DXVECTOR4 posLight;		// ライトの位置
@@ -286,8 +286,8 @@ void CModel::BindX(LPD3DXMESH pMesh, LPD3DXBUFFER pBuffMat, DWORD dwNumMat)
 	// Vtxサイズ設定
 	SetVtxSize();
 
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();	// デバイスの取得
-	D3DXMATERIAL *pMat;													// マテリアルへのポインタ
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();	// デバイスの取得
+	D3DXMATERIAL *pMat;																	// マテリアルへのポインタ
 
 	// マテリアルデータへのポインタを取得
 	pMat = (D3DXMATERIAL*)m_pBuffMat->GetBufferPointer();
@@ -300,7 +300,7 @@ void CModel::BindX(LPD3DXMESH pMesh, LPD3DXBUFFER pBuffMat, DWORD dwNumMat)
 		if (pMat[nCntMat].pTextureFilename != NULL)
 		{// テクスチャファイルが存在する
 			// テクスチャの設定
-			m_apIdxTexture[nCntMat] = CManager::GetTexture()->Regist(pMat[nCntMat].pTextureFilename);
+			m_apIdxTexture[nCntMat] = CManager::GetInstance()->GetTexture()->Regist(pMat[nCntMat].pTextureFilename);
 
 			// テクスチャの読み込み
 			D3DXCreateTextureFromFile(pDevice,

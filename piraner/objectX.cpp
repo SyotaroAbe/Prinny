@@ -69,7 +69,7 @@ CObjectX::~CObjectX()
 void CObjectX::Load(HWND hWnd)
 {
 	// モデル読み込み
-	m_aIdxXFile[MODEL_HOUSE00] = CManager::GetXFile()->Regist("data\\MODEL\\Dumpster.x");
+	m_aIdxXFile[MODEL_HOUSE00] = CManager::GetInstance()->GetXFile()->Regist("data\\MODEL\\Dumpster.x");
 
 	FILE *pFile;
 
@@ -206,8 +206,8 @@ HRESULT CObjectX::Init(D3DXVECTOR3 pos)
 	m_pos = pos;
 
 	// モデルの最小値・最大値の取得
-	m_vtxMin = CManager::GetXFile()->GetSizeMin(m_aIdxXFile[m_modelType]);
-	m_vtxMax = CManager::GetXFile()->GetSize(m_aIdxXFile[m_modelType]);
+	m_vtxMin = CManager::GetInstance()->GetXFile()->GetSizeMin(m_aIdxXFile[m_modelType]);
+	m_vtxMax = CManager::GetInstance()->GetXFile()->GetSize(m_aIdxXFile[m_modelType]);
 
 	return S_OK;
 }
@@ -265,7 +265,7 @@ void CObjectX::Update(void)
 //===============================================
 void CObjectX::Draw(void)
 {
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();	// デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();	// デバイスの取得
 	D3DXMATRIX mtxRot, mtxTrans;										// 計算用マトリックス
 
 	// ワールドマトリックスの初期化
@@ -283,7 +283,7 @@ void CObjectX::Draw(void)
 	pDevice->SetTransform(D3DTS_WORLD, &m_mtxWorld);
 
 	// Xファイルの描画
-	CManager::GetXFile()->Draw(m_aIdxXFile[m_modelType], CXFile::COL_NORMAL);
+	CManager::GetInstance()->GetXFile()->Draw(m_aIdxXFile[m_modelType], CXFile::COL_NORMAL);
 
 	//// 現在のマテリアルを取得
 	//pDevice->GetMaterial(&matDef);
@@ -312,7 +312,7 @@ void CObjectX::Draw(void)
 //===============================================
 void CObjectX::DrawXFile(int nIdx, CXFile::COL col)
 {
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();	// デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();	// デバイスの取得
 	D3DXMATRIX mtxRot, mtxTrans;										// 計算用マトリックス
 
 	// ワールドマトリックスの初期化
@@ -330,7 +330,7 @@ void CObjectX::DrawXFile(int nIdx, CXFile::COL col)
 	pDevice->SetTransform(D3DTS_WORLD, &m_mtxWorld);
 
 	// Xファイルの描画
-	CManager::GetXFile()->Draw(nIdx, col);
+	CManager::GetInstance()->GetXFile()->Draw(nIdx, col);
 }
 
 //===============================================
@@ -344,8 +344,8 @@ void CObjectX::CollisionModel(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, int nIdx,
 
 	if (bPlayer == false)
 	{
-		vtxMax = CManager::GetXFile()->GetSize(nIdx);
-		vtxMin = CManager::GetXFile()->GetSizeMin(nIdx);
+		vtxMax = CManager::GetInstance()->GetXFile()->GetSize(nIdx);
+		vtxMin = CManager::GetInstance()->GetXFile()->GetSizeMin(nIdx);
 	}
 	else
 	{
@@ -424,5 +424,5 @@ void CObjectX::SetMove(const D3DXVECTOR3 move)
 //===============================================
 D3DXVECTOR3 CObjectX::GetSize(void)
 {
-	return CManager::GetXFile()->GetSize(0);
+	return CManager::GetInstance()->GetXFile()->GetSize(0);
 }

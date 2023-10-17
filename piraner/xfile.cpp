@@ -110,7 +110,7 @@ void CXFile::Unload(void)
 //===============================================
 int CXFile::Regist(const char *pFilename)
 {
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();   // デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();   // デバイスの取得
 
 	for (int nCntXFile = 0; nCntXFile < m_nNumAll; nCntXFile++)
 	{
@@ -155,7 +155,7 @@ void CXFile::BindX(int nIdx)
 	// Vtxサイズ設定
 	SetVtxSize(nIdx);
 
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();	// デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();	// デバイスの取得
 	D3DXMATERIAL *pMat;		// マテリアルへのポインタ
 
 	// マテリアルデータへのポインタを取得
@@ -169,8 +169,8 @@ void CXFile::BindX(int nIdx)
 		if (pMat[nCntMat].pTextureFilename != NULL)
 		{// テクスチャファイルが存在する
 			// テクスチャの設定
-			m_aXFile[nIdx].m_pIdxTexture[nCntMat] = CManager::GetTexture()->Regist(pMat[nCntMat].pTextureFilename);
-			m_aXFile[nIdx].m_pTexture[nCntMat] = CManager::GetTexture()->GetAddress(m_aXFile[nIdx].m_pIdxTexture[nCntMat]);
+			m_aXFile[nIdx].m_pIdxTexture[nCntMat] = CManager::GetInstance()->GetTexture()->Regist(pMat[nCntMat].pTextureFilename);
+			m_aXFile[nIdx].m_pTexture[nCntMat] = CManager::GetInstance()->GetTexture()->GetAddress(m_aXFile[nIdx].m_pIdxTexture[nCntMat]);
 		}
 		else
 		{// 存在しない
@@ -247,7 +247,7 @@ void CXFile::SetVtxSize(int nIdx)
 //===============================================
 void CXFile::Draw(int nIdx, COL col)
 {
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();	// デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();	// デバイスの取得
 	D3DMATERIAL9 matDef;												// 現在のマテリアル保存用
 	D3DXMATERIAL *pMat;													// マテリアルデータ
 
@@ -332,7 +332,7 @@ void CXFile::Draw(int nIdx, COL col)
 //===============================================
 void CXFile::CleannessDraw(int nIdx)
 {
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();	// デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();	// デバイスの取得
 	D3DMATERIAL9 matDef;												// 現在のマテリアル保存用
 	D3DXMATERIAL *pMat;													// マテリアルデータ
 	D3DMATERIAL9 mat[256];

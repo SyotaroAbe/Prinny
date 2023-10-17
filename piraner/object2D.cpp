@@ -70,7 +70,7 @@ CObject2D::~CObject2D()
 //===============================================
 HRESULT CObject2D::Init(D3DXVECTOR3 pos)
 {
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();   // デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();   // デバイスの取得
 	VERTEX_2D *pVtx;													// 頂点情報へのポインタ
 
 	// 値を代入
@@ -187,7 +187,7 @@ void CObject2D::Update(void)
 //===============================================
 void CObject2D::Draw(void)
 {
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();   // デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();   // デバイスの取得
 
 	// 頂点バッファをデータストリームに設定
 	pDevice->SetStreamSource(0, m_pVtxBuff, 0, sizeof(VERTEX_2D));
@@ -391,7 +391,7 @@ void CObject2D::DrawEffect(D3DXCOLOR col)
 	// 頂点バッファをアンロックする
 	m_pVtxBuff->Unlock();
 
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();   // デバイスの取得
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();   // デバイスの取得
 
 	// 頂点バッファをデータストリームに設定
 	pDevice->SetStreamSource(0, m_pVtxBuff, 0, sizeof(VERTEX_2D));
@@ -462,7 +462,7 @@ void CObject2D::Brightness(float fBrightness)
 //===============================================
 void CObject2D::BindTexture(int nIdx)
 {
-	m_pTexture = CManager::GetTexture()->GetAddress(nIdx);
+	m_pTexture = CManager::GetInstance()->GetTexture()->GetAddress(nIdx);
 }
 
 //===============================================
