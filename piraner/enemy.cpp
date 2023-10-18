@@ -370,12 +370,12 @@ void CEnemy::Draw(void)
 //===============================================
 void CEnemy::CollisionObjX(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 vtxMax, D3DXVECTOR3 vtxMin)
 {
-	if (pPosOld->x + vtxMin.x - m_vtxMax.x <= m_pos.x && pPosOld->x + vtxMax.x - m_vtxMin.x >= m_pos.x
-		&& pPosOld->z + vtxMin.z - m_vtxMax.z <= m_pos.z && pPosOld->z + vtxMax.z - m_vtxMin.z >= m_pos.z
-		&& pPosOld->y + vtxMin.y - m_vtxMax.y <= m_pos.y && pPosOld->y + vtxMax.y - m_vtxMin.y >= m_pos.y)
+	if (pPos->x + vtxMin.x - m_vtxMax.x <= m_pos.x && pPos->x + vtxMax.x - m_vtxMin.x >= m_pos.x
+		&& pPos->z + vtxMin.z <= m_pos.z - m_vtxMin.z && pPos->z + vtxMax.z >= m_pos.z + m_vtxMin.z
+		&& pPos->y + vtxMin.y <= m_pos.y + m_vtxMax.y && pPos->y + vtxMax.y >= m_pos.y + m_vtxMin.y)
 	{// 範囲内にある
 		if (pPosOld->y + vtxMax.y <= m_posOld.y + m_vtxMin.y
-			&& pPosOld->y + vtxMax.y >= m_pos.y + m_vtxMin.y)
+			&& pPos->y + vtxMax.y >= m_pos.y + m_vtxMin.y)
 		{// 上からめり込んだ
 			// 上にのせる
 			m_pos.y = pPosOld->y - m_vtxMin.y + vtxMax.y;
@@ -389,15 +389,15 @@ void CEnemy::CollisionObjX(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 
 			m_pos.y = pPosOld->y - m_vtxMax.y + vtxMin.y;
 			m_move.y = 0.0f;
 		}
-		else if (pPosOld->z - vtxMax.z >= m_posOld.z + m_vtxMax.z
-			&& pPosOld->z - vtxMax.z <= m_pos.z + m_vtxMax.z)
+		else if (pPosOld->z + vtxMin.z >= m_posOld.z - m_vtxMin.z
+			&& pPos->z + vtxMin.z <= m_pos.z - m_vtxMin.z)
 		{// 左から右にめり込んだ
 			// 位置を戻す
 			m_pos.z = pPosOld->z - m_vtxMax.z - vtxMax.z;
 			m_state = STATE_MOVELEFT;
 		}
-		else if (pPosOld->z - vtxMin.z <= m_posOld.z - m_vtxMax.z
-			&& pPosOld->z - vtxMin.z >= m_pos.z - m_vtxMax.z)
+		else if (pPosOld->z + vtxMax.z <= m_posOld.z + m_vtxMin.z
+			&& pPos->z + vtxMax.z >= m_pos.z + m_vtxMin.z)
 		{// 右から左にめり込んだ
 			// 位置を戻す
 			m_pos.z = pPosOld->z + m_vtxMax.z + vtxMax.z;

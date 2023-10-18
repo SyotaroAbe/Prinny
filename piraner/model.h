@@ -37,11 +37,12 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 	void SetVtxSize(void);
 
 	void SetPos(D3DXVECTOR3 pos);
-	void SetRot(D3DXVECTOR3 rot);
 	D3DXVECTOR3 GetPosOri(void) { return m_posOri; }
-	void SetParent(CModel *pModel);
+	void SetRot(D3DXVECTOR3 rot);
+	void SetCol(D3DXCOLOR col);
 	D3DXVECTOR3 GetVtxMax(void) { return m_vtxMax; }
 	D3DXVECTOR3 GetVtxMin(void) { return m_vtxMin; }
+	void SetParent(CModel *pModel);
 
 protected:	// 派生クラスからもアクセスできる [アクセス指定子]
 
@@ -56,6 +57,7 @@ private:	// 自分のみアクセス可能 [アクセス指定子]
 	D3DXVECTOR3 m_pos;		// 位置
 	D3DXVECTOR3 m_posOri;	// 初期位置
 	D3DXVECTOR3 m_rot;		// 向き
+	D3DXCOLOR m_col;		// 色
 	D3DXVECTOR3 m_vtxMax;	// モデルの最大値
 	D3DXVECTOR3 m_vtxMin;	// モデルの最小値
 	CModel *m_pParent;		// 親モデルのポインタ

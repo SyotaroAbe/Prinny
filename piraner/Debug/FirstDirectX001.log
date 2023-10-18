@@ -1,36 +1,3 @@
-﻿  manager.cpp
-  コードを生成中...
-  コンパイル中...
-  xfile.cpp
-  tutorial.cpp
-  title.cpp
-  texture.cpp
-  shadow.cpp
-  result.cpp
-  renderer.cpp
-  player.cpp
-  pause.cpp
-  objectX.cpp
-  objectMesh.cpp
-  objectBillboard.cpp
-  object3D.cpp
-  object2D.cpp
-  object.cpp
-  number.cpp
-  motion.cpp
-  model.cpp
-  meshfield.cpp
-  main.cpp
-  コードを生成中...
-  コンパイル中...
-  light.cpp
-  game.cpp
-  fade.cpp
-  enemy.cpp
-  effect.cpp
-  debugproc.cpp
-  camera.cpp
-  bg.cpp
-  コードを生成中...
+﻿  player.cpp
   FirstDirectX001.vcxproj -> C:\Users\student\Desktop\piraner\Prinny\piraner\Debug\FirstDirectX001.exe
   FirstDirectX001.vcxproj -> C:\Users\student\Desktop\piraner\Prinny\piraner\Debug\FirstDirectX001.pdb (Full PDB)

@@ -23,6 +23,7 @@
 #include "tutorial.h"
 #include "sound.h"
 #include "title.h"
+#include "bullet.h"
 
 //===============================================
 // マクロ定義
@@ -32,8 +33,11 @@
 #define MOVE_GRAVITY		(0.75f)		// 重力
 #define LAND_POS			(0.0f)		// 地面
 
-#define JUMP_HIPDROP		(10.85f)	// ヒップドロップ初動の浮力
+#define JUMP_HIPDROP		(12.0f)		// ヒップドロップ初動の浮力
 #define MOVE_HIPDROP		(1.2f)		// ヒップドロップ中重力
+
+#define JUMP_ATTACK			(0.75f)		// 空中攻撃時の浮力
+#define ROT_BULLET			(0.7f)		// 弾生成の向き
 
 #define MOVE_MINUS			(0.07f)		// 移動量の減衰
 #define TURN_TIME			(1)			// 曲がる時間
@@ -56,7 +60,7 @@ CPlayer::CPlayer() : CObject(4)
 	m_bAirJump = false;
 	m_fLenthCamera = 0.0f;
 	m_fRotBullet = 0.0f;
-	m_nTurnCounter = 0;
+	m_nStateCounter = 0;
 	m_apModel[MAX_MODEL] = {};
 	m_nNumModel = 0;
 	m_nParticleCounter = 0;
@@ -82,7 +86,7 @@ CPlayer::CPlayer(int nPriority) : CObject(nPriority)
 	m_bAirJump = false;
 	m_fLenthCamera = 0.0f;
 	m_fRotBullet = 0.0f;
-	m_nTurnCounter = 0;
+	m_nStateCounter = 0;
 	m_apModel[MAX_MODEL] = {};
 	m_nNumModel = 0;
 	m_pMotion = NULL;
@@ -261,6 +265,11 @@ void CPlayer::Uninit(void)
 //===============================================
 void CPlayer::Update(void)
 {
+	float fGravity = MOVE_GRAVITY;
+
+	// カウンタを更新
+	m_nStateCounter--;
+
 	// 前回の位置を保存
 	m_posOld = m_pos;
 
@@ -279,12 +288,24 @@ void CPlayer::Update(void)
 			m_move.x += sinf(D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
 			m_move.z += cosf(D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
 			m_rotDest.y = D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y);
+			if (m_bJump == false)
+			{
+				m_pMotion->Set(MOTIONTYPE_MOVE);				// 移動モーション設定
+			}
 		}
 		else if (CManager::GetInstance()->GetKeyboardInput()->GetPress(DIK_D) == true)
 		{//右キーが押された
 			m_move.x += sinf(D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
 			m_move.z += cosf(D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
 			m_rotDest.y = D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y);
+			if (m_bJump == false)
+			{
+				m_pMotion->Set(MOTIONTYPE_MOVE);				// 移動モーション設定
+			}
+		}
+		else if(m_bJump == false)
+		{
+			m_pMotion->Set(MOTIONTYPE_NEUTRAL);				// 待機モーション設定
 		}
 
 		if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_SPACE) == true && m_bAirJump == false)
@@ -292,6 +313,11 @@ void CPlayer::Update(void)
 			if (m_bJump == true)
 			{// 2段ジャンプ
 				m_bAirJump = true;
+				m_pMotion->Set(MOTIONTYPE_JUMPAIR);				// ジャンプモーション
+			}
+			else
+			{
+				m_pMotion->Set(MOTIONTYPE_JUMP);				// ジャンプモーション
 			}
 
 			m_move.y = JUMP_PLAYER;
@@ -304,18 +330,51 @@ void CPlayer::Update(void)
 	{// Sキーが押された
 		m_state = STATE_HIPDROP;
 		m_move.y = JUMP_HIPDROP;
+		m_pMotion->Set(MOTIONTYPE_HIPDROP);				// ヒップドロップモーション
 	}
 
 	switch (m_state)
 	{
 	case STATE_NORMAL:		// 通常
-		CManager::GetInstance()->GetCamera()->ScalingLenth(m_fLenthCamera, 0.1f);
+		// 攻撃前動作
+		if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_RETURN) == true && m_bJump == true && m_pMotion->GetType() != MOTIONTYPE_PREATTACK)
+		{
+			m_pMotion->Set(MOTIONTYPE_PREATTACK);				// 空中攻撃前動作
+			m_move.y = JUMP_HIPDROP;
+			m_state = STATE_AIRSLASH;
+		}
+
+		// カメラ距離を一定に設定
+		m_fLenthCamera = LENTH_NORMAL;
+		CManager::GetInstance()->GetCamera()->ScalingLenth(m_fLenthCamera, 0.15f);
 		break;
 
 	case STATE_DASH:		// ダッシュ
 		break;
 
 	case STATE_AIRSLASH:	// 空中攻撃
+		if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_RETURN) == true)
+		{
+			// 攻撃モーションを交互に出す
+			if (m_pMotion->GetType() == MOTIONTYPE_PREATTACK || m_pMotion->GetType() == MOTIONTYPE_ATTACKL)
+			{
+				m_pMotion->Set(MOTIONTYPE_ATTACKR);	// モーション切り替え
+				m_move.y = JUMP_ATTACK;				// 少し浮かす
+
+				// 弾の生成
+				CBullet::Create(m_pos)->Set(m_pos, D3DXVECTOR3(0.0f, -sinf(m_rot.x + ROT_BULLET) * 10.0f, -cosf(m_rot.y + ROT_BULLET) * 10.0f));
+			}
+			else
+			{
+				m_pMotion->Set(MOTIONTYPE_ATTACKL);	// モーション切り替え
+				m_move.y = JUMP_ATTACK;				// 少し浮かす
+
+				// 弾の生成
+				CBullet::Create(m_pos)->Set(m_pos, D3DXVECTOR3(0.0f, -sinf(m_rot.x + ROT_BULLET) * 10.0f, -cosf(m_rot.y + ROT_BULLET) * 10.0f));
+			}
+		}
+		
+		fGravity = 0.45f;
 		break;
 
 	case STATE_HIPDROP:		// ヒップドロップ
@@ -324,11 +383,31 @@ void CPlayer::Update(void)
 
 	case STATE_LANDDROP:	// ヒップドロップ着地
 		// カメラ拡縮処理
-		if (CManager::GetInstance()->GetCamera()->ScalingLenth(m_fLenthCamera, 0.1f) == true)
+		if (CManager::GetInstance()->GetCamera()->ScalingLenth(m_fLenthCamera, 0.15f) == true)
 		{// ある一定まで縮小した
 			m_state = STATE_NORMAL;
 			m_fLenthCamera = LENTH_NORMAL;
 		}
+		break;
+
+	case STATE_JUMPDROP:	// ヒップドロップジャンプ
+		if (m_nStateCounter < 0)
+		{
+			m_state = STATE_NORMAL;
+		}
+		break;
+
+	case STATE_DAMAGE:		// ダメージ
+		if (m_nStateCounter < 0)
+		{
+			m_state = STATE_NORMAL;
+		}
+		break;
+
+	case STATE_INVINCIBLE:	// 無敵
+		break;
+
+	case STATE_DEATH:		// 死亡
 		break;
 	}
 
@@ -359,7 +438,7 @@ void CPlayer::Update(void)
 	// 重力処理
 	if (m_state != STATE_HIPDROP)
 	{
-		m_move.y -= MOVE_GRAVITY;
+		m_move.y -= fGravity;
 	}
 
 	// 位置を更新
@@ -391,6 +470,7 @@ void CPlayer::Update(void)
 	// デバッグ表示
 	CManager::GetInstance()->GetDebugProc()->Print(" 移動          ：A D\n");
 	CManager::GetInstance()->GetDebugProc()->Print(" ジャンプ      ：SPACE\n");
+	CManager::GetInstance()->GetDebugProc()->Print(" 空中攻撃      ：ENTER\n");
 	CManager::GetInstance()->GetDebugProc()->Print(" ヒップドロップ：S\n");
 	CManager::GetInstance()->GetDebugProc()->Print(" リザルトへ    ：BACKSPACE\n\n");
 
@@ -431,7 +511,14 @@ void CPlayer::Draw(void)
 		for (int nCntModel = 0; nCntModel < m_nNumModel; nCntModel++)
 		{
 			// モデルの描画処理
-			m_apModel[nCntModel]->Draw();
+			if (m_state != STATE_DAMAGE)
+			{
+				m_apModel[nCntModel]->Draw();
+			}
+			else
+			{
+				m_apModel[nCntModel]->SetCol(D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
+			}
 
 			// モデルの影の描画処理
 			m_apModel[nCntModel]->DrawShadowmtx();
@@ -446,7 +533,7 @@ void CPlayer::CollisionObjX(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3
 {
 	if (pPos->x + vtxMin.x - m_vtxMax.x <= m_pos.x && pPos->x + vtxMax.x - m_vtxMin.x >= m_pos.x
 		&& pPos->z + vtxMin.z <= m_pos.z - m_vtxMin.z && pPos->z + vtxMax.z >= m_pos.z + m_vtxMin.z
-		&& pPos->y + vtxMin.y - m_vtxMax.y <= m_pos.y && pPos->y + vtxMax.y - m_vtxMin.y >= m_pos.y)
+		&& pPos->y + vtxMin.y <= m_pos.y + m_vtxMax.y && pPos->y + vtxMax.y >= m_pos.y + m_vtxMin.y)
 	{// 範囲内にある
 		if (pPosOld->y + vtxMax.y <= m_posOld.y + m_vtxMin.y
 			&& pPos->y + vtxMax.y >= m_pos.y + m_vtxMin.y)
@@ -454,12 +541,16 @@ void CPlayer::CollisionObjX(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3
 			// 上にのせる
 			m_pos.y = pPosOld->y - m_vtxMin.y + vtxMax.y;
 			m_move.y = 0.0f;
-			CGame::GetPlayer()->SetJump(false);
+			SetJump(false);
 
 			if (m_state == STATE_HIPDROP)
 			{// ヒップドロップ中
 				m_state = STATE_LANDDROP;
 				m_fLenthCamera = LEMTH_HIPDROP;
+			}
+			else if(m_state != STATE_LANDDROP && m_state != STATE_DAMAGE)
+			{
+				m_state = STATE_NORMAL;		// 通常状態へ戻す
 			}
 		}
 		else if (pPosOld->y + vtxMin.y >= m_posOld.y + m_vtxMax.y
@@ -469,17 +560,17 @@ void CPlayer::CollisionObjX(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3
 			m_pos.y = pPosOld->y - m_vtxMax.y + vtxMin.y;
 			m_move.y = 0.0f;
 		}
-		else if (pPosOld->z - vtxMax.z >= m_posOld.z + m_vtxMax.z
-			&& pPos->z - vtxMax.z <= m_pos.z + m_vtxMax.z)
+		else if (pPosOld->z + vtxMin.z >= m_posOld.z - m_vtxMin.z
+			&& pPos->z + vtxMin.z <= m_pos.z - m_vtxMin.z)
 		{// 左から右にめり込んだ
 			// 位置を戻す
-			m_pos.z = pPosOld->z - m_vtxMax.z - vtxMax.z;
+			m_pos.z = pPosOld->z + m_vtxMin.z + vtxMin.z;
 		}
-		else if (pPosOld->z - vtxMin.z <= m_posOld.z - m_vtxMax.z
-			&& pPos->z - vtxMin.z >= m_pos.z - m_vtxMax.z)
+		else if (pPosOld->z + vtxMax.z <= m_posOld.z + m_vtxMin.z
+			&& pPos->z + vtxMax.z >= m_pos.z + m_vtxMin.z)
 		{// 右から左にめり込んだ
 			// 位置を戻す
-			m_pos.z = pPosOld->z + m_vtxMax.z + vtxMax.z;
+			m_pos.z = pPosOld->z - m_vtxMin.z + vtxMax.z;
 		}
 	}
 }
@@ -493,23 +584,19 @@ void CPlayer::CollisionEnemy(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR
 		&& pPosOld->z + vtxMin.z - m_vtxMax.z <= m_pos.z && pPosOld->z + vtxMax.z - m_vtxMin.z >= m_pos.z
 		&& pPosOld->y + vtxMin.y - m_vtxMax.y <= m_pos.y && pPosOld->y + vtxMax.y - m_vtxMin.y >= m_pos.y)
 	{// 範囲内にある
-		if (pPosOld->y + vtxMax.y <= m_posOld.y + m_vtxMin.y
-			&& pPosOld->y + vtxMax.y >= m_pos.y + m_vtxMin.y)
-		{// 上からめり込んだ
-			if (m_state == STATE_HIPDROP)
-			{// ヒップドロップ中
-				m_state = STATE_NORMAL;
-				m_move.y = JUMP_HIPDROP;
-				m_bAirJump = false;
-			}
-			else
-			{
-				// ダメージ
-			}
+		if (m_state == STATE_HIPDROP)
+		{// ヒップドロップ中
+			m_state = STATE_JUMPDROP;			// ヒップドロップジャンプ状態
+			m_nStateCounter = 2;				// 状態カウンターを設定
+			m_move.y = JUMP_HIPDROP;
+			m_bAirJump = false;
+			m_pMotion->Set(MOTIONTYPE_JUMP);	// ジャンプモーション
 		}
-		else
+		else if (m_state != STATE_DAMAGE && m_state != STATE_JUMPDROP)
 		{
 			// ダメージ
+			m_state = STATE_DAMAGE;
+			m_nStateCounter = 10;
 		}
 	}
 }

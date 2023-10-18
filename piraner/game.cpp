@@ -65,10 +65,10 @@ HRESULT CGame::Init(HWND hWnd)
 	CObjectX::Load(hWnd);
 
 	// プレイヤーの生成
-	m_pPlayer = CPlayer::Create(D3DXVECTOR3(0.0f, 105.0f, 0.0f), 4);
+	m_pPlayer = CPlayer::Create(D3DXVECTOR3(0.0f, 110.0f, 0.0f), 4);
 
 	// 敵の生成
-	m_pEnemy = CEnemy::Create(D3DXVECTOR3(0.0f, 305.0f, 500.0f), 4);
+	m_pEnemy = CEnemy::Create(D3DXVECTOR3(0.0f, 310.0f, 500.0f), 4);
 
 	// ポーズの生成
 	m_pPause = CPause::Create(6);

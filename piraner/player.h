@@ -48,6 +48,7 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 		STATE_AIRSLASH,		// 空中攻撃
 		STATE_HIPDROP,		// ヒップドロップ
 		STATE_LANDDROP,		// ヒップドロップ着地
+		STATE_JUMPDROP,		// ヒップドロップジャンプ
 		STATE_DAMAGE,		// ダメージ
 		STATE_INVINCIBLE,	// 無敵
 		STATE_DEATH,		// 死亡
@@ -59,9 +60,14 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 	{
 		MOTIONTYPE_NEUTRAL = 0,	// 待機
 		MOTIONTYPE_MOVE,		// 移動
-		MOTIONTYPE_ACTION,		// アクション
+		MOTIONTYPE_PREATTACK,	// 空中攻撃前動作
 		MOTIONTYPE_JUMP,		// ジャンプ
 		MOTIONTYPE_LANDING,		// 着地
+		MOTIONTYPE_JUMPAIR,		// 空中ジャンプ
+		MOTIONTYPE_ATTACKL,		// 空中攻撃左
+		MOTIONTYPE_ATTACKR,		// 空中攻撃右
+		MOTIONTYPE_HIPDROP,		// ヒップドロップ
+		MOTIONTYPE_DASH,		// ダッシュ
 		MOTIONTYPE_MAX
 	};
 
@@ -102,8 +108,8 @@ private:	// 自分のみアクセス可能 [アクセス指定子]
 	float m_fLenthCamera;					// カメラの距離
 	float m_fRotBullet;						// 照準の向き
 	float m_fRotDiff;						// 目的の向きまでの差分
-	int m_nTurnCounter;						// 曲がっている時間
 	int m_nParticleCounter;					// パーティクル発生時間
+	int m_nStateCounter;					// 状態管理カウンター
 
 	EState m_state;							// 状態
 

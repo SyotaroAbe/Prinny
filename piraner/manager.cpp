@@ -338,6 +338,7 @@ void CManager::Uninit(void)
 
 		if (m_pManager != NULL)
 		{
+			delete m_pManager;
 			m_pManager = NULL;
 		}
 	}

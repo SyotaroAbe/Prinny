@@ -79,7 +79,7 @@ void CMotion::Update(void)
 	D3DXVECTOR3 posOri;				// 初期位置
 	int nNextKey = 0;				// 次のキー
 
-	if (m_aInfo[m_nType].bLoop == true || m_nKey < m_aInfo[m_nType].nNumKey)
+	if (m_aInfo[m_nType].bLoop == true || m_nKey < m_aInfo[m_nType].nNumKey - 1)
 	{// ループするもしくはキーの総数に達していない
 		// 次のキーを現在のキーの1つ後に設定する
 		nNextKey = (m_nKey + 1) % m_aInfo[m_nType].nNumKey;
@@ -103,6 +103,33 @@ void CMotion::Update(void)
 			rotDest.z = m_aInfo[m_nType].aKeyInfo[nNextKey].aKey[nCntModel].fRotZ
 						- m_aInfo[m_nType].aKeyInfo[m_nKey].aKey[nCntModel].fRotZ;
 
+			if (rotDest.x < -D3DX_PI)
+			{//角度がΠを超えた場合
+				rotDest.x += D3DX_PI * 2;
+			}
+			else if (rotDest.x > D3DX_PI)
+			{//角度がΠを超えた場合
+				rotDest.x -= D3DX_PI * 2;
+			}
+
+			if (rotDest.y < -D3DX_PI)
+			{//角度がΠを超えた場合
+				rotDest.y += D3DX_PI * 2;
+			}
+			else if (rotDest.y > D3DX_PI)
+			{//角度がΠを超えた場合
+				rotDest.y -= D3DX_PI * 2;
+			}
+
+			if (rotDest.z < -D3DX_PI)
+			{//角度がΠを超えた場合
+				rotDest.z += D3DX_PI * 2;
+			}
+			else if (rotDest.z > D3DX_PI)
+			{//角度がΠを超えた場合
+				rotDest.z -= D3DX_PI * 2;
+			}
+
 			// パーツの位置・向きを設定
 			D3DXVECTOR3 pos = posOri + D3DXVECTOR3(
 				m_aInfo[m_nType].aKeyInfo[m_nKey].aKey[nCntModel].fPosX + posDest.x
@@ -118,6 +145,33 @@ void CMotion::Update(void)
 				* ((float)m_nCounter / (float)m_aInfo[m_nType].aKeyInfo[m_nKey].nFrame),
 				m_aInfo[m_nType].aKeyInfo[m_nKey].aKey[nCntModel].fRotZ + rotDest.z
 				* ((float)m_nCounter / (float)m_aInfo[m_nType].aKeyInfo[m_nKey].nFrame));
+
+			if (rot.x < -D3DX_PI)
+			{//角度がΠを超えた場合
+				rot.x += D3DX_PI * 2;
+			}
+			else if (rot.x > D3DX_PI)
+			{//角度がΠを超えた場合
+				rot.x -= D3DX_PI * 2;
+			}
+
+			if (rot.y < -D3DX_PI)
+			{//角度がΠを超えた場合
+				rot.y += D3DX_PI * 2;
+			}
+			else if (rot.y > D3DX_PI)
+			{//角度がΠを超えた場合
+				rot.y -= D3DX_PI * 2;
+			}
+			
+			if (rot.z < -D3DX_PI)
+			{//角度がΠを超えた場合
+				rot.z += D3DX_PI * 2;
+			}
+			else if (rot.z > D3DX_PI)
+			{//角度がΠを超えた場合
+				rot.z -= D3DX_PI * 2;
+			}
 
 			// モデルに値を設定
 			m_ppModel[nCntModel]->SetPos(pos);

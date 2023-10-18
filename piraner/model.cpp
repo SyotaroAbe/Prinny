@@ -32,6 +32,7 @@ CModel::CModel()
 	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_posOri = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_col = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f);
 	m_vtxMax = D3DXVECTOR3(MIN_VTX, MIN_VTX, MIN_VTX);
 	m_vtxMax = D3DXVECTOR3(MAX_VTX, MAX_VTX, MAX_VTX);
 	m_pParent = NULL;
@@ -193,9 +194,6 @@ void CModel::Draw(void)
 
 	for (int nCntMat = 0; nCntMat < (int)m_dwNumMat; nCntMat++)
 	{
-		// モデルのカラー変更
-		//pMat[nCntMat].MatD3D.Diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-
 		// マテリアルの設定
 		pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
 
@@ -393,6 +391,80 @@ void CModel::SetPos(D3DXVECTOR3 pos)
 void CModel::SetRot(D3DXVECTOR3 rot)
 {
 	m_rot = rot;
+}
+
+//===============================================
+// 色設定
+//===============================================
+void CModel::SetCol(D3DXCOLOR col)
+{
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();	// デバイスの取得
+	D3DXMATRIX mtxRot, mtxTrans;														// 計算用マトリックス
+	D3DXMATRIX mtxParent;																// 親のマトリックス
+	D3DMATERIAL9 matDef;																// 現在のマテリアル保存用
+	D3DXMATERIAL *pMat;																	// マテリアルデータ
+
+	m_col = col;
+
+	// ワールドマトリックスの初期化
+	D3DXMatrixIdentity(&m_mtxWorld);
+
+	// 向きを反映
+	D3DXMatrixRotationYawPitchRoll(&mtxRot, m_rot.y, m_rot.x, m_rot.z);
+	D3DXMatrixMultiply(&m_mtxWorld, &m_mtxWorld, &mtxRot);
+
+	// 位置を反映
+	D3DXMatrixTranslation(&mtxTrans, m_pos.x, m_pos.y, m_pos.z);
+	D3DXMatrixMultiply(&m_mtxWorld, &m_mtxWorld, &mtxTrans);
+
+	// パーツの「親マトリックス」を設定
+	if (m_pParent != NULL)
+	{// 親モデルがある場合
+		mtxParent = m_pParent->m_mtxWorld;
+	}
+	else
+	{// 親モデルがない場合
+		// 現在（最新）のマトリックスを取得する [ = プレイヤーのマトリックス ]
+		pDevice->GetTransform(D3DTS_WORLD, &mtxParent);
+	}
+
+	// 算出した「パーツのワールドマトリックス」と「親のマトリックス」を掛け合わせる
+	D3DXMatrixMultiply(&m_mtxWorld,
+		&m_mtxWorld,
+		&mtxParent);
+
+	// ワールドマトリックスの設定
+	pDevice->SetTransform(D3DTS_WORLD, &m_mtxWorld);
+
+	// 現在のマテリアルを取得
+	pDevice->GetMaterial(&matDef);
+
+	// マテリアルデータへのポインタを取得
+	pMat = (D3DXMATERIAL*)m_pBuffMat->GetBufferPointer();
+
+	for (int nCntMat = 0; nCntMat < (int)m_dwNumMat; nCntMat++)
+	{
+		// モデルの色を保存
+		D3DXCOLOR DiffuseModel = pMat[nCntMat].MatD3D.Diffuse;
+
+		// モデルのカラー変更
+		pMat[nCntMat].MatD3D.Diffuse = m_col;
+
+		// マテリアルの設定
+		pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
+
+		// テクスチャの設定
+		pDevice->SetTexture(0, m_apTexture[nCntMat]);
+
+		// モデル（パーツ）の描画
+		m_pMesh->DrawSubset(nCntMat);
+
+		// 保存していた色を戻す
+		pMat[nCntMat].MatD3D.Diffuse = DiffuseModel;
+	}
+
+	// 保存していたマテリアルを戻す
+	pDevice->SetMaterial(&matDef);
 }
 
 //===============================================
