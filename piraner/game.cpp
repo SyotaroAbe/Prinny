@@ -65,10 +65,10 @@ HRESULT CGame::Init(HWND hWnd)
 	CObjectX::Load(hWnd);
 
 	// プレイヤーの生成
-	m_pPlayer = CPlayer::Create(D3DXVECTOR3(0.0f, 110.0f, 0.0f), 4);
+	m_pPlayer = CPlayer::Create(D3DXVECTOR3(0.0f, 210.0f, -200.0f), 4);
 
 	// 敵の生成
-	m_pEnemy = CEnemy::Create(D3DXVECTOR3(0.0f, 310.0f, 500.0f), 4);
+	m_pEnemy = CEnemy::Create(D3DXVECTOR3(0.0f, 310.0f, 500.0f), CEnemy::TYPE_MOVE, 4);
 
 	// ポーズの生成
 	m_pPause = CPause::Create(6);
@@ -126,7 +126,7 @@ void CGame::Update(void)
 	}
 
 	if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_BACKSPACE) == true
-		|| CManager::GetInstance()->GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_BACK, 0) == true || m_pPlayer->GetPos().z > 600.0f)
+		|| CManager::GetInstance()->GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_BACK, 0) == true || m_pPlayer->GetPos().z > 800.0f)
 	{// BackSpace
 		CRenderer::GetFade()->Set(CScene::MODE_RESULT);		// リザルト画面へ移動
 	}

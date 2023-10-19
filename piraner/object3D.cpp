@@ -330,3 +330,21 @@ float CObject3D::CollisionVec(D3DXVECTOR3 pos)
 
 	return pos.y;
 }
+
+//===============================================
+// サイズの設定処理
+//===============================================
+void CObject3D::SetSize(D3DXVECTOR3 size)
+{
+	m_fSizeX = size.x;
+	m_fSizeZ = size.z;
+}
+
+//===============================================
+// サイズの設定処理
+//===============================================
+void CObject3D::SetSizeMin(D3DXVECTOR3 size)
+{
+	m_fSizeX = size.x;
+	m_fSizeZ = size.z;
+}

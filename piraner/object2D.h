@@ -44,7 +44,10 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 	void SetSize(const float fSizeX, const float fSizeY);
 	float GetSizeX(void) { return m_fSizeX; }
 	float GetSizeY(void) { return m_fSizeY; }
+	void SetSize(D3DXVECTOR3 size);
 	D3DXVECTOR3 GetSize(void) { return D3DXVECTOR3(m_fSizeX, m_fSizeY, 0.0f); }
+	void SetSizeMin(D3DXVECTOR3 size);
+	D3DXVECTOR3 GetSizeMin(void) { return D3DXVECTOR3(m_fSizeX, m_fSizeY, 0.0f); }
 
 protected:	// 派生クラスからもアクセスできる [アクセス指定子]
 	LPDIRECT3DTEXTURE9 m_pTexture;		// テクスチャへのポインタ

@@ -27,7 +27,15 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 	CEnemy(int nPriority = 3);		// オーバーロードされたコンストラクタ
 	~CEnemy();						// デストラクタ
 
-	// プレイヤーの状態
+	// 種類
+	enum EType
+	{
+		TYPE_NORMAL = 0,	// 通常
+		TYPE_MOVE,			// 動く
+		TYPE_MAX
+	};
+
+	// 状態
 	enum EState
 	{
 		STATE_NONE = 0,		// なし
@@ -53,7 +61,7 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 		MOTIONTYPE_MAX
 	};
 
-	static CEnemy *Create(D3DXVECTOR3 pos, int nPriority = 3);
+	static CEnemy *Create(D3DXVECTOR3 pos, EType type, int nPriority = 3);
 
 	HRESULT Init(D3DXVECTOR3 pos);
 	void Uninit(void);
@@ -69,8 +77,11 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 	D3DXVECTOR3 GetMove(void) { return m_move; }
 	D3DXVECTOR3 GetRot(void) { return m_rot; }
 	void SetJump(const bool bJump);
+	void SetSize(D3DXVECTOR3 size);
 	D3DXVECTOR3 GetSize(void) { return m_vtxMax; }
+	void SetSizeMin(D3DXVECTOR3 size);
 	D3DXVECTOR3 GetSizeMin(void) { return m_vtxMin; }
+	void SetEType(EType type);
 	void SetMotion(MOTIONTYPE type);
 
 private:	// 自分のみアクセス可能 [アクセス指定子]
@@ -86,8 +97,11 @@ private:	// 自分のみアクセス可能 [アクセス指定子]
 	float m_fSpeed;							// 移動速度変更用
 	bool m_bJump;							// ジャンプしたかどうか
 	float m_fRotDiff;						// 目的の向きまでの差分
+	int m_nStateCounter;					// 状態管理カウンター
 
+	EType m_type;							// 種類
 	EState m_state;							// 状態
+	EState m_stateOld;						// 前回の状態
 
 	CModel *m_apModel[MAX_MODEL];			// モデル（パーツ）へのポインタ
 	int m_nNumModel;						// モデル（パーツ）の総数

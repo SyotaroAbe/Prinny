@@ -77,7 +77,10 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 	virtual D3DXVECTOR3 GetPosOld(void) = 0;
 	virtual void SetMove(const D3DXVECTOR3 move) = 0;
 	virtual D3DXVECTOR3 GetRot(void) = 0;
+	virtual void SetSize(D3DXVECTOR3 size) = 0;
 	virtual D3DXVECTOR3 GetSize(void) = 0;
+	virtual void SetSizeMin(D3DXVECTOR3 size) = 0;
+	virtual D3DXVECTOR3 GetSizeMin(void) = 0;
 
 protected:	// 派生クラスからもアクセスできる [アクセス指定子]
 	void Release(void);

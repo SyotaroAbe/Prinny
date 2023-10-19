@@ -529,3 +529,21 @@ void CObject2D::SetSize(const float fSizeX, const float fSizeY)
 	m_fSizeX = fSizeX;
 	m_fSizeY = fSizeY;
 }
+
+//===============================================
+// サイズの設定処理
+//===============================================
+void CObject2D::SetSize(D3DXVECTOR3 size)
+{
+	m_fSizeX = size.x;
+	m_fSizeY = size.y;
+}
+
+//===============================================
+// サイズの設定処理
+//===============================================
+void CObject2D::SetSizeMin(D3DXVECTOR3 size)
+{
+	m_fSizeX = size.x;
+	m_fSizeY = size.y;
+}

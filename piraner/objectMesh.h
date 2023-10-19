@@ -47,7 +47,10 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 	void SetMove(const D3DXVECTOR3 move);
 	void SetSize(const float fSizeX, const float fSizeZ);
 	void SetCol(const COL col);
+	void SetSize(D3DXVECTOR3 size);
 	D3DXVECTOR3 GetSize(void) { return D3DXVECTOR3(m_fSizeX, 0.0f, m_fSizeZ); }
+	void SetSizeMin(D3DXVECTOR3 size);
+	D3DXVECTOR3 GetSizeMin(void) { return D3DXVECTOR3(m_fSizeX, 0.0f, m_fSizeZ); }
 
 protected:	// 派生クラスからもアクセスできる
 	LPDIRECT3DTEXTURE9 m_pTexture = NULL;		// テクスチャへのポインタ

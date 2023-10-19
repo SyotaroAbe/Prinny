@@ -45,7 +45,7 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 	virtual void Draw(void);
 
 	void DrawXFile(int nIdx, CXFile::COL col);
-	void CollisionModel(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, int nIdx, CObject *pObj, bool bPlayer = false);
+	static bool CollisionModel(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 vtxMax, D3DXVECTOR3 vtxMin);
 
 	void SetPos(const D3DXVECTOR3 pos);
 	D3DXVECTOR3 GetPos(void) { return m_pos; }
@@ -53,7 +53,10 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 	void SetRot(const D3DXVECTOR3 rot);
 	D3DXVECTOR3 GetRot(void) { return m_rot; }
 	void SetMove(const D3DXVECTOR3 move);
+	void SetSize(D3DXVECTOR3 size);
 	D3DXVECTOR3 GetSize(void);
+	void SetSizeMin(D3DXVECTOR3 size);
+	D3DXVECTOR3 GetSizeMin(void);
 	void SetModel(MODEL type);
 
 protected:	// 派生クラスからもアクセスできる

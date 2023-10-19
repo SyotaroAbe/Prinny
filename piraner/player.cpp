@@ -24,6 +24,7 @@
 #include "sound.h"
 #include "title.h"
 #include "bullet.h"
+#include "objectX.h"
 
 //===============================================
 // マクロ定義
@@ -139,6 +140,10 @@ HRESULT CPlayer::Init(D3DXVECTOR3 pos)
 
 	// 位置の設定
 	m_pos = pos;
+
+	// 向きの設定
+	m_rot = D3DXVECTOR3(0.0f, D3DX_PI, 0.0f);
+	m_rotDest = D3DXVECTOR3(0.0f, D3DX_PI, 0.0f);
 
 	// 移動速度の初期化
 	m_fSpeed = MOVE_PLAYER;
@@ -336,12 +341,26 @@ void CPlayer::Update(void)
 	switch (m_state)
 	{
 	case STATE_NORMAL:		// 通常
+		m_fSpeed = MOVE_PLAYER;
+
 		// 攻撃前動作
-		if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_RETURN) == true && m_bJump == true && m_pMotion->GetType() != MOTIONTYPE_PREATTACK)
+		if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_RETURN) == true)
 		{
-			m_pMotion->Set(MOTIONTYPE_PREATTACK);				// 空中攻撃前動作
-			m_move.y = JUMP_HIPDROP;
-			m_state = STATE_AIRSLASH;
+			if (m_bJump == true && m_pMotion->GetType() != MOTIONTYPE_PREATTACK)
+			{
+				m_pMotion->Set(MOTIONTYPE_PREATTACK);				// 空中攻撃前動作
+				m_move.y = JUMP_HIPDROP;
+				m_state = STATE_AIRSLASH;
+			}
+			else if(m_state != STATE_DASH)
+			{
+				//if (m_rot.y <= 0.002f && m_rot.y >= -0.002f || m_rot.y <= D3DX_PI + 0.002f && m_rot.y >= D3DX_PI - 0.002f || m_rot.y <= -D3DX_PI + 0.002f && m_rot.y >= -D3DX_PI - 0.002f)
+				//{
+					m_pMotion->Set(MOTIONTYPE_DASH);	// ダッシュ
+					m_state = STATE_DASH;
+					m_nStateCounter = 20;				// 状態カウンターを設定
+				//}
+			}
 		}
 
 		// カメラ距離を一定に設定
@@ -350,6 +369,17 @@ void CPlayer::Update(void)
 		break;
 
 	case STATE_DASH:		// ダッシュ
+		if (m_nStateCounter < 0)
+		{
+			m_state = STATE_NORMAL;
+		}
+		m_fSpeed = 0.9f;
+		m_move.z += cosf(D3DX_PI * ROT_DOWN + (ROT_CAMERA * m_rot.y)) * m_fSpeed;
+
+		// エフェクトの生成
+		CEffect::Create(D3DXVECTOR3(m_pos.x, m_pos.y + 40.0f, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(0.0f, 0.8f, 1.0f, 1.0f), CEffect::TYPE_NORMAL, 25, 50, 3);
+		CEffect::Create(D3DXVECTOR3(m_pos.x, m_pos.y + 40.0f, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f), CEffect::TYPE_NORMAL, 20, 50, 3);
+		CParticle::Create(1)->Set(D3DXVECTOR3(m_pos.x + cosf(m_rot.y) * 18.0f, m_pos.y, m_pos.z - sinf(m_rot.y) * 18.0f), CParticle::TYPE_CURVE);
 		break;
 
 	case STATE_AIRSLASH:	// 空中攻撃
@@ -460,11 +490,24 @@ void CPlayer::Update(void)
 	//}
 
 	// モーションの更新処理
-	m_pMotion->Update();
+	if (m_pMotion != NULL)
+	{
+		m_pMotion->Update();
+	}
 
 	if (m_pos.y < -100.0f)
 	{// 落下死
 		
+	}
+
+	// 地形との当たり判定
+	if (CObjectX::CollisionModel(&m_pos, &m_posOld, m_vtxMax, m_vtxMin) == true)
+	{// 着地している
+		SetJump(false);
+	}
+	else
+	{
+		m_bJump = true;
 	}
 
 	// デバッグ表示
@@ -540,17 +583,14 @@ void CPlayer::CollisionObjX(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3
 		{// 上からめり込んだ
 			// 上にのせる
 			m_pos.y = pPosOld->y - m_vtxMin.y + vtxMax.y;
-			m_move.y = 0.0f;
-			SetJump(false);
 
 			if (m_state == STATE_HIPDROP)
 			{// ヒップドロップ中
-				m_state = STATE_LANDDROP;
-				m_fLenthCamera = LEMTH_HIPDROP;
+				SetState(STATE_LANDDROP);
 			}
-			else if(m_state != STATE_LANDDROP && m_state != STATE_DAMAGE)
+			else if(m_state != STATE_LANDDROP && m_state != STATE_DAMAGE && m_state != STATE_DASH)
 			{
-				m_state = STATE_NORMAL;		// 通常状態へ戻す
+				SetState(STATE_NORMAL);
 			}
 		}
 		else if (pPosOld->y + vtxMin.y >= m_posOld.y + m_vtxMax.y
@@ -585,18 +625,12 @@ void CPlayer::CollisionEnemy(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR
 		&& pPosOld->y + vtxMin.y - m_vtxMax.y <= m_pos.y && pPosOld->y + vtxMax.y - m_vtxMin.y >= m_pos.y)
 	{// 範囲内にある
 		if (m_state == STATE_HIPDROP)
-		{// ヒップドロップ中
-			m_state = STATE_JUMPDROP;			// ヒップドロップジャンプ状態
-			m_nStateCounter = 2;				// 状態カウンターを設定
-			m_move.y = JUMP_HIPDROP;
-			m_bAirJump = false;
-			m_pMotion->Set(MOTIONTYPE_JUMP);	// ジャンプモーション
+		{// ヒップドロップ中に敵の頭上へ着地
+			SetState(STATE_JUMPDROP);
 		}
-		else if (m_state != STATE_DAMAGE && m_state != STATE_JUMPDROP)
-		{
-			// ダメージ
-			m_state = STATE_DAMAGE;
-			m_nStateCounter = 10;
+		else if (m_state != STATE_DAMAGE && m_state != STATE_JUMPDROP && m_state != STATE_DASH)
+		{// 敵に当たった
+			SetState(STATE_DAMAGE);
 		}
 	}
 }
@@ -624,6 +658,90 @@ void CPlayer::SetJump(const bool bJump)
 {
 	m_bJump = bJump;
 	m_bAirJump = bJump;
+}
+
+//===============================================
+// サイズの設定
+//===============================================
+void CPlayer::SetSize(D3DXVECTOR3 size)
+{
+	m_vtxMax = size;
+}
+
+//===============================================
+// サイズの設定
+//===============================================
+void CPlayer::SetSizeMin(D3DXVECTOR3 size)
+{
+	m_vtxMin = size;
+}
+
+//===============================================
+// 状態の設定
+//===============================================
+void CPlayer::SetState(EState state)
+{
+	if (state == STATE_LANDDROP && m_state == STATE_HIPDROP)
+	{// ヒップドロップ中に地形へ着地
+		m_fLenthCamera = LEMTH_HIPDROP;
+		m_move.y = 0.0f;
+		SetJump(false);
+	}
+	else if (state != STATE_LANDDROP && state != STATE_DAMAGE && state != STATE_DASH && m_state == STATE_NORMAL)
+	{// ヒップドロップ中以外で地形へ着地
+		m_move.y = 0.0f;
+		SetJump(false);
+	}
+
+	if (m_state == STATE_HIPDROP && state == STATE_JUMPDROP)
+	{// ヒップドロップ中に敵の頭上へ着地
+		m_nStateCounter = 2;				// 状態カウンターを設定
+		m_move.y = JUMP_HIPDROP;
+		m_bAirJump = false;					// 空中ジャンプフラグリセット
+		m_pMotion->Set(MOTIONTYPE_JUMP);	// ジャンプモーション
+
+		// パーティクルの生成
+		CParticle::Create(3)->Set(D3DXVECTOR3(m_pos.x - sinf(D3DX_PI * ROT_UP + (1.0f * m_rot.y) * 5.0f), m_pos.y,
+			m_pos.z - cosf(D3DX_PI * ROT_UP + (1.0f * m_rot.y) * 5.0f)), CParticle::TYPE_ENEMY);
+	}
+	else if (m_state != STATE_DAMAGE && m_state != STATE_JUMPDROP && m_state != STATE_DASH && state == STATE_DAMAGE)
+	{// 敵に当たった
+		m_pMotion->Set(MOTIONTYPE_DAMAGE);
+		m_nStateCounter = 30;
+		m_move.z += cosf(D3DX_PI * ROT_UP + (ROT_CAMERA * m_rot.y)) * 12.0f;
+	}
+
+	m_state = state;
+
+	switch (m_state)
+	{
+	case STATE_NORMAL:		// 通常
+		break;
+
+	case STATE_DASH:		// ダッシュ
+		break;
+
+	case STATE_AIRSLASH:	// 空中攻撃
+		break;
+
+	case STATE_HIPDROP:		// ヒップドロップ
+		break;
+
+	case STATE_LANDDROP:	// ヒップドロップ着地
+		break;
+
+	case STATE_JUMPDROP:	// ヒップドロップジャンプ
+		break;
+
+	case STATE_DAMAGE:		// ダメージ
+		break;
+
+	case STATE_INVINCIBLE:	// 無敵
+		break;
+
+	case STATE_DEATH:		// 死亡
+		break;
+	}
 }
 
 //===============================================

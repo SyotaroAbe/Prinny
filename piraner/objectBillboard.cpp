@@ -464,3 +464,21 @@ void CObjectBillboard::SetSize(const float fSizeX, const float fSizeZ)
 	m_fSizeX = fSizeX;
 	m_fSizeZ = fSizeZ;
 }
+
+//===============================================
+// サイズの設定処理
+//===============================================
+void CObjectBillboard::SetSize(D3DXVECTOR3 size)
+{
+	m_fSizeX = size.x;
+	m_fSizeZ = size.z;
+}
+
+//===============================================
+// サイズの設定処理
+//===============================================
+void CObjectBillboard::SetSizeMin(D3DXVECTOR3 size)
+{
+	m_fSizeX = size.x;
+	m_fSizeZ = size.z;
+}

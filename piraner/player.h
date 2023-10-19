@@ -68,6 +68,7 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 		MOTIONTYPE_ATTACKR,		// 空中攻撃右
 		MOTIONTYPE_HIPDROP,		// ヒップドロップ
 		MOTIONTYPE_DASH,		// ダッシュ
+		MOTIONTYPE_DAMAGE,		// ダメージ
 		MOTIONTYPE_MAX
 	};
 
@@ -88,8 +89,12 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 	D3DXVECTOR3 GetMove(void) { return m_move; }
 	D3DXVECTOR3 GetRot(void) { return m_rot; }
 	void SetJump(const bool bJump);
+	void SetSize(D3DXVECTOR3 size);
 	D3DXVECTOR3 GetSize(void) { return m_vtxMax; }
+	void SetSizeMin(D3DXVECTOR3 size);
 	D3DXVECTOR3 GetSizeMin(void) { return m_vtxMin; }
+	void SetState(EState state);
+	EState GetState(void) { return m_state; }
 	void SetMotion(MOTIONTYPE type);
 
 private:	// 自分のみアクセス可能 [アクセス指定子]

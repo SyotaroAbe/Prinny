@@ -38,7 +38,10 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 	D3DXVECTOR3 GetRot(void) { return m_rot; }
 	void SetMove(const D3DXVECTOR3 move);
 	void SetSize(const float fSizeX, const float fSizeZ);
+	void SetSize(D3DXVECTOR3 size);
 	D3DXVECTOR3 GetSize(void) { return D3DXVECTOR3(m_fSizeX, 0.0f, m_fSizeZ); }
+	void SetSizeMin(D3DXVECTOR3 size);
+	D3DXVECTOR3 GetSizeMin(void) { return D3DXVECTOR3(m_fSizeX, 0.0f, m_fSizeZ); }
 	float CollisionVec(D3DXVECTOR3 pos);
 
 protected:	// 派生クラスからもアクセスできる [アクセス指定子]

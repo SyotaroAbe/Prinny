@@ -28,12 +28,9 @@
 //===============================================
 // マクロ定義
 //===============================================
-#define MOVE_ENEMY			(0.2f)		// 動く速度
+#define MOVE_ENEMY			(0.1f)		// 動く速度
 #define JUMP_ENEMY			(16.85f)	// ジャンプ力
 #define MOVE_GRAVITY		(0.75f)		// 重力
-
-#define JUMP_HIPDROP		(10.85f)	// ヒップドロップ初動の浮力
-#define MOVE_HIPDROP		(1.2f)		// ヒップドロップ中重力
 
 #define MOVE_MINUS			(0.07f)		// 移動量の減衰
 #define TURN_TIME			(1)			// 曲がる時間
@@ -53,11 +50,14 @@ CEnemy::CEnemy() : CObject(4)
 	m_mtxWorld;
 	m_fSpeed = 0.0f;
 	m_bJump = false;
+	m_nStateCounter = 0;
 	m_apModel[MAX_MODEL] = {};
 	m_nNumModel = 0;
 	m_vtxMax = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_vtxMin = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_type = TYPE_NORMAL;
 	m_state = STATE_NONE;
+	m_stateOld = STATE_NONE;
 }
 
 //===============================================
@@ -74,12 +74,15 @@ CEnemy::CEnemy(int nPriority) : CObject(nPriority)
 	m_mtxWorld;
 	m_fSpeed = 0.0f;
 	m_bJump = false;
+	m_nStateCounter = 0;
 	m_apModel[MAX_MODEL] = {};
 	m_nNumModel = 0;
 	m_pMotion = NULL;
 	m_vtxMax = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_vtxMin = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_type = TYPE_NORMAL;
 	m_state = STATE_NONE;
+	m_stateOld = STATE_NONE;
 }
 
 //===============================================
@@ -93,7 +96,7 @@ CEnemy::~CEnemy()
 //===============================================
 // 生成処理
 //===============================================
-CEnemy *CEnemy::Create(D3DXVECTOR3 pos, int nPriority)
+CEnemy *CEnemy::Create(D3DXVECTOR3 pos, EType type, int nPriority)
 {
 	CEnemy *pEnemy;
 
@@ -102,6 +105,9 @@ CEnemy *CEnemy::Create(D3DXVECTOR3 pos, int nPriority)
 
 	// 種類の設定
 	pEnemy->SetType(CObject::TYPE_ENEMY);
+
+	// 敵種類の設定
+	pEnemy->SetEType(type);
 	
 	// 初期化処理
 	pEnemy->Init(pos);
@@ -209,7 +215,10 @@ HRESULT CEnemy::Init(D3DXVECTOR3 pos)
 	m_pMotion->Set(MOTIONTYPE_NEUTRAL);
 
 	// 初期状態設定
-	m_state = STATE_MOVELEFT;
+	if (m_type == TYPE_MOVE)
+	{
+		m_state = STATE_MOVELEFT;
+	}
 
 	return S_OK;
 }
@@ -247,24 +256,45 @@ void CEnemy::Uninit(void)
 //===============================================
 void CEnemy::Update(void)
 {
+	m_nStateCounter--;		// カウンタを更新
+
 	// 前回の位置を保存
 	m_posOld = m_pos;
 
 	switch (m_state)
 	{
 	case STATE_NORMAL:		// 通常
+		if (m_nStateCounter <= 0)
+		{
+			m_state = m_stateOld;
+			m_nStateCounter = 100;
+		}
 		break;
 
 	case STATE_MOVERIGHT:	// 右移動
 		m_move.x += sinf(D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
 		m_move.z += cosf(D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
 		m_rotDest.y = D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y);
+
+		if (m_nStateCounter <= 0)
+		{
+			m_stateOld = m_state;
+			m_state = STATE_NORMAL;
+			m_nStateCounter = 200;
+		}
 		break;
 
 	case STATE_MOVELEFT:	// 左移動
 		m_move.x += sinf(D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
 		m_move.z += cosf(D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
 		m_rotDest.y = D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y);
+
+		if (m_nStateCounter <= 0)
+		{
+			m_stateOld = m_state;
+			m_state = STATE_NORMAL;
+			m_nStateCounter = 200;
+		}
 		break;
 
 	case STATE_DASH:		// ダッシュ
@@ -311,16 +341,11 @@ void CEnemy::Update(void)
 	m_move.x += (0.0f - m_move.x) * MOVE_MINUS;
 	m_move.z += (0.0f - m_move.z) * MOVE_MINUS;
 
-	//if (m_pos.y < LAND_POS)
-	//{// 着地した
-	//	m_pos.y = LAND_POS;
-	//	m_move.y = 0.0f;
-	//	m_bJump = false;
-	//	m_bAirJump = false;
-	//}
-
 	// モーションの更新処理
-	m_pMotion->Update();
+	if (m_pMotion != NULL)
+	{
+		m_pMotion->Update();
+	}
 
 	// 当たり判定
 	CGame::GetPlayer()->CollisionEnemy(&m_pos, &m_posOld, m_vtxMax, m_vtxMin);
@@ -394,14 +419,20 @@ void CEnemy::CollisionObjX(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 
 		{// 左から右にめり込んだ
 			// 位置を戻す
 			m_pos.z = pPosOld->z - m_vtxMax.z - vtxMax.z;
-			m_state = STATE_MOVELEFT;
+			if (m_type == TYPE_MOVE)
+			{
+				m_state = STATE_MOVELEFT;
+			}
 		}
 		else if (pPosOld->z + vtxMax.z <= m_posOld.z + m_vtxMin.z
 			&& pPos->z + vtxMax.z >= m_pos.z + m_vtxMin.z)
 		{// 右から左にめり込んだ
 			// 位置を戻す
 			m_pos.z = pPosOld->z + m_vtxMax.z + vtxMax.z;
-			m_state = STATE_MOVERIGHT;
+			if (m_type == TYPE_MOVE)
+			{
+				m_state = STATE_MOVERIGHT;
+			}
 		}
 	}
 }
@@ -431,9 +462,33 @@ void CEnemy::SetJump(const bool bJump)
 }
 
 //===============================================
+// 種類の設定
+//===============================================
+void CEnemy::SetEType(EType type)
+{
+	m_type = type;
+}
+
+//===============================================
 // モーションの設定
 //===============================================
 void CEnemy::SetMotion(MOTIONTYPE type)
 {
 	m_pMotion->Set(type);
+}
+
+//===============================================
+// サイズの設定処理
+//===============================================
+void CEnemy::SetSize(D3DXVECTOR3 size)
+{
+	m_vtxMax = size;
+}
+
+//===============================================
+// サイズの設定処理
+//===============================================
+void CEnemy::SetSizeMin(D3DXVECTOR3 size)
+{
+	m_vtxMin  = size;
 }

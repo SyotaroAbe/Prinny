@@ -361,3 +361,21 @@ void CObjectMesh::SetCol(const COL col)
 	// 頂点バッファをアンロックする
 	m_pVtxBuff->Unlock();
 }
+
+//===============================================
+// サイズの設定処理
+//===============================================
+void CObjectMesh::SetSize(D3DXVECTOR3 size)
+{
+	m_fSizeX = size.x;
+	m_fSizeZ = size.z;
+}
+
+//===============================================
+// サイズの設定処理
+//===============================================
+void CObjectMesh::SetSizeMin(D3DXVECTOR3 size)
+{
+	m_fSizeX = size.x;
+	m_fSizeZ = size.z;
+}
