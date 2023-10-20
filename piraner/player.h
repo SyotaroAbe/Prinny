@@ -115,6 +115,7 @@ private:	// 自分のみアクセス可能 [アクセス指定子]
 	float m_fRotDiff;						// 目的の向きまでの差分
 	int m_nParticleCounter;					// パーティクル発生時間
 	int m_nStateCounter;					// 状態管理カウンター
+	bool m_bInvincible;						// 無敵状態かどうか
 
 	EState m_state;							// 状態
 

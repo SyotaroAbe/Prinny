@@ -1,34 +1,8 @@
-﻿  bg.cpp
-  bullet.cpp
-  camera.cpp
-  effect.cpp
-  enemy.cpp
-  fileload.cpp
-  game.cpp
-  manager.cpp
-  meshfield.cpp
-  model.cpp
-  motion.cpp
-  number.cpp
-  object.cpp
-  object2D.cpp
-  object3D.cpp
-  objectBillboard.cpp
-  objectMesh.cpp
-  objectX.cpp
-  particle.cpp
-  pause.cpp
-  コンパイル中...
-  player.cpp
-  renderer.cpp
-  result.cpp
-  shadow.cpp
-  title.cpp
-  tutorial.cpp
+﻿  game.cpp
   コード生成しています。
-  114 of 459 functions (24.8%) were compiled, the rest were copied from previous compilation.
-    26 functions were new in current compilation
-    72 functions had inline decision re-evaluated but remain unchanged
+  1 of 459 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
   コード生成が終了しました。
   FirstDirectX001.vcxproj -> C:\Users\student\Desktop\piraner\Prinny\piraner\FirstDirectX001.exe
   FirstDirectX001.vcxproj -> C:\Users\student\Desktop\piraner\Prinny\piraner\FirstDirectX001.pdb (Full PDB)

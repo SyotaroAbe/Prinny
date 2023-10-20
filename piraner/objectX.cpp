@@ -69,7 +69,8 @@ CObjectX::~CObjectX()
 void CObjectX::Load(HWND hWnd)
 {
 	// モデル読み込み
-	m_aIdxXFile[MODEL_HOUSE00] = CManager::GetInstance()->GetXFile()->Regist("data\\MODEL\\Dumpster.x");
+	m_aIdxXFile[MODEL_NORMAL] = CManager::GetInstance()->GetXFile()->Regist("data\\MODEL\\box.x");
+	m_aIdxXFile[MODEL_DAMAGE] = CManager::GetInstance()->GetXFile()->Regist("data\\MODEL\\box001.x");
 
 	FILE *pFile;
 
@@ -100,8 +101,52 @@ void CObjectX::Load(HWND hWnd)
 	}
 	else
 	{
-		MessageBox(hWnd, "ファイルの読み込みに失敗！", "警告！", MB_ICONWARNING);
+		MessageBox(hWnd, "[model.txt]の読み込みに失敗！", "警告！", MB_ICONWARNING);
 	}
+
+	//// ファイル作成
+	//FILE *pFile = fopen("data\\TXT\\map000.csv", "r");
+
+	//if (pFile != NULL)
+	//{// 読み込み成功
+	//	char aTemp[MAX_NAME];
+	//	D3DXVECTOR3 pos = D3DXVECTOR3(0.0f, 700.0f, -600.0f);
+	//	D3DXVECTOR3 rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+	//	// １行目データ読み込み
+	//	fscanf(pFile, "%s\n", &aTemp[0]);
+
+	//	// ２行目以降読み込み
+	//	while (1)
+	//	{
+	//		int aType = -1;
+
+	//		int result = fscanf(pFile, "%d", &aType);
+
+	//		if (result == EOF)
+	//		{// 終了判定
+	//			break;
+	//		}
+
+	//		if (aType == 5)
+	//		{
+	//			pos.z += 100.0f;
+	//			pos.y = 700.0f;
+	//		}
+	//		else
+	//		{
+	//			CObjectX::Create(pos, rot, (MODEL)aType, 3);
+	//			pos.y -= 100.0f;
+	//		}
+	//	}
+
+	//	// ファイル閉じる
+	//	fclose(pFile);
+	//}
+	//else
+	//{
+	//	MessageBox(hWnd, "[map000.csv]の読み込みに失敗！", "警告！", MB_ICONWARNING);
+	//}
 }
 
 //===============================================
@@ -180,7 +225,14 @@ CObjectX *CObjectX::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, MODEL type, int nPr
 	pObjX = new CObjectX(nPriority);
 
 	// 種類の設定
-	pObjX->SetType(TYPE_XFAIL);
+	if (type == MODEL_NORMAL)
+	{
+		pObjX->SetType(TYPE_BOXNORMAL);
+	}
+	else
+	{
+		pObjX->SetType(TYPE_BOXDAMAGE);
+	}
 
 	// モデルの設定
 	pObjX->SetModel(type);
@@ -257,7 +309,7 @@ void CObjectX::Update(void)
 
 	// 当たり判定
 	//CGame::GetPlayer()->CollisionObjX(&m_pos, &m_posOld, m_vtxMax, m_vtxMin);
-	CGame::GetEnemy()->CollisionObjX(&m_pos, &m_posOld, m_vtxMax, m_vtxMin);
+	//CGame::GetEnemy()->CollisionObjX(&m_pos, &m_posOld, m_vtxMax, m_vtxMin);
 }
 
 //===============================================
@@ -353,7 +405,7 @@ bool CObjectX::CollisionModel(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTO
 			D3DXVECTOR3 sizeMax = pObject->GetSize();		// 最大サイズ
 			D3DXVECTOR3 sizeMin = pObject->GetSizeMin();	// 最小サイズ
 
-			if (type == CObject::TYPE_XFAIL)
+			if (type == CObject::TYPE_BOXNORMAL || type == CObject::TYPE_BOXDAMAGE)
 			{// プレイヤー
 				if (pos.x + sizeMin.x - vtxMax.x <= pPos->x && pos.x + sizeMax.x - vtxMin.x >= pPos->x
 					&& pos.z + sizeMin.z <= pPos->z - vtxMin.z && pos.z + sizeMax.z >= pPos->z + vtxMin.z
@@ -367,13 +419,27 @@ bool CObjectX::CollisionModel(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTO
 						// 上にのせる
 						CGame::GetPlayer()->SetPos(D3DXVECTOR3(pPos->x, posOld.y - vtxMin.y + sizeMax.y, pPos->z));
 
-						if (state == CPlayer::STATE_HIPDROP)
-						{// ヒップドロップ中
-							CGame::GetPlayer()->SetState(CPlayer::STATE_LANDDROP);
-						}
-						else if (state != CPlayer::STATE_LANDDROP && state != CPlayer::STATE_DAMAGE && state != CPlayer::STATE_DASH)
+						if (pObject->GetType() == CObject::TYPE_BOXNORMAL)
 						{
-							CGame::GetPlayer()->SetState(CPlayer::STATE_NORMAL);
+							if (state == CPlayer::STATE_HIPDROP)
+							{// ヒップドロップ中
+								CGame::GetPlayer()->SetState(CPlayer::STATE_LANDDROP);
+							}
+							else if (state != CPlayer::STATE_LANDDROP && state != CPlayer::STATE_DAMAGE && state != CPlayer::STATE_DASH)
+							{
+								CGame::GetPlayer()->SetState(CPlayer::STATE_NORMAL);
+							}
+						}
+						else
+						{
+							if (state == CPlayer::STATE_HIPDROP)
+							{// ヒップドロップ中
+								CGame::GetPlayer()->SetState(CPlayer::STATE_JUMPDROP);
+							}
+							else if (state != CPlayer::STATE_DAMAGE && state != CPlayer::STATE_JUMPDROP && state != CPlayer::STATE_DASH)
+							{// 当たった
+								CGame::GetPlayer()->SetState(CPlayer::STATE_DAMAGE);
+							}
 						}
 
 						bLand = true;
@@ -384,6 +450,14 @@ bool CObjectX::CollisionModel(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTO
 						// 下に戻す
 						CGame::GetPlayer()->SetPos(D3DXVECTOR3(pPos->x, posOld.y - vtxMax.y + sizeMin.y, pPos->z));
 						CGame::GetPlayer()->SetMove(D3DXVECTOR3(CGame::GetPlayer()->GetMove().x, 0.0f, CGame::GetPlayer()->GetMove().z));
+
+						if (pObject->GetType() == CObject::TYPE_BOXDAMAGE)
+						{
+							if (state != CPlayer::STATE_DAMAGE && state != CPlayer::STATE_JUMPDROP && state != CPlayer::STATE_DASH)
+							{// 当たった
+								CGame::GetPlayer()->SetState(CPlayer::STATE_DAMAGE);
+							}
+						}
 					}
 					else if (posOld.z + sizeMin.z >= pPosOld->z - vtxMin.z
 						&& pos.z + sizeMin.z <= pPos->z - vtxMin.z)
@@ -391,12 +465,89 @@ bool CObjectX::CollisionModel(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTO
 						// 位置を戻す
 						CGame::GetPlayer()->SetPos(D3DXVECTOR3(pPos->x, pPos->y, posOld.z + vtxMin.z + sizeMin.z));
 
+						if (pObject->GetType() == CObject::TYPE_BOXDAMAGE)
+						{
+							if (state != CPlayer::STATE_DAMAGE && state != CPlayer::STATE_JUMPDROP && state != CPlayer::STATE_DASH)
+							{// 当たった
+								CGame::GetPlayer()->SetState(CPlayer::STATE_DAMAGE);
+							}
+						}
 					}
 					else if (posOld.z + sizeMax.z <= pPosOld->z + vtxMin.z
 						&& pos.z + sizeMax.z >= pPos->z + vtxMin.z)
 					{// 右から左にめり込んだ
 						// 位置を戻す
 						CGame::GetPlayer()->SetPos(D3DXVECTOR3(pPos->x, pPos->y, posOld.z - vtxMin.z + sizeMax.z));
+
+						if (pObject->GetType() == CObject::TYPE_BOXDAMAGE)
+						{
+							if (state != CPlayer::STATE_DAMAGE && state != CPlayer::STATE_JUMPDROP && state != CPlayer::STATE_DASH)
+							{// 当たった
+								CGame::GetPlayer()->SetState(CPlayer::STATE_DAMAGE);
+							}
+						}
+					}
+				}
+			}
+			pObject = pObjectNext;		// 次のオブジェクトを代入
+		}
+	}
+
+	return bLand;
+}
+
+//===============================================
+// 敵との当たり判定
+//===============================================
+bool CObjectX::CollisionEnemy(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 vtxMax, D3DXVECTOR3 vtxMin)
+{
+	bool bLand = false;
+
+	for (int nCntPriority = 0; nCntPriority < PRIORITY_MAX; nCntPriority++)
+	{
+		CObject *pObject = CObject::GetTop(nCntPriority);		// 先頭のオブジェクトを代入
+
+		while (pObject != NULL)
+		{// 使用されている
+			CObject *pObjectNext = pObject->GetNext();		// 次のオブジェクトを保存
+			CObject::TYPE type = pObject->GetType();		// 種類を取得
+			D3DXVECTOR3 pos = pObject->GetPos();			// 位置
+			D3DXVECTOR3 posOld = pObject->GetPosOld();		// 前回の位置
+			D3DXVECTOR3 sizeMax = pObject->GetSize();		// 最大サイズ
+			D3DXVECTOR3 sizeMin = pObject->GetSizeMin();	// 最小サイズ
+
+			if (type == CObject::TYPE_BOXNORMAL || type == CObject::TYPE_BOXDAMAGE)
+			{// プレイヤー
+				if (pos.x + sizeMin.x - vtxMax.x <= pPos->x && pos.x + sizeMax.x - vtxMin.x >= pPos->x
+					&& pos.z + sizeMin.z <= pPos->z - vtxMin.z && pos.z + sizeMax.z >= pPos->z + vtxMin.z
+					&& pos.y + sizeMin.y <= pPos->y + vtxMax.y && pos.y + sizeMax.y >= pPos->y + vtxMin.y)
+				{// 範囲内にある
+					if (posOld.y + sizeMax.y <= pPosOld->y + vtxMin.y
+						&& pos.y + sizeMax.y >= pPos->y + vtxMin.y)
+					{// 上からめり込んだ
+						// 上にのせる
+						pPos->y = posOld.y - vtxMin.y + sizeMax.y;
+
+						bLand = true;
+					}
+					else if (posOld.y + sizeMin.y >= pPosOld->y + vtxMax.y
+						&& pos.y + sizeMin.y <= pPos->y + vtxMax.y)
+					{// 下からめり込んだ
+						// 下に戻す
+						pPos->y = posOld.y - vtxMax.y + sizeMin.y;
+						//CGame::GetPlayer()->SetMove(D3DXVECTOR3(CGame::GetPlayer()->GetMove().x, 0.0f, CGame::GetPlayer()->GetMove().z));
+					}
+					else if (posOld.z + sizeMin.z >= pPosOld->z - vtxMin.z
+						&& pos.z + sizeMin.z <= pPos->z - vtxMin.z)
+					{// 左から右にめり込んだ
+						// 位置を戻す
+						pPos->z = posOld.z + vtxMin.z + sizeMin.z;
+					}
+					else if (posOld.z + sizeMax.z <= pPosOld->z + vtxMin.z
+						&& pos.z + sizeMax.z >= pPos->z + vtxMin.z)
+					{// 右から左にめり込んだ
+						// 位置を戻す
+						pPos->z = posOld.z - vtxMin.z + sizeMax.z;
 					}
 				}
 			}

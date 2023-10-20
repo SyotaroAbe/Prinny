@@ -48,12 +48,12 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 		TYPE_TARGET,	// ターゲット
 		TYPE_ROCKON,	// ロックオン
 		TYPE_XFAIL,		// Xファイル
-		TYPE_GARBAGE,	// ごみ
-		TYPE_DUMPSTER,	// ゴミステーション
 		TYPE_SHADOW,	// 影
 		TYPE_SCENE,		// シーン
 		TYPE_PAUSE,		// ポーズ
 		TYPE_RANKIN,	// ランクイン
+		TYPE_BOXNORMAL,	// 通常床
+		TYPE_BOXDAMAGE,	// ダメージ床
 		TYPE_MAX
 	}TYPE;
 

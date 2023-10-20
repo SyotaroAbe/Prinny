@@ -61,6 +61,7 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 		MOTIONTYPE_MAX
 	};
 
+	static void Load(void);
 	static CEnemy *Create(D3DXVECTOR3 pos, EType type, int nPriority = 3);
 
 	HRESULT Init(D3DXVECTOR3 pos);

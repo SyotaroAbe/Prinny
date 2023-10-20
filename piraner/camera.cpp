@@ -127,6 +127,12 @@ void CCamera::Update(void)
 	//’‹“_‚Æˆê‚É‹“_‚à“®‚©‚·
 	m_posV.x = m_posV.x + m_fLength;
 	m_posV.z = m_posV.z;
+
+	if (m_posR.z <= 0.0f)
+	{
+		m_posV.z = 0.0f;
+		m_posR.z = 0.0f;
+	}
 }
 
 //===============================================

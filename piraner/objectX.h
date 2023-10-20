@@ -29,8 +29,8 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 	typedef enum
 	{
 		MODEL_NONE = 0,			// なし
-		MODEL_HOUSE00,			// 家１
-		MODEL_HOUSE01,			// 家２
+		MODEL_NORMAL,			// 通常床
+		MODEL_DAMAGE,			// ダメージ床
 		MODEL_MAX
 	}MODEL;
 
@@ -46,6 +46,7 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 
 	void DrawXFile(int nIdx, CXFile::COL col);
 	static bool CollisionModel(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 vtxMax, D3DXVECTOR3 vtxMin);
+	static bool CollisionEnemy(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 vtxMax, D3DXVECTOR3 vtxMin);
 
 	void SetPos(const D3DXVECTOR3 pos);
 	D3DXVECTOR3 GetPos(void) { return m_pos; }

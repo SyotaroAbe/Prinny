@@ -68,6 +68,7 @@ CPlayer::CPlayer() : CObject(4)
 	m_vtxMax = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_vtxMin = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_state = STATE_NONE;
+	m_bInvincible = false;
 }
 
 //===============================================
@@ -95,6 +96,7 @@ CPlayer::CPlayer(int nPriority) : CObject(nPriority)
 	m_vtxMax = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_vtxMin = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_state = STATE_NONE;
+	m_bInvincible = false;
 }
 
 //===============================================
@@ -229,6 +231,12 @@ HRESULT CPlayer::Init(D3DXVECTOR3 pos)
 
 	// 初期モーション設定
 	m_pMotion->Set(MOTIONTYPE_NEUTRAL);
+
+	// モーションの更新処理
+	if (m_pMotion != NULL)
+	{
+		m_pMotion->Update();
+	}
 
 	// 初期状態設定
 	m_state = STATE_NORMAL;
@@ -431,6 +439,8 @@ void CPlayer::Update(void)
 		if (m_nStateCounter < 0)
 		{
 			m_state = STATE_NORMAL;
+			//m_bInvincible = true;
+			m_nStateCounter = 200;				// 状態カウンターを設定
 		}
 		break;
 
@@ -439,6 +449,14 @@ void CPlayer::Update(void)
 
 	case STATE_DEATH:		// 死亡
 		break;
+	}
+
+	if (m_bInvincible == true)
+	{
+		if (m_nStateCounter < 0)
+		{
+			m_bInvincible = false;
+		}
 	}
 
 	m_fRotDiff = m_rotDest.y - m_rot.y;	// 目的の向きまでの差分
@@ -493,11 +511,6 @@ void CPlayer::Update(void)
 	if (m_pMotion != NULL)
 	{
 		m_pMotion->Update();
-	}
-
-	if (m_pos.y < -100.0f)
-	{// 落下死
-		
 	}
 
 	// 地形との当たり判定
@@ -628,7 +641,7 @@ void CPlayer::CollisionEnemy(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR
 		{// ヒップドロップ中に敵の頭上へ着地
 			SetState(STATE_JUMPDROP);
 		}
-		else if (m_state != STATE_DAMAGE && m_state != STATE_JUMPDROP && m_state != STATE_DASH)
+		else if (m_state != STATE_DAMAGE && m_state != STATE_JUMPDROP && m_state != STATE_DASH && m_bInvincible == false)
 		{// 敵に当たった
 			SetState(STATE_DAMAGE);
 		}

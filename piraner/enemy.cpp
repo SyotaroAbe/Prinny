@@ -24,6 +24,7 @@
 #include "tutorial.h"
 #include "sound.h"
 #include "title.h"
+#include "objectX.h"
 
 //===============================================
 // マクロ定義
@@ -91,6 +92,15 @@ CEnemy::CEnemy(int nPriority) : CObject(nPriority)
 CEnemy::~CEnemy()
 {
 
+}
+
+//===============================================
+// 読み込み処理
+//===============================================
+void CEnemy::Load(void)
+{
+	CEnemy::Create(D3DXVECTOR3(0.0f, 110.0f, 500.0f), CEnemy::TYPE_NORMAL, 4);
+	CEnemy::Create(D3DXVECTOR3(0.0f, 310.0f, 500.0f), CEnemy::TYPE_NORMAL, 4);
 }
 
 //===============================================
@@ -213,6 +223,12 @@ HRESULT CEnemy::Init(D3DXVECTOR3 pos)
 
 	// 初期モーション設定
 	m_pMotion->Set(MOTIONTYPE_NEUTRAL);
+
+	// モーションの更新処理
+	if (m_pMotion != NULL)
+	{
+		m_pMotion->Update();
+	}
 
 	// 初期状態設定
 	if (m_type == TYPE_MOVE)
@@ -349,6 +365,16 @@ void CEnemy::Update(void)
 
 	// 当たり判定
 	CGame::GetPlayer()->CollisionEnemy(&m_pos, &m_posOld, m_vtxMax, m_vtxMin);
+
+	// 地形との当たり判定
+	if (CObjectX::CollisionEnemy(&m_pos, &m_posOld, m_vtxMax, m_vtxMin) == true)
+	{// 着地している
+		SetJump(false);
+	}
+	else
+	{
+		m_bJump = true;
+	}
 
 	// デバッグ表示
 	CManager::GetInstance()->GetDebugProc()->Print(" 敵の位置：（%f, %f, %f）\n\n", m_pos.x, m_pos.y, m_pos.z);
