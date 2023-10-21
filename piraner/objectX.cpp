@@ -499,7 +499,7 @@ bool CObjectX::CollisionModel(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTO
 //===============================================
 // “G‚Æ‚Ì“–‚½‚è”»’è
 //===============================================
-bool CObjectX::CollisionEnemy(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 vtxMax, D3DXVECTOR3 vtxMin)
+bool CObjectX::CollisionEnemy(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 *pMove, D3DXVECTOR3 vtxMax, D3DXVECTOR3 vtxMin)
 {
 	bool bLand = false;
 
@@ -527,6 +527,7 @@ bool CObjectX::CollisionEnemy(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTO
 					{// ã‚©‚ç‚ß‚èž‚ñ‚¾
 						// ã‚É‚Ì‚¹‚é
 						pPos->y = posOld.y - vtxMin.y + sizeMax.y;
+						pMove->y = 0.0f;
 
 						bLand = true;
 					}

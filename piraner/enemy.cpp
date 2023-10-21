@@ -99,8 +99,8 @@ CEnemy::~CEnemy()
 //===============================================
 void CEnemy::Load(void)
 {
-	CEnemy::Create(D3DXVECTOR3(0.0f, 110.0f, 500.0f), CEnemy::TYPE_NORMAL, 4);
-	CEnemy::Create(D3DXVECTOR3(0.0f, 310.0f, 500.0f), CEnemy::TYPE_NORMAL, 4);
+	CEnemy::Create(D3DXVECTOR3(0.0f, 210.0f, 500.0f), CEnemy::TYPE_MOVE, 4);
+	CEnemy::Create(D3DXVECTOR3(0.0f, 310.0f, 800.0f), CEnemy::TYPE_NORMAL, 4);
 }
 
 //===============================================
@@ -367,9 +367,10 @@ void CEnemy::Update(void)
 	CGame::GetPlayer()->CollisionEnemy(&m_pos, &m_posOld, m_vtxMax, m_vtxMin);
 
 	// ’nŒ`‚Æ‚Ì“–‚½‚è”»’è
-	if (CObjectX::CollisionEnemy(&m_pos, &m_posOld, m_vtxMax, m_vtxMin) == true)
+	if (CObjectX::CollisionEnemy(&m_pos, &m_posOld, &m_move, m_vtxMax, m_vtxMin) == true)
 	{// ’…’n‚µ‚Ä‚¢‚é
 		SetJump(false);
+		m_move.y = 0.0f;
 	}
 	else
 	{
