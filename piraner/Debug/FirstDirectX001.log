@@ -1,4 +1,4 @@
-﻿  enemy.cpp
+﻿  bullet.cpp
 cl : コマンド ライン warning D9028: 簡易リビルド時のエラーです、通常のビルドに戻します
   FirstDirectX001.vcxproj -> C:\Users\student\Desktop\piraner\Prinny\piraner\Debug\FirstDirectX001.exe
   FirstDirectX001.vcxproj -> C:\Users\student\Desktop\piraner\Prinny\piraner\Debug\FirstDirectX001.pdb (Full PDB)
