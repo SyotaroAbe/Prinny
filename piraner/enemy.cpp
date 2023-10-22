@@ -101,6 +101,8 @@ void CEnemy::Load(void)
 {
 	CEnemy::Create(D3DXVECTOR3(0.0f, 210.0f, 500.0f), CEnemy::TYPE_MOVE, 4);
 	CEnemy::Create(D3DXVECTOR3(0.0f, 310.0f, 800.0f), CEnemy::TYPE_NORMAL, 4);
+	CEnemy::Create(D3DXVECTOR3(0.0f, 310.0f, 1000.0f), CEnemy::TYPE_NORMAL, 4);
+	CEnemy::Create(D3DXVECTOR3(0.0f, 310.0f, 1200.0f), CEnemy::TYPE_NORMAL, 4);
 }
 
 //===============================================
@@ -412,7 +414,7 @@ void CEnemy::Draw(void)
 			m_apModel[nCntModel]->Draw();
 
 			// ƒ‚ƒfƒ‹‚Ì‰e‚Ì•`‰æˆ—
-			m_apModel[nCntModel]->DrawShadowmtx();
+			m_apModel[nCntModel]->DrawShadowmtx(m_pos.y);
 		}
 	}
 }

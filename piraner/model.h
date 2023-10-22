@@ -31,7 +31,7 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 	virtual void Update(void);
 	virtual void Draw(void);
 
-	void DrawShadowmtx(void);
+	void DrawShadowmtx(float fpos);
 	
 	void BindX(LPD3DXMESH pMesh, LPD3DXBUFFER pBuffMat, DWORD dwNumMat);
 	void SetVtxSize(void);

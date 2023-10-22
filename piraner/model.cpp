@@ -211,7 +211,7 @@ void CModel::Draw(void)
 //===============================================
 // 影の描画処理
 //===============================================
-void CModel::DrawShadowmtx(void)
+void CModel::DrawShadowmtx(float fpos)
 {
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();	// デバイスの取得
 	D3DXMATRIX mtxShadow;		// シャドウマトリックス
@@ -227,7 +227,7 @@ void CModel::DrawShadowmtx(void)
 	posLight = D3DXVECTOR4(-light.Direction.x, -light.Direction.y, -light.Direction.z, 0.0f);
 
 	// 平面情報を作成
-	pos = D3DXVECTOR3(m_pos.x, 0.5f, m_pos.z);
+	pos = D3DXVECTOR3(m_pos.x, fpos, m_pos.z);
 	normal = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 	D3DXPlaneFromPointNormal(&plane, &pos, &normal);
 

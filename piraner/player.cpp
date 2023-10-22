@@ -577,7 +577,7 @@ void CPlayer::Draw(void)
 			}
 
 			// ƒ‚ƒfƒ‹‚Ì‰e‚Ì•`‰æˆ—
-			m_apModel[nCntModel]->DrawShadowmtx();
+			m_apModel[nCntModel]->DrawShadowmtx(m_pos.y);
 		}
 	}
 }
