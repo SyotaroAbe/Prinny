@@ -31,7 +31,8 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 	enum EType
 	{
 		TYPE_NORMAL = 0,	// 通常
-		TYPE_MOVE,			// 動く
+		TYPE_WALK,			// 歩く
+		TYPE_JUMP,			// 跳ぶ
 		TYPE_MAX
 	};
 

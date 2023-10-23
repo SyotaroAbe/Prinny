@@ -23,7 +23,7 @@
 #define BULLET_SIZEX		(8.0f)			// 幅（半分）
 #define BULLET_SIZEY		(8.0f)			// 高さ（半分）
 #define MOVE_BULLET			(5.0f)			// 動く速度
-#define BULLET_LIFE			(150)			// ライフ
+#define BULLET_LIFE			(120)			// ライフ
 
 //===============================================
 // 静的メンバ変数
@@ -190,26 +190,29 @@ bool CBullet::CollisionEnemy(D3DXVECTOR3 pos)
 			CObject *pObjectNext = pObject->GetNext();		// 次のオブジェクト
 			TYPE type = pObject->GetType();					// 種類を取得
 
-			if (type == TYPE_ENEMY || type == TYPE_XFAIL)
+			if (type == TYPE_ENEMY || type == TYPE_BOXNORMAL || type == TYPE_BOXDAMAGE)
 			{// 敵、地形
 				D3DXVECTOR3 ObjPos = pObject->GetPos();			// 位置を取得
 				D3DXVECTOR3 ObjSize = pObject->GetSize();		// サイズを取得
 				D3DXVECTOR3 ObjSizeMin = pObject->GetSizeMin();	// サイズを取得
 
-				if (pos.x + ObjSizeMin.x <= ObjPos.x && pos.x + ObjSize.x >= ObjPos.x
-					&& pos.z + ObjSizeMin.z <= ObjPos.z + BULLET_SIZEX && pos.z + ObjSize.z >= ObjPos.z - BULLET_SIZEX
-					&& pos.y + ObjSizeMin.y <= ObjPos.y + BULLET_SIZEX && pos.y + ObjSize.y >= ObjPos.y - BULLET_SIZEX)
+				if (pos.x >= ObjPos.x + ObjSizeMin.x && pos.x <= ObjPos.x + ObjSize.x
+					&& pos.z + BULLET_SIZEX >= ObjPos.z + ObjSizeMin.z && pos.z - BULLET_SIZEX <= ObjPos.z + ObjSize.z
+					&& pos.y + BULLET_SIZEX >= ObjPos.y + ObjSizeMin.y && pos.y - BULLET_SIZEX <= ObjPos.y + ObjSize.y)
 				{// 敵と弾が当たった
-					CParticle::Create(1)->Set(pObject->GetPos(), CParticle::TYPE_ENEMY);	// パーティクルの生成
 
 					//// サウンドの再生
 					//CManager::GetSound()->Play(CSound::LABEL_SE_EXPLOSION_HIT);
 
 					if (type == TYPE_ENEMY)
 					{
-
+						CParticle::Create(1)->Set(pObject->GetPos(), CParticle::TYPE_ENEMY);	// パーティクルの生成
 						pObject->Uninit();														// 敵の終了処理
 						//CGame::GetScore()->Add(ENEMY_SCORE);									// スコア加算
+					}
+					else
+					{
+						CParticle::Create(1)->Set(pos, CParticle::TYPE_ENEMY);	// パーティクルの生成
 					}
 					return true;
 				}

@@ -99,10 +99,14 @@ CEnemy::~CEnemy()
 //===============================================
 void CEnemy::Load(void)
 {
-	CEnemy::Create(D3DXVECTOR3(0.0f, 210.0f, 500.0f), CEnemy::TYPE_MOVE, 4);
+	CEnemy::Create(D3DXVECTOR3(0.0f, 210.0f, 500.0f), CEnemy::TYPE_WALK, 4);
 	CEnemy::Create(D3DXVECTOR3(0.0f, 310.0f, 800.0f), CEnemy::TYPE_NORMAL, 4);
 	CEnemy::Create(D3DXVECTOR3(0.0f, 310.0f, 1000.0f), CEnemy::TYPE_NORMAL, 4);
 	CEnemy::Create(D3DXVECTOR3(0.0f, 310.0f, 1200.0f), CEnemy::TYPE_NORMAL, 4);
+	CEnemy::Create(D3DXVECTOR3(0.0f, 310.0f, 1900.0f), CEnemy::TYPE_NORMAL, 4);
+	CEnemy::Create(D3DXVECTOR3(0.0f, 510.0f, 2850.0f), CEnemy::TYPE_NORMAL, 4);
+	CEnemy::Create(D3DXVECTOR3(0.0f, 210.0f, 3500.0f), CEnemy::TYPE_NORMAL, 4);
+	CEnemy::Create(D3DXVECTOR3(0.0f, 310.0f, 5100.0f), CEnemy::TYPE_WALK, 4);
 }
 
 //===============================================
@@ -233,7 +237,7 @@ HRESULT CEnemy::Init(D3DXVECTOR3 pos)
 	}
 
 	// 初期状態設定
-	if (m_type == TYPE_MOVE)
+	if (m_type == TYPE_WALK)
 	{
 		m_state = STATE_MOVELEFT;
 	}
@@ -290,9 +294,8 @@ void CEnemy::Update(void)
 		break;
 
 	case STATE_MOVERIGHT:	// 右移動
-		m_move.x += sinf(D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
-		m_move.z += cosf(D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
-		m_rotDest.y = D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y);
+		m_move.z += cosf(D3DX_PI * ROT_DOWN + (ROT_CAMERA * m_rot.y)) * m_fSpeed;
+		//m_rotDest.y = D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y);
 
 		if (m_nStateCounter <= 0)
 		{
@@ -303,9 +306,8 @@ void CEnemy::Update(void)
 		break;
 
 	case STATE_MOVELEFT:	// 左移動
-		m_move.x += sinf(D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
-		m_move.z += cosf(D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
-		m_rotDest.y = D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y);
+		m_move.z += cosf(D3DX_PI * ROT_DOWN + (ROT_CAMERA * m_rot.y)) * m_fSpeed;
+		//m_rotDest.y = D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y);
 
 		if (m_nStateCounter <= 0)
 		{
@@ -369,7 +371,7 @@ void CEnemy::Update(void)
 	CGame::GetPlayer()->CollisionEnemy(&m_pos, &m_posOld, m_vtxMax, m_vtxMin);
 
 	// 地形との当たり判定
-	if (CObjectX::CollisionEnemy(&m_pos, &m_posOld, &m_move, m_vtxMax, m_vtxMin) == true)
+	if (CObjectX::CollisionEnemy(&m_pos, &m_posOld, &m_rotDest, &m_move, m_vtxMax, m_vtxMin) == true)
 	{// 着地している
 		SetJump(false);
 		m_move.y = 0.0f;
@@ -378,9 +380,6 @@ void CEnemy::Update(void)
 	{
 		m_bJump = true;
 	}
-
-	// デバッグ表示
-	CManager::GetInstance()->GetDebugProc()->Print(" 敵の位置：（%f, %f, %f）\n\n", m_pos.x, m_pos.y, m_pos.z);
 }
 
 //===============================================
@@ -448,7 +447,7 @@ void CEnemy::CollisionObjX(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 
 		{// 左から右にめり込んだ
 			// 位置を戻す
 			m_pos.z = pPosOld->z - m_vtxMax.z - vtxMax.z;
-			if (m_type == TYPE_MOVE)
+			if (m_type == TYPE_WALK)
 			{
 				m_state = STATE_MOVELEFT;
 			}
@@ -458,7 +457,7 @@ void CEnemy::CollisionObjX(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 
 		{// 右から左にめり込んだ
 			// 位置を戻す
 			m_pos.z = pPosOld->z + m_vtxMax.z + vtxMax.z;
-			if (m_type == TYPE_MOVE)
+			if (m_type == TYPE_WALK)
 			{
 				m_state = STATE_MOVERIGHT;
 			}

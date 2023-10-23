@@ -69,8 +69,9 @@ CObjectX::~CObjectX()
 void CObjectX::Load(HWND hWnd)
 {
 	// モデル読み込み
-	m_aIdxXFile[MODEL_NORMAL] = CManager::GetInstance()->GetXFile()->Regist("data\\MODEL\\box.x");
-	m_aIdxXFile[MODEL_DAMAGE] = CManager::GetInstance()->GetXFile()->Regist("data\\MODEL\\box001.x");
+	m_aIdxXFile[MODEL_NORMAL] = CManager::GetInstance()->GetXFile()->Regist("data\\MODEL\\boxNormal000.x");
+	m_aIdxXFile[MODEL_NORMALWIDE] = CManager::GetInstance()->GetXFile()->Regist("data\\MODEL\\boxNormal001.x");
+	m_aIdxXFile[MODEL_DAMAGE] = CManager::GetInstance()->GetXFile()->Regist("data\\MODEL\\boxDamage.x");
 
 	FILE *pFile;
 
@@ -225,13 +226,13 @@ CObjectX *CObjectX::Create(D3DXVECTOR3 pos, D3DXVECTOR3 rot, MODEL type, int nPr
 	pObjX = new CObjectX(nPriority);
 
 	// 種類の設定
-	if (type == MODEL_NORMAL)
+	if (type == MODEL_DAMAGE)
 	{
-		pObjX->SetType(TYPE_BOXNORMAL);
+		pObjX->SetType(TYPE_BOXDAMAGE);
 	}
 	else
 	{
-		pObjX->SetType(TYPE_BOXDAMAGE);
+		pObjX->SetType(TYPE_BOXNORMAL);
 	}
 
 	// モデルの設定
@@ -499,7 +500,7 @@ bool CObjectX::CollisionModel(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTO
 //===============================================
 // 敵との当たり判定
 //===============================================
-bool CObjectX::CollisionEnemy(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 *pMove, D3DXVECTOR3 vtxMax, D3DXVECTOR3 vtxMin)
+bool CObjectX::CollisionEnemy(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 *pRot, D3DXVECTOR3 *pMove, D3DXVECTOR3 vtxMax, D3DXVECTOR3 vtxMin)
 {
 	bool bLand = false;
 
@@ -543,12 +544,14 @@ bool CObjectX::CollisionEnemy(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTO
 					{// 左から右にめり込んだ
 						// 位置を戻す
 						pPos->z = posOld.z + vtxMin.z + sizeMin.z;
+						pRot->y = D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y);
 					}
 					else if (posOld.z + sizeMax.z <= pPosOld->z + vtxMin.z
 						&& pos.z + sizeMax.z >= pPos->z + vtxMin.z)
 					{// 右から左にめり込んだ
 						// 位置を戻す
 						pPos->z = posOld.z - vtxMin.z + sizeMax.z;
+						pRot->y = D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y);
 					}
 				}
 			}
@@ -604,7 +607,7 @@ void CObjectX::SetSize(D3DXVECTOR3 size)
 //===============================================
 D3DXVECTOR3 CObjectX::GetSize(void)
 {
-	return CManager::GetInstance()->GetXFile()->GetSize(0);
+	return CManager::GetInstance()->GetXFile()->GetSize(m_modelType - 1);
 }
 
 //===============================================
@@ -620,5 +623,5 @@ void CObjectX::SetSizeMin(D3DXVECTOR3 size)
 //===============================================
 D3DXVECTOR3 CObjectX::GetSizeMin(void)
 {
-	return CManager::GetInstance()->GetXFile()->GetSizeMin(0);
+	return CManager::GetInstance()->GetXFile()->GetSizeMin(m_modelType - 1);
 }

@@ -126,7 +126,7 @@ void CGame::Update(void)
 	}
 
 	if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_BACKSPACE) == true
-		|| CManager::GetInstance()->GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_BACK, 0) == true || m_pPlayer->GetPos().z > 2400.0f)
+		|| CManager::GetInstance()->GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_BACK, 0) == true || m_pPlayer->GetPos().z > 6500.0f)
 	{// BackSpace
 		CRenderer::GetFade()->Set(CScene::MODE_RESULT);		// リザルト画面へ移動
 	}
@@ -134,6 +134,7 @@ void CGame::Update(void)
 
 	if (m_pPlayer->GetPos().y < -100.0f)
 	{// 落下死
+		GetPlayer()->SetState(CPlayer::STATE_DEATH);
 		CRenderer::GetFade()->Set(CScene::MODE_GAME);		// リザルト画面へ移動
 	}
 

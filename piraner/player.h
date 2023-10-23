@@ -116,6 +116,7 @@ private:	// 自分のみアクセス可能 [アクセス指定子]
 	int m_nParticleCounter;					// パーティクル発生時間
 	int m_nStateCounter;					// 状態管理カウンター
 	bool m_bInvincible;						// 無敵状態かどうか
+	int m_nInvincibleCounter;				// 無敵状態カウンター
 
 	EState m_state;							// 状態
 

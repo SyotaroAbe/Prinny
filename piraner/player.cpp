@@ -69,6 +69,7 @@ CPlayer::CPlayer() : CObject(4)
 	m_vtxMin = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_state = STATE_NONE;
 	m_bInvincible = false;
+	m_nInvincibleCounter = 0;
 }
 
 //===============================================
@@ -97,6 +98,7 @@ CPlayer::CPlayer(int nPriority) : CObject(nPriority)
 	m_vtxMin = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_state = STATE_NONE;
 	m_bInvincible = false;
+	m_nInvincibleCounter = 0;
 }
 
 //===============================================
@@ -282,6 +284,7 @@ void CPlayer::Update(void)
 
 	// カウンタを更新
 	m_nStateCounter--;
+	m_nInvincibleCounter--;
 
 	// 前回の位置を保存
 	m_posOld = m_pos;
@@ -439,8 +442,8 @@ void CPlayer::Update(void)
 		if (m_nStateCounter < 0)
 		{
 			m_state = STATE_NORMAL;
-			//m_bInvincible = true;
-			m_nStateCounter = 200;				// 状態カウンターを設定
+			m_bInvincible = true;
+			m_nInvincibleCounter = 200;				// 状態カウンターを設定
 		}
 		break;
 
@@ -453,7 +456,7 @@ void CPlayer::Update(void)
 
 	if (m_bInvincible == true)
 	{
-		if (m_nStateCounter < 0)
+		if (m_nInvincibleCounter < 0)
 		{
 			m_bInvincible = false;
 		}
@@ -721,7 +724,7 @@ void CPlayer::SetState(EState state)
 	{// 敵に当たった
 		m_pMotion->Set(MOTIONTYPE_DAMAGE);
 		m_nStateCounter = 30;
-		m_move.z += cosf(D3DX_PI * ROT_UP + (ROT_CAMERA * m_rot.y)) * 12.0f;
+		m_move.z += cosf(D3DX_PI * ROT_UP + (ROT_CAMERA * m_rot.y)) * 10.0f;
 	}
 
 	m_state = state;
