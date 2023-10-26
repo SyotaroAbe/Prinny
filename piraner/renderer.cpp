@@ -10,6 +10,7 @@
 #include "manager.h"
 #include "game.h"
 #include "fade.h"
+#include "bossBattle.h"
 
 //===============================================
 // 静的メンバ変数
@@ -140,7 +141,9 @@ void CRenderer::Uninit(void)
 //===============================================
 void CRenderer::Update(void)
 {
-	if ((CManager::GetMode() == CScene::MODE_GAME && CGame::GetPauseState() == false) || CManager::GetMode() == CScene::MODE_TUTORIAL || CManager::GetMode() == CScene::MODE_TITLE)
+	if ((CManager::GetMode() == CScene::MODE_GAME && CGame::GetPauseState() == false) 
+		|| (CManager::GetMode() == CScene::MODE_BOSS && CBossBattle::GetPauseState() == false) 
+		|| CManager::GetMode() == CScene::MODE_TUTORIAL || CManager::GetMode() == CScene::MODE_TITLE)
 	{// ポーズ状態じゃない
 		// 全てのオブジェクトの更新処理
 		CObject::UpdateAll();

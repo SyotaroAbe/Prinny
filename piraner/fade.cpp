@@ -22,6 +22,7 @@ CFade::CFade()
 	m_state = STATE_NONE;
 	m_modeNext = CScene::MODE_TITLE;
 	m_color = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f);
+	m_bNext = true;
 }
 
 //===============================================
@@ -137,8 +138,11 @@ void CFade::Update(void)
 				m_color.a = 1.0f;
 				m_state = STATE_IN;
 
-				// モードの設定（次の画面に移行）
-				CManager::SetMode(m_modeNext);
+				if (m_bNext == true)
+				{// 画面遷移させる
+					// モードの設定（次の画面に移行）
+					CManager::SetMode(m_modeNext);
+				}
 			}
 		}
 
@@ -179,12 +183,13 @@ void CFade::Draw(void)
 //===============================================
 // 設定処理
 //===============================================
-void CFade::Set(CScene::MODE modeNext)
+void CFade::Set(CScene::MODE modeNext, bool bNext)
 {
 	if (m_state != STATE_OUT)
 	{
 		m_state = STATE_OUT;							// フェードアウト状態に
 		m_modeNext = modeNext;							// 次の画面（モード）を設定
+		m_bNext = bNext;								// 画面遷移するか設定
 		m_color = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f);	// 黒いポリゴン（透明）にしておく
 	}
 }

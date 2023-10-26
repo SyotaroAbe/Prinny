@@ -1,0 +1,372 @@
+#==============================================================================
+#
+# 『』スクリプトファイル [model.txt]
+# Author : 阿部翔大郎
+#
+#==============================================================================
+SCRIPT			# この行は絶対消さないこと！
+
+#------------------------------------------------------------------------------
+# テクスチャ数
+#------------------------------------------------------------------------------
+NUM_TEXTURE = 15
+
+#------------------------------------------------------------------------------
+# テクスチャファイル名
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+# モデル数
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+# モデルファイル名
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+# カメラ情報
+#------------------------------------------------------------------------------
+CAMERASET
+	POS = 500.0 500.0 1500.0			# 視点
+	REF = 0.0 0.0 0.0				# 注視点
+END_CAMERASET
+
+#------------------------------------------------------------------------------
+# ライト情報
+#------------------------------------------------------------------------------
+LIGHTSET
+	DIRECTION = 0.22 -0.87 0.44		# 方向
+	DIFFUSE = 1.0 1.0 1.0			# 拡散光
+END_LIGHTSET
+
+LIGHTSET
+	DIRECTION = -0.18 0.88 -0.44	# 方向
+	DIFFUSE = 0.65 0.65 0.65		# 拡散光
+END_LIGHTSET
+
+LIGHTSET
+	DIRECTION = 0.89 -0.11 0.44		# 方向
+	DIFFUSE = 0.15 0.15 0.15		# 拡散光
+END_LIGHTSET
+
+#------------------------------------------------------------------------------
+# 空情報
+#------------------------------------------------------------------------------
+SKYSET
+	TEXTYPE = 0
+	MOVE = 0.00002
+END_SKYSET
+
+#------------------------------------------------------------------------------
+# 山情報
+#------------------------------------------------------------------------------
+MOUNTAINSET
+	TEXTYPE = 1
+END_MOUNTAINSET
+
+#------------------------------------------------------------------------------
+# 地面情報
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+# 壁情報
+#------------------------------------------------------------------------------
+WALLSET
+	TEXTYPE = 3
+	POS = 0 -80 640
+	ROT = 0 180 0
+	BLOCK = 16 1
+	SIZE = 80 80
+END_WALLSET
+
+#------------------------------------------------------------------------------
+# モデル配置情報
+#------------------------------------------------------------------------------
+MODELSET
+	TYPE = 2
+	POS = 0.0 -100.0 -400.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 100.0 -300.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 0.0 -300.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 -100.0 -300.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 100.0 -200.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 0.0 -200.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 -100.0 -200.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 100.0 -100.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 0.0 -100.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 -100.0 -100.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 100.0 0.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 0.0 0.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 -100.0 0.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 100.0 100.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 0.0 100.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 -100.0 100.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 100.0 200.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 0.0 200.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 -100.0 200.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 100.0 300.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 0.0 300.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 -100.0 300.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 100.0 400.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 0.0 400.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 -100.0 400.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 0.0 500.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 -100.0 500.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 100.0 500.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 -100.0 600.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 0.0 600.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 100.0 600.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 -100.0 700.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 0.0 700.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 100.0 700.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 -100.0 800.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 0.0 800.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 100.0 800.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 -100.0 900.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 0.0 900.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 1
+	POS = 0.0 100.0 900.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+MODELSET
+	TYPE = 2
+	POS = 0.0 -100.0 1000.0
+	ROT = 0.0 0.0 0.0
+	SHADOW = 0
+END_MODELSET
+
+END_SCRIPT		# この行は絶対消さないこと！

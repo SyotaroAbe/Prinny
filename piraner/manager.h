@@ -38,6 +38,7 @@ public:		// 誰でもアクセス可能[アクセス指定子]
 		MODE_TITLE,		// タイトル画面
 		MODE_TUTORIAL,	// チュートリアル画面
 		MODE_GAME,		// ゲーム画面
+		MODE_BOSS,		// ボス戦
 		MODE_RESULT,	// リザルト画面
 		MODE_MAX
 	};
@@ -77,6 +78,7 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 	void Reset(void);
 	void SetFPS(int nCountFPS);
 	HWND GetHWND(void) { return m_hWnd; }
+	void AddCountDeath(CScene::MODE mode);
 
 	static CManager* GetInstance(void);
 	static void SetMode(CScene::MODE mode);
@@ -111,6 +113,8 @@ private:	// 自分のみアクセス可能 [アクセス指定子]
 	static CScene::MODE m_mode;				// 現在の画面モード
 
 	int m_nCountFPS;						// FPSをカウント
+	int m_nCntDeathGame;					// ゲームモード死亡数カウント
+	int m_nCntDeathBoss;					// ボスバトル死亡数カウント
 	bool m_bEdit;							// エディット切り替え
 };
 

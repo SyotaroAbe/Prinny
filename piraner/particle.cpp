@@ -117,36 +117,20 @@ void CParticle::Set(D3DXVECTOR3 pos, TYPE type)
 
 	case TYPE_ENEMY:		// “G‚Ì”š”­
 		m_tex = CEffect::TYPE_NORMAL;
-		m_col = D3DXCOLOR(0.2f, 0.3f, 1.0f, 1.0f);
+		m_col = D3DXCOLOR(1.0f, 0.2f, 0.1f, 1.0f);
 		m_nMaxApeear = 10;
 		m_nRadius = 30;
 		m_nLife = 250;
 		break;
 
-	case TYPE_BURN:			// ”R‚¦‚éƒSƒ~
+	case TYPE_BULLET:			// ’e
 		m_tex = CEffect::TYPE_NORMAL;
-		m_col = D3DXCOLOR(1.0f, 0.3f, 0.2f, 1.0f);
+		m_col = D3DXCOLOR(0.2f, 0.3f, 1.0f, 1.0f);
 		m_nMaxApeear = 10;
-		m_nRadius = 20;
+		m_nRadius = 30;
 		m_nLife = 250;
 		break;
 			
-	case TYPE_NONFLAMMABLE:	// ”R‚¦‚È‚¢ƒSƒ~
-		m_tex = CEffect::TYPE_NORMAL;
-		m_col = D3DXCOLOR(1.0f, 0.5f, 0.2f, 1.0f);
-		m_nMaxApeear = 10;
-		m_nRadius = 20;
-		m_nLife = 250;
-		break;
-
-	case TYPE_RECYCLABLE:		// Ž‘Œ¹ƒSƒ~
-		m_tex = CEffect::TYPE_NORMAL;
-		m_col = D3DXCOLOR(0.5f, 0.3f, 1.0f, 1.0f);
-		m_nMaxApeear = 10;
-		m_nRadius = 20;
-		m_nLife = 250;
-		break;
-
 	case TYPE_MOVE:			// ˆÚ“®
 		m_tex = CEffect::TYPE_STEAM;
 		m_col = D3DXCOLOR(0.1f, 0.1f, 0.1f, 0.05f);

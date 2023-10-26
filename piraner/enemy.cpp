@@ -17,7 +17,6 @@
 #include "model.h"
 #include "meshfield.h"
 #include "motion.h"
-#include "fileload.h"
 #include "shadow.h"
 #include "object3D.h"
 #include "game.h"
@@ -25,6 +24,7 @@
 #include "sound.h"
 #include "title.h"
 #include "objectX.h"
+#include "fileload.h"
 
 //===============================================
 // マクロ定義
@@ -97,16 +97,19 @@ CEnemy::~CEnemy()
 //===============================================
 // 読み込み処理
 //===============================================
-void CEnemy::Load(void)
+void CEnemy::Load(HWND hWnd)
 {
-	CEnemy::Create(D3DXVECTOR3(0.0f, 210.0f, 500.0f), CEnemy::TYPE_WALK, 4);
-	CEnemy::Create(D3DXVECTOR3(0.0f, 310.0f, 800.0f), CEnemy::TYPE_NORMAL, 4);
-	CEnemy::Create(D3DXVECTOR3(0.0f, 310.0f, 1000.0f), CEnemy::TYPE_NORMAL, 4);
-	CEnemy::Create(D3DXVECTOR3(0.0f, 310.0f, 1200.0f), CEnemy::TYPE_NORMAL, 4);
-	CEnemy::Create(D3DXVECTOR3(0.0f, 310.0f, 1900.0f), CEnemy::TYPE_NORMAL, 4);
-	CEnemy::Create(D3DXVECTOR3(0.0f, 510.0f, 2850.0f), CEnemy::TYPE_NORMAL, 4);
-	CEnemy::Create(D3DXVECTOR3(0.0f, 210.0f, 3500.0f), CEnemy::TYPE_NORMAL, 4);
-	CEnemy::Create(D3DXVECTOR3(0.0f, 310.0f, 5100.0f), CEnemy::TYPE_WALK, 4);
+	CEnemy::Create(D3DXVECTOR3(0.0f, 220.0f, 500.0f), CEnemy::TYPE_WALK, 4);
+	CEnemy::Create(D3DXVECTOR3(0.0f, 320.0f, 800.0f), CEnemy::TYPE_NORMAL, 4);
+	CEnemy::Create(D3DXVECTOR3(0.0f, 320.0f, 1000.0f), CEnemy::TYPE_NORMAL, 4);
+	CEnemy::Create(D3DXVECTOR3(0.0f, 320.0f, 1200.0f), CEnemy::TYPE_NORMAL, 4);
+	CEnemy::Create(D3DXVECTOR3(0.0f, 320.0f, 1900.0f), CEnemy::TYPE_NORMAL, 4);
+	CEnemy::Create(D3DXVECTOR3(0.0f, 520.0f, 2850.0f), CEnemy::TYPE_NORMAL, 4);
+	CEnemy::Create(D3DXVECTOR3(0.0f, 220.0f, 3500.0f), CEnemy::TYPE_NORMAL, 4);
+	CEnemy::Create(D3DXVECTOR3(0.0f, 320.0f, 5100.0f), CEnemy::TYPE_WALK, 4);
+	CEnemy::Create(D3DXVECTOR3(0.0f, 520.0f, 6400.0f), CEnemy::TYPE_NORMAL, 4);
+	CEnemy::Create(D3DXVECTOR3(0.0f, 620.0f, 6600.0f), CEnemy::TYPE_NORMAL, 4);
+	CEnemy::Create(D3DXVECTOR3(0.0f, 720.0f, 6800.0f), CEnemy::TYPE_NORMAL, 4);
 }
 
 //===============================================
@@ -143,7 +146,7 @@ HRESULT CEnemy::Init(D3DXVECTOR3 pos)
 	m_pMotion->Init();
 
 	// モデルの総数
-	m_nNumModel = CManager::GetInstance()->GetLoad()->GetNumModel();
+	m_nNumModel = CManager::GetInstance()->GetLoad()->GetNumModel(CFileLoad::FILE_ENEMY);
 
 	// 位置の設定
 	m_pos = pos;
@@ -159,9 +162,9 @@ HRESULT CEnemy::Init(D3DXVECTOR3 pos)
 		D3DXVECTOR3 pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		D3DXVECTOR3 rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
-		apModelFile[nCntModel] = CManager::GetInstance()->GetLoad()->GetFileName(nCntModel);		// ファイル名取得
-		pos = CManager::GetInstance()->GetLoad()->GetPos(nCntModel);								// 位置の取得
-		rot = CManager::GetInstance()->GetLoad()->GetRot(nCntModel);								// 向きの取得
+		apModelFile[nCntModel] = CManager::GetInstance()->GetLoad()->GetFileName(CFileLoad::FILE_ENEMY, nCntModel);		// ファイル名取得
+		pos = CManager::GetInstance()->GetLoad()->GetPos(CFileLoad::FILE_ENEMY, nCntModel);								// 位置の取得
+		rot = CManager::GetInstance()->GetLoad()->GetRot(CFileLoad::FILE_ENEMY, nCntModel);								// 向きの取得
 
 		m_apModel[nCntModel] = CModel::Create(apModelFile[nCntModel], pos, rot);	// 生成
 	}
@@ -175,7 +178,7 @@ HRESULT CEnemy::Init(D3DXVECTOR3 pos)
 	{
 		int nParent = 0;
 
-		nParent = CManager::GetInstance()->GetLoad()->GetParent(nCntModel);	// 親を取得
+		nParent = CManager::GetInstance()->GetLoad()->GetParent(CFileLoad::FILE_ENEMY, nCntModel);	// 親を取得
 
 		m_apModel[nCntModel]->SetParent(m_apModel[nParent]);
 	}
@@ -224,7 +227,7 @@ HRESULT CEnemy::Init(D3DXVECTOR3 pos)
 	for (int nCntMotion = 0; nCntMotion < MOTIONTYPE_MAX; nCntMotion++)
 	{// モーション数分繰り返す
 		m_pMotion->Set(nCntMotion);
-		m_pMotion->SetInfo(CManager::GetInstance()->GetLoad()->GetInfo(nCntMotion));
+		m_pMotion->SetInfo(CManager::GetInstance()->GetLoad()->GetInfo(CFileLoad::FILE_ENEMY, nCntMotion));
 	}
 
 	// 初期モーション設定
@@ -286,6 +289,8 @@ void CEnemy::Update(void)
 	switch (m_state)
 	{
 	case STATE_NORMAL:		// 通常
+		m_pMotion->Set(MOTIONTYPE_NEUTRAL);
+
 		if (m_nStateCounter <= 0)
 		{
 			m_state = m_stateOld;
@@ -308,6 +313,7 @@ void CEnemy::Update(void)
 	case STATE_MOVELEFT:	// 左移動
 		m_move.z += cosf(D3DX_PI * ROT_DOWN + (ROT_CAMERA * m_rot.y)) * m_fSpeed;
 		//m_rotDest.y = D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y);
+		m_pMotion->Set(MOTIONTYPE_MOVE);				// 初期モーション設定
 
 		if (m_nStateCounter <= 0)
 		{

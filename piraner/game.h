@@ -24,6 +24,7 @@ class CMeshField;
 class CObject3D;
 class CPause;
 class CEnemy;
+class CGameBg;
 
 //===============================================
 // ゲーム画面クラス
@@ -48,12 +49,14 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 	void Uninit(void);
 	void Update(void);
 	void Draw(void);
+	void Reset(void);
 
 	static CPlayer *GetPlayer() { return m_pPlayer; }
 	static CMeshField *GetMeshField() { return m_pMeshField; }
 	static CObject3D *GetObject3D() { return m_pObject3D; }
 	static CPause *GetPause() { return m_pPause; }
 	static CEnemy *GetEnemy() { return m_pEnemy; }
+	static CGameBg *GetGameBg() { return m_pGameBg; }
 
 	static void SetEnablePause(const bool bPause);
 	static bool GetPauseState(void) { return m_bPause; }
@@ -68,12 +71,14 @@ private:	// 自分のみアクセス可能 [アクセス指定子]
 	static CObject3D *m_pObject3D;					// オブジェクト3Dクラスのポインタ
 	static CPause *m_pPause;						// ポーズクラスのポインタ
 	static CEnemy *m_pEnemy;						// 敵クラスのポインタ
+	static CGameBg *m_pGameBg;						// 背景クラスのポインタ
 
 	static bool m_bStateReady;		// GAMSESTATE_READYかどうか
 	static bool m_bPause;			// 現在のポーズの状態
 	static bool m_bPauseCamera;		// ポーズ時のカメラ操作可能か
 	STATE m_state;					// ゲームの状態
 	int m_nCounterState;			// 状態管理カウンター
+	HWND m_hWnd;					// HWND保存用
 };
 
 #endif

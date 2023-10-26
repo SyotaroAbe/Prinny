@@ -15,6 +15,7 @@
 #include "game.h"
 #include "player.h"
 #include "enemy.h"
+#include "bossBattle.h"
 
 //===============================================
 // 静的メンバ変数
@@ -73,10 +74,17 @@ void CObjectX::Load(HWND hWnd)
 	m_aIdxXFile[MODEL_NORMALWIDE] = CManager::GetInstance()->GetXFile()->Regist("data\\MODEL\\boxNormal001.x");
 	m_aIdxXFile[MODEL_DAMAGE] = CManager::GetInstance()->GetXFile()->Regist("data\\MODEL\\boxDamage.x");
 
-	FILE *pFile;
+	FILE *pFile = NULL;
 
 	// ファイルを開く
-	pFile = fopen("data\\TXT\\model.txt", "r");
+	if (CManager::GetMode() == CScene::MODE_GAME)
+	{
+		pFile = fopen("data\\TXT\\model.txt", "r");
+	}
+	else if (CManager::GetMode() == CScene::MODE_BOSS)
+	{
+		pFile = fopen("data\\TXT\\bossBattle.txt", "r");
+	}
 
 	if (pFile != NULL)
 	{// 読み込み成功
@@ -418,28 +426,65 @@ bool CObjectX::CollisionModel(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTO
 						&& pos.y + sizeMax.y >= pPos->y + vtxMin.y)
 					{// 上からめり込んだ
 						// 上にのせる
-						CGame::GetPlayer()->SetPos(D3DXVECTOR3(pPos->x, posOld.y - vtxMin.y + sizeMax.y, pPos->z));
+						if (CManager::GetMode() == CScene::MODE_GAME)
+						{
+							CGame::GetPlayer()->SetPos(D3DXVECTOR3(pPos->x, posOld.y - vtxMin.y + sizeMax.y, pPos->z));
+							CGame::GetPlayer()->SetMove(D3DXVECTOR3(CGame::GetPlayer()->GetMove().x, 0.0f, CGame::GetPlayer()->GetMove().z));
+						}
+						else
+						{
+							CBossBattle::GetPlayer()->SetPos(D3DXVECTOR3(pPos->x, posOld.y - vtxMin.y + sizeMax.y, pPos->z));
+							CBossBattle::GetPlayer()->SetMove(D3DXVECTOR3(CGame::GetPlayer()->GetMove().x, 0.0f, CGame::GetPlayer()->GetMove().z));
+						}
 
 						if (pObject->GetType() == CObject::TYPE_BOXNORMAL)
 						{
 							if (state == CPlayer::STATE_HIPDROP)
 							{// ヒップドロップ中
-								CGame::GetPlayer()->SetState(CPlayer::STATE_LANDDROP);
+								if (CManager::GetMode() == CScene::MODE_GAME)
+								{
+									CGame::GetPlayer()->SetState(CPlayer::STATE_LANDDROP);
+								}
+								else
+								{
+									CBossBattle::GetPlayer()->SetState(CPlayer::STATE_LANDDROP);
+								}
 							}
 							else if (state != CPlayer::STATE_LANDDROP && state != CPlayer::STATE_DAMAGE && state != CPlayer::STATE_DASH)
 							{
-								CGame::GetPlayer()->SetState(CPlayer::STATE_NORMAL);
+								if (CManager::GetMode() == CScene::MODE_GAME)
+								{
+									CGame::GetPlayer()->SetState(CPlayer::STATE_NORMAL);
+								}
+								else
+								{
+									CBossBattle::GetPlayer()->SetState(CPlayer::STATE_NORMAL);
+								}
 							}
 						}
 						else
 						{
 							if (state == CPlayer::STATE_HIPDROP)
 							{// ヒップドロップ中
-								CGame::GetPlayer()->SetState(CPlayer::STATE_JUMPDROP);
+								if (CManager::GetMode() == CScene::MODE_GAME)
+								{
+									CGame::GetPlayer()->SetState(CPlayer::STATE_JUMPDROP);
+								}
+								else
+								{
+									CBossBattle::GetPlayer()->SetState(CPlayer::STATE_JUMPDROP);
+								}
 							}
 							else if (state != CPlayer::STATE_DAMAGE && state != CPlayer::STATE_JUMPDROP && state != CPlayer::STATE_DASH)
 							{// 当たった
-								CGame::GetPlayer()->SetState(CPlayer::STATE_DAMAGE);
+								if (CManager::GetMode() == CScene::MODE_GAME)
+								{
+									CGame::GetPlayer()->SetState(CPlayer::STATE_DAMAGE);
+								}
+								else
+								{
+									CBossBattle::GetPlayer()->SetState(CPlayer::STATE_DAMAGE);
+								}
 							}
 						}
 
@@ -449,14 +494,29 @@ bool CObjectX::CollisionModel(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTO
 						&& pos.y + sizeMin.y <= pPos->y + vtxMax.y)
 					{// 下からめり込んだ
 						// 下に戻す
-						CGame::GetPlayer()->SetPos(D3DXVECTOR3(pPos->x, posOld.y - vtxMax.y + sizeMin.y, pPos->z));
-						CGame::GetPlayer()->SetMove(D3DXVECTOR3(CGame::GetPlayer()->GetMove().x, 0.0f, CGame::GetPlayer()->GetMove().z));
+						if (CManager::GetMode() == CScene::MODE_GAME)
+						{
+							CGame::GetPlayer()->SetPos(D3DXVECTOR3(pPos->x, posOld.y - vtxMax.y + sizeMin.y, pPos->z));
+							CGame::GetPlayer()->SetMove(D3DXVECTOR3(CGame::GetPlayer()->GetMove().x, 0.0f, CGame::GetPlayer()->GetMove().z));
+						}
+						else
+						{
+							CBossBattle::GetPlayer()->SetPos(D3DXVECTOR3(pPos->x, posOld.y - vtxMax.y + sizeMin.y, pPos->z));
+							CBossBattle::GetPlayer()->SetMove(D3DXVECTOR3(CGame::GetPlayer()->GetMove().x, 0.0f, CGame::GetPlayer()->GetMove().z));
+						}
 
 						if (pObject->GetType() == CObject::TYPE_BOXDAMAGE)
 						{
 							if (state != CPlayer::STATE_DAMAGE && state != CPlayer::STATE_JUMPDROP && state != CPlayer::STATE_DASH)
 							{// 当たった
-								CGame::GetPlayer()->SetState(CPlayer::STATE_DAMAGE);
+								if (CManager::GetMode() == CScene::MODE_GAME)
+								{
+									CGame::GetPlayer()->SetState(CPlayer::STATE_DAMAGE);
+								}
+								else
+								{
+									CBossBattle::GetPlayer()->SetState(CPlayer::STATE_DAMAGE);
+								}
 							}
 						}
 					}
@@ -464,13 +524,27 @@ bool CObjectX::CollisionModel(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTO
 						&& pos.z + sizeMin.z <= pPos->z - vtxMin.z)
 					{// 左から右にめり込んだ
 						// 位置を戻す
-						CGame::GetPlayer()->SetPos(D3DXVECTOR3(pPos->x, pPos->y, posOld.z + vtxMin.z + sizeMin.z));
+						if (CManager::GetMode() == CScene::MODE_GAME)
+						{
+							CGame::GetPlayer()->SetPos(D3DXVECTOR3(pPos->x, pPos->y, posOld.z + vtxMin.z + sizeMin.z));
+						}
+						else
+						{
+							CBossBattle::GetPlayer()->SetPos(D3DXVECTOR3(pPos->x, pPos->y, posOld.z + vtxMin.z + sizeMin.z));
+						}
 
 						if (pObject->GetType() == CObject::TYPE_BOXDAMAGE)
 						{
 							if (state != CPlayer::STATE_DAMAGE && state != CPlayer::STATE_JUMPDROP && state != CPlayer::STATE_DASH)
 							{// 当たった
-								CGame::GetPlayer()->SetState(CPlayer::STATE_DAMAGE);
+								if (CManager::GetMode() == CScene::MODE_GAME)
+								{
+									CGame::GetPlayer()->SetState(CPlayer::STATE_DAMAGE);
+								}
+								else
+								{
+									CBossBattle::GetPlayer()->SetState(CPlayer::STATE_DAMAGE);
+								}
 							}
 						}
 					}
@@ -478,13 +552,27 @@ bool CObjectX::CollisionModel(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTO
 						&& pos.z + sizeMax.z >= pPos->z + vtxMin.z)
 					{// 右から左にめり込んだ
 						// 位置を戻す
-						CGame::GetPlayer()->SetPos(D3DXVECTOR3(pPos->x, pPos->y, posOld.z - vtxMin.z + sizeMax.z));
+						if (CManager::GetMode() == CScene::MODE_GAME)
+						{
+							CGame::GetPlayer()->SetPos(D3DXVECTOR3(pPos->x, pPos->y, posOld.z - vtxMin.z + sizeMax.z));
+						}
+						else
+						{
+							CBossBattle::GetPlayer()->SetPos(D3DXVECTOR3(pPos->x, pPos->y, posOld.z - vtxMin.z + sizeMax.z));
+						}
 
 						if (pObject->GetType() == CObject::TYPE_BOXDAMAGE)
 						{
 							if (state != CPlayer::STATE_DAMAGE && state != CPlayer::STATE_JUMPDROP && state != CPlayer::STATE_DASH)
 							{// 当たった
-								CGame::GetPlayer()->SetState(CPlayer::STATE_DAMAGE);
+								if (CManager::GetMode() == CScene::MODE_GAME)
+								{
+									CGame::GetPlayer()->SetState(CPlayer::STATE_DAMAGE);
+								}
+								else
+								{
+									CBossBattle::GetPlayer()->SetState(CPlayer::STATE_DAMAGE);
+								}
 							}
 						}
 					}

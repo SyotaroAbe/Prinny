@@ -36,6 +36,7 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 		TYPE_NONE = 0,	// なし
 		TYPE_PLAYER,	// プレイヤー
 		TYPE_ENEMY,		// 敵
+		TYPE_BOSS,		// ボス
 		TYPE_BLOCK,		// ブロック
 		TYPE_BULLET,	// 弾
 		TYPE_EXPLOSION,	// 爆発

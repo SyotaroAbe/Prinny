@@ -52,8 +52,9 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 		STATE_DAMAGE,		// ダメージ
 		STATE_INVINCIBLE,	// 無敵
 		STATE_DEATH,		// 死亡
+		STATE_CLEAR,		// クリア
 		STATE_MAX
-	};
+	,};
 
 	// モーションの種類
 	enum MOTIONTYPE
@@ -96,6 +97,7 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 	void SetState(EState state);
 	EState GetState(void) { return m_state; }
 	void SetMotion(MOTIONTYPE type);
+	void SetPosShadow(void);
 
 private:	// 自分のみアクセス可能 [アクセス指定子]
 	D3DXVECTOR3 m_pos;						// 位置
@@ -106,6 +108,7 @@ private:	// 自分のみアクセス可能 [アクセス指定子]
 	D3DXMATRIX m_mtxWorld;					// ワールドマトリックス
 	D3DXVECTOR3 m_vtxMax;					// モデルの最大値
 	D3DXVECTOR3 m_vtxMin;					// モデルの最小値
+	D3DXVECTOR3 m_posShadow;				// 影の位置
 
 	float m_fSpeed;							// 移動速度変更用
 	bool m_bJump;							// ジャンプしたかどうか

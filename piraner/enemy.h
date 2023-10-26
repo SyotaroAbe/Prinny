@@ -48,6 +48,7 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 		STATE_DAMAGE,		// ダメージ
 		STATE_INVINCIBLE,	// 無敵
 		STATE_DEATH,		// 死亡
+		STATE_CLEAR,		// クリア
 		STATE_MAX
 	};
 
@@ -62,7 +63,7 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 		MOTIONTYPE_MAX
 	};
 
-	static void Load(void);
+	static void Load(HWND hWnd);
 	static CEnemy *Create(D3DXVECTOR3 pos, EType type, int nPriority = 3);
 
 	HRESULT Init(D3DXVECTOR3 pos);

@@ -17,6 +17,7 @@
 #include "sound.h"
 #include "player.h"
 #include "enemy.h"
+#include "gamebg.h"
 
 //===============================================
 // Ã“Iƒƒ“ƒo•Ï”
@@ -26,6 +27,7 @@ CMeshField *CGame::m_pMeshField = NULL;					// ƒƒbƒVƒ…ƒtƒB[ƒ‹ƒhƒNƒ‰ƒX‚Ìƒ|ƒCƒ“ƒ
 CObject3D *CGame::m_pObject3D = NULL;					// ƒIƒuƒWƒFƒNƒg3DƒNƒ‰ƒX‚Ìƒ|ƒCƒ“ƒ^
 CPause *CGame::m_pPause = NULL;							// ƒ|[ƒYƒNƒ‰ƒX‚Ìƒ|ƒCƒ“ƒ^
 CEnemy *CGame::m_pEnemy = NULL;							// “GƒNƒ‰ƒX‚Ìƒ|ƒCƒ“ƒ^
+CGameBg *CGame::m_pGameBg = NULL;						// ”wŒiƒNƒ‰ƒX‚Ìƒ|ƒCƒ“ƒ^
 
 bool CGame::m_bPause = false;				// ƒ|[ƒYó‘Ô
 bool CGame::m_bStateReady = false;			// GAMSESTATE_READY‚©‚Ç‚¤‚©
@@ -39,6 +41,7 @@ CGame::CGame() : CScene()
 	// ’l‚ÌƒNƒŠƒA
 	m_state = STATE_NONE;
 	m_nCounterState = 0;
+	m_hWnd = NULL;
 }
 
 //===============================================
@@ -58,6 +61,8 @@ HRESULT CGame::Init(HWND hWnd)
 	m_bStateReady = true;		// ‘Ò‹@ó‘Ô‚É‚·‚é
 	m_bPauseCamera = false;
 
+	m_hWnd = hWnd;		// HWND•Û‘¶
+
 	// ƒJƒƒ‰‚Ì‰Šú‰»ˆ—
 	CManager::GetInstance()->GetCamera()->Init();
 
@@ -67,8 +72,11 @@ HRESULT CGame::Init(HWND hWnd)
 	// ƒvƒŒƒCƒ„[‚Ì¶¬
 	m_pPlayer = CPlayer::Create(D3DXVECTOR3(0.0f, 210.0f, -350.0f), 4);
 
+	// ”wŒi‚Ì¶¬
+	m_pGameBg = CGameBg::Create(D3DXVECTOR3(m_pPlayer->GetPos().x, m_pPlayer->GetPos().y, CManager::GetInstance()->GetCamera()->GetPosR().z), CGameBg::TEX_GAME, 0);
+
 	// “G‚Ì¶¬
-	CEnemy::Load();
+	CEnemy::Load(hWnd);
 
 	// ƒ|[ƒY‚Ì¶¬
 	m_pPause = CPause::Create(6);
@@ -126,16 +134,18 @@ void CGame::Update(void)
 	}
 
 	if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_BACKSPACE) == true
-		|| CManager::GetInstance()->GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_BACK, 0) == true || m_pPlayer->GetPos().z > 6500.0f)
+		|| CManager::GetInstance()->GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_BACK, 0) == true || m_pPlayer->GetPos().z > 7500.0f)
 	{// BackSpace
-		CRenderer::GetFade()->Set(CScene::MODE_RESULT);		// ƒŠƒUƒ‹ƒg‰æ–Ê‚ÖˆÚ“®
+		CRenderer::GetFade()->Set(CScene::MODE_BOSS);		// ƒŠƒUƒ‹ƒg‰æ–Ê‚ÖˆÚ“®
 	}
 //#endif
 
 	if (m_pPlayer->GetPos().y < -100.0f)
 	{// —Ž‰ºŽ€
 		GetPlayer()->SetState(CPlayer::STATE_DEATH);
-		CRenderer::GetFade()->Set(CScene::MODE_GAME);		// ƒŠƒUƒ‹ƒg‰æ–Ê‚ÖˆÚ“®
+		CManager::GetInstance()->AddCountDeath(CManager::GetMode());			// Ž€–S‰ñ”‚ðƒJƒEƒ“ƒg
+		CRenderer::GetFade()->Set(CScene::MODE_GAME);							// ƒŠƒUƒ‹ƒg‰æ–Ê‚ÖˆÚ“®
+		//Reset();	// ƒŠƒZƒbƒg
 	}
 
 	if (m_bStateReady == false)
@@ -204,6 +214,57 @@ void CGame::Update(void)
 void CGame::Draw(void)
 {
 	
+}
+
+//===============================================
+// ƒŠƒZƒbƒgˆ—
+//===============================================
+void CGame::Reset(void)
+{
+	CRenderer::GetFade()->Set(CScene::MODE_GAME, false);
+
+	//if (CRenderer::GetFade()->Get() == CFade::STATE_IN)
+	//{
+		// ƒTƒEƒ“ƒh‚Ì’âŽ~
+		CManager::GetInstance()->GetSound()->Stop(CSound::LABEL_BGM_GAME);
+
+		// ƒ|[ƒY‚ÌI—¹ˆ—
+		m_pPause->Uninit();
+		delete m_pPause;
+		m_pPause = NULL;
+
+		// ƒIƒuƒWƒFƒNƒg‚ÌƒŠƒZƒbƒg
+		CObject::Reset();
+
+		m_bPause = false;
+		m_bStateReady = true;		// ‘Ò‹@ó‘Ô‚É‚·‚é
+		m_bPauseCamera = false;
+
+		// ƒJƒƒ‰‚Ì‰Šú‰»ˆ—
+		CManager::GetInstance()->GetCamera()->Init();
+
+		//// ƒIƒuƒWƒFƒNƒgXƒtƒ@ƒCƒ‹‚Ì¶¬
+		//CObjectX::Load(m_hWnd);
+
+		// ƒvƒŒƒCƒ„[‚Ì‰Šú‰»
+		m_pPlayer->Init(D3DXVECTOR3(0.0f, 210.0f, -350.0f));
+
+		// ”wŒi‚Ì‰Šú‰»
+		m_pGameBg->Init(D3DXVECTOR3(m_pPlayer->GetPos().x, m_pPlayer->GetPos().y, CManager::GetInstance()->GetCamera()->GetPosR().z));
+
+		// “G‚Ì¶¬
+		CEnemy::Load(m_hWnd);
+
+		// ƒ|[ƒY‚Ì¶¬
+		m_pPause = CPause::Create(6);
+
+		// ’Êíó‘Ô‚ÉÝ’è
+		m_state = STATE_NORMAL;
+		m_nCounterState = 0;
+
+		// ƒTƒEƒ“ƒh‚ÌÄ¶
+		CManager::GetInstance()->GetSound()->Play(CSound::LABEL_BGM_GAME);
+	//}
 }
 
 //===============================================

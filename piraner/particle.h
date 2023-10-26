@@ -25,9 +25,7 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 	{
 		TYPE_PLAYER = 0,	// プレイヤーの爆発
 		TYPE_ENEMY,			// 敵の爆発
-		TYPE_BURN,			// 燃えるゴミ
-		TYPE_NONFLAMMABLE,	// 燃えないゴミ
-		TYPE_RECYCLABLE,		// 資源ゴミ
+		TYPE_BULLET,		// 弾
 		TYPE_MOVE,			// 移動
 		TYPE_CURVE,			// カーブ
 		TYPE_MAX

@@ -22,6 +22,7 @@
 #include "tutorial.h"
 #include "meshfield.h"
 #include "fileload.h"
+#include "bossBattle.h"
 
 //===============================================
 // 静的メンバ変数
@@ -42,7 +43,7 @@ HWND CManager::m_hWnd = NULL;						// ウインドウ保存用
 
 CScene::MODE CScene::m_mode = CScene::MODE_TITLE;		// 現在の画面モード
 CScene::MODE CScene::m_modeOld = CScene::MODE_TITLE;	// 前回の画面モード
-CScene::MODE CManager::m_mode = CScene::MODE_GAME;		// 現在の画面モード
+CScene::MODE CManager::m_mode = CScene::MODE_TITLE;		// 現在の画面モード
 
 //***********************************************************
 // シーンクラス
@@ -107,6 +108,10 @@ CScene *CScene::Create(HWND hWnd, MODE mode)
 		pScene = new CGame;
 		break;
 
+	case MODE_BOSS:		// ボス戦
+		pScene = new CBossBattle;
+		break;
+
 	case MODE_RESULT:	// リザルト画面
 		pScene = new CResult;
 
@@ -152,6 +157,8 @@ CManager::CManager()
 {
 	// 値のクリア
 	m_nCountFPS = 0;
+	m_nCntDeathGame = 0;
+	m_nCntDeathBoss = 0;
 	m_bEdit = false;
 }
 
@@ -375,7 +382,8 @@ void CManager::Update(void)
 		// レンダラーの更新処理
 		m_pRenderer->Update();
 
-		if ((CManager::GetMode() == CScene::MODE_GAME && (CGame::GetPauseState() == false || CGame::GetPauseCamera() == true))
+		if ((CManager::GetMode() == CScene::MODE_GAME && (CGame::GetPauseState() == false || CGame::GetPauseCamera() == true)
+			|| CManager::GetMode() == CScene::MODE_BOSS && (CBossBattle::GetPauseState() == false || CBossBattle::GetPauseCamera() == true))
 			|| CManager::GetMode() == CScene::MODE_TUTORIAL || CManager::GetMode() == CScene::MODE_TITLE)
 		{// ポーズ状態
 			// カメラの更新処理
@@ -406,6 +414,10 @@ void CManager::Update(void)
 			if (mode == CScene::MODE_GAME)
 			{
 				m_pDebugProc->Print(" 現在のモード：ゲーム");
+			}
+			if (mode == CScene::MODE_BOSS)
+			{
+				m_pDebugProc->Print(" 現在のモード：ボス");
 			}
 			if (mode == CScene::MODE_RESULT)
 			{
@@ -453,6 +465,21 @@ void CManager::Reset(void)
 void CManager::SetFPS(int nCountFPS)
 {
 	m_nCountFPS = nCountFPS;
+}
+
+//===============================================
+// 死亡回数カウント処理
+//===============================================
+void CManager::AddCountDeath(CScene::MODE mode)
+{
+	if (mode == CScene::MODE_GAME)
+	{// ゲームモード中に死亡
+		m_nCntDeathGame++;
+	}
+	else if (mode == CScene::MODE_BOSS)
+	{// ボス戦中に死亡
+		m_nCntDeathBoss++;
+	}
 }
 
 //===============================================

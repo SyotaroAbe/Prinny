@@ -212,7 +212,7 @@ bool CBullet::CollisionEnemy(D3DXVECTOR3 pos)
 					}
 					else
 					{
-						CParticle::Create(1)->Set(pos, CParticle::TYPE_ENEMY);	// パーティクルの生成
+						CParticle::Create(1)->Set(pos, CParticle::TYPE_BULLET);	// パーティクルの生成
 					}
 					return true;
 				}

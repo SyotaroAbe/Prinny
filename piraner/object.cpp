@@ -152,26 +152,67 @@ void CObject::ReleaseAll()
 //===============================================
 void CObject::Reset()
 {
-	//for (int nCntPriority = 0; nCntPriority < PRIORITY_MAX; nCntPriority++)
-	//{
-	//	for (int nCntObject = 0; nCntObject < MAX_OBJECT; nCntObject++)
-	//	{
-	//		if (m_apObject[nCntPriority][nCntObject] != NULL)
-	//		{// 使用されている
-	//			CObject *pObj;									// オブジェクトクラスのポインタ
-	//			pObj = GetObject(nCntPriority, nCntObject);		// オブジェクトを取得
+	for (int nCntPriority = 0; nCntPriority < PRIORITY_MAX; nCntPriority++)
+	{
+		CObject *pObject = m_apTop[nCntPriority];	// 先頭のオブジェクトを代入
 
-	//			TYPE type;						// 種類
-	//			type = pObj->GetType();			// タイプを取得
+		while (pObject != NULL)
+		{// ポインタが使用されている
+			CObject *pObjectNext = pObject->m_pNext;	// 次のオブジェクトを保存
+			TYPE type = pObject->GetType();				// オブジェクトの種類を取得
 
-	//			if (type == TYPE_ENEMY || type == TYPE_ITEM)
-	//			{// 敵とアイテム
-	//				// 終了処理
-	//				m_apObject[nCntPriority][nCntObject]->Uninit();
-	//			}
-	//		}
-	//	}
-	//}
+			if (type == TYPE_ENEMY || type == TYPE_BOSS || type == TYPE_BOXNORMAL || type == TYPE_BOXDAMAGE)
+			{// 敵、ボス
+				// 終了処理
+				pObject->Uninit();
+			}
+
+			pObject = pObjectNext;	// 次のオブジェクトを代入
+		}
+	}
+
+	for (int nCntPriority = 0; nCntPriority < PRIORITY_MAX; nCntPriority++)
+	{
+		CObject *pObject = m_apTop[nCntPriority];	// 先頭のオブジェクトを代入
+
+		while (pObject != NULL)
+		{// ポインタが使用されている
+			CObject *pObjectNext = pObject->m_pNext;	// 次のオブジェクトを保存
+
+			if (pObject->m_bDeath == true)
+			{// 死亡フラグが立っている
+				// リストから削除して破棄する
+				if (m_apTop[nCntPriority] != pObject && m_apCur[nCntPriority] != pObject)
+				{// 自身が先頭でも最後尾でもない
+					pObject->m_pPrev->m_pNext = pObject->m_pNext;		// 前のオブジェクトの次のオブジェクトのポインタに次のオブジェクトを保存する
+					pObject->m_pNext->m_pPrev = pObject->m_pPrev;		// 次のオブジェクトの前のオブジェクトのポインタに前のオブジェクトを保存する
+				}
+				else if (m_apTop[nCntPriority] != pObject && m_apCur[nCntPriority] == pObject)
+				{// 自身が先頭ではないが最後尾である
+					m_apCur[nCntPriority] = pObject->m_pPrev;		// 最後尾を前のオブジェクトに設定する
+				}
+				else if (m_apTop[nCntPriority] == pObject && m_apCur[nCntPriority] != pObject)
+				{// 自身が先頭だが最後尾ではない
+					m_apTop[nCntPriority] = pObject->m_pNext;		// 先頭を次のオブジェクトに設定する
+				}
+
+				if (pObject == m_apTop[nCntPriority])
+				{// 先頭と一致
+					m_apTop[nCntPriority] = NULL;
+				}
+				if (pObject == m_apCur[nCntPriority])
+				{// 最後尾と一致
+					m_apCur[nCntPriority] = NULL;
+				}
+
+				// メモリを開放
+				delete pObject;
+				pObject = NULL;
+			}
+
+			pObject = pObjectNext;	// 次のオブジェクトを代入
+		}
+	}
 }
 
 //===============================================

@@ -121,7 +121,7 @@ void CCamera::Update(void)
 	m_posV.y += (m_posVDest.y - m_posV.y) * MOVEV_MINUS;
 	m_posV.z += (m_posVDest.z - m_posV.z) * MOVEV_MINUS;
 	m_posR.x += (m_posRDest.x - m_posR.x) * MOVER_MINUS;
-	m_posR.y += (m_posVDest.y - m_posV.y) * MOVEV_MINUS;
+	m_posR.y += (m_posRDest.y - m_posV.y) * MOVER_MINUS;
 	m_posR.z += (m_posRDest.z - m_posR.z) * MOVER_MINUS;
 
 	//íçéãì_Ç∆àÍèèÇ…éãì_Ç‡ìÆÇ©Ç∑

@@ -36,7 +36,7 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 	void Update(void);
 	void Draw(void);
 
-	void Set(CScene::MODE modeNext);
+	void Set(CScene::MODE modeNext, bool bNext = true);
 	STATE Get(void) { return m_state; }
 
 private:	// 自分のみアクセス可能 [アクセス指定子]
@@ -44,6 +44,7 @@ private:	// 自分のみアクセス可能 [アクセス指定子]
 	STATE m_state;							// フェードの状態
 	CScene::MODE m_modeNext;				// 次の画面（モード）
 	D3DXCOLOR m_color;						// ポリゴン（フェード）の色
+	bool m_bNext;							// 画面遷移するか
 };
 
 #endif

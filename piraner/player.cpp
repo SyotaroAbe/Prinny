@@ -70,6 +70,7 @@ CPlayer::CPlayer() : CObject(4)
 	m_state = STATE_NONE;
 	m_bInvincible = false;
 	m_nInvincibleCounter = 0;
+	m_posShadow = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 }
 
 //===============================================
@@ -99,6 +100,7 @@ CPlayer::CPlayer(int nPriority) : CObject(nPriority)
 	m_state = STATE_NONE;
 	m_bInvincible = false;
 	m_nInvincibleCounter = 0;
+	m_posShadow = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 }
 
 //===============================================
@@ -140,10 +142,11 @@ HRESULT CPlayer::Init(D3DXVECTOR3 pos)
 	m_pMotion->Init();
 
 	// モデルの総数
-	m_nNumModel = CManager::GetInstance()->GetLoad()->GetNumModel();
+	m_nNumModel = CManager::GetInstance()->GetLoad()->GetNumModel(CFileLoad::FILE_PLAYER);
 
 	// 位置の設定
 	m_pos = pos;
+	m_posShadow = m_pos;
 
 	// 向きの設定
 	m_rot = D3DXVECTOR3(0.0f, D3DX_PI, 0.0f);
@@ -163,9 +166,9 @@ HRESULT CPlayer::Init(D3DXVECTOR3 pos)
 		D3DXVECTOR3 pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		D3DXVECTOR3 rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
-		apModelFile[nCntModel] = CManager::GetInstance()->GetLoad()->GetFileName(nCntModel);		// ファイル名取得
-		pos = CManager::GetInstance()->GetLoad()->GetPos(nCntModel);								// 位置の取得
-		rot = CManager::GetInstance()->GetLoad()->GetRot(nCntModel);								// 向きの取得
+		apModelFile[nCntModel] = CManager::GetInstance()->GetLoad()->GetFileName(CFileLoad::FILE_PLAYER, nCntModel);		// ファイル名取得
+		pos = CManager::GetInstance()->GetLoad()->GetPos(CFileLoad::FILE_PLAYER, nCntModel);								// 位置の取得
+		rot = CManager::GetInstance()->GetLoad()->GetRot(CFileLoad::FILE_PLAYER, nCntModel);								// 向きの取得
 
 		m_apModel[nCntModel] = CModel::Create(apModelFile[nCntModel], pos, rot);	// 生成
 	}
@@ -179,7 +182,7 @@ HRESULT CPlayer::Init(D3DXVECTOR3 pos)
 	{
 		int nParent = 0;
 
-		nParent = CManager::GetInstance()->GetLoad()->GetParent(nCntModel);	// 親を取得
+		nParent = CManager::GetInstance()->GetLoad()->GetParent(CFileLoad::FILE_PLAYER, nCntModel);	// 親を取得
 
 		m_apModel[nCntModel]->SetParent(m_apModel[nParent]);
 	}
@@ -228,7 +231,7 @@ HRESULT CPlayer::Init(D3DXVECTOR3 pos)
 	for (int nCntMotion = 0; nCntMotion < MOTIONTYPE_MAX; nCntMotion++)
 	{// モーション数分繰り返す
 		m_pMotion->Set(nCntMotion);
-		m_pMotion->SetInfo(CManager::GetInstance()->GetLoad()->GetInfo(nCntMotion));
+		m_pMotion->SetInfo(CManager::GetInstance()->GetLoad()->GetInfo(CFileLoad::FILE_PLAYER, nCntMotion));
 	}
 
 	// 初期モーション設定
@@ -289,64 +292,67 @@ void CPlayer::Update(void)
 	// 前回の位置を保存
 	m_posOld = m_pos;
 
-	if (m_nParticleCounter < COUNT_PARTICLE && CManager::GetMode() != CScene::MODE_TITLE)
-	{// パーティクル発生時間に達していない
-		// パーティクルの生成
-		CParticle::Create(1)->Set(D3DXVECTOR3(m_pos.x + cosf(m_rot.y) * 18.0f, m_pos.y, m_pos.z - sinf(m_rot.y) * 18.0f), CParticle::TYPE_CURVE);
-		CParticle::Create(1)->Set(D3DXVECTOR3(m_pos.x - cosf(m_rot.y) * 18.0f, m_pos.y, m_pos.z + sinf(m_rot.y) * 18.0f), CParticle::TYPE_CURVE);
-		m_nParticleCounter++;											// 発生時間をカウントアップ
-	}
-
-	if (m_state == STATE_NORMAL)
+	if (m_state != STATE_CLEAR)
 	{
-		if (CManager::GetInstance()->GetKeyboardInput()->GetPress(DIK_A) == true)
-		{//左キーが押された
-			m_move.x += sinf(D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
-			m_move.z += cosf(D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
-			m_rotDest.y = D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y);
-			if (m_bJump == false)
-			{
-				m_pMotion->Set(MOTIONTYPE_MOVE);				// 移動モーション設定
-			}
+		if (m_nParticleCounter < COUNT_PARTICLE && CManager::GetMode() != CScene::MODE_TITLE)
+		{// パーティクル発生時間に達していない
+			// パーティクルの生成
+			CParticle::Create(1)->Set(D3DXVECTOR3(m_pos.x + cosf(m_rot.y) * 18.0f, m_pos.y, m_pos.z - sinf(m_rot.y) * 18.0f), CParticle::TYPE_CURVE);
+			CParticle::Create(1)->Set(D3DXVECTOR3(m_pos.x - cosf(m_rot.y) * 18.0f, m_pos.y, m_pos.z + sinf(m_rot.y) * 18.0f), CParticle::TYPE_CURVE);
+			m_nParticleCounter++;											// 発生時間をカウントアップ
 		}
-		else if (CManager::GetInstance()->GetKeyboardInput()->GetPress(DIK_D) == true)
-		{//右キーが押された
-			m_move.x += sinf(D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
-			m_move.z += cosf(D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
-			m_rotDest.y = D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y);
-			if (m_bJump == false)
-			{
-				m_pMotion->Set(MOTIONTYPE_MOVE);				// 移動モーション設定
-			}
-		}
-		else if(m_bJump == false)
+
+		if (m_state == STATE_NORMAL)
 		{
-			m_pMotion->Set(MOTIONTYPE_NEUTRAL);				// 待機モーション設定
-		}
-
-		if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_SPACE) == true && m_bAirJump == false)
-		{// SPACEキーが押された
-			if (m_bJump == true)
-			{// 2段ジャンプ
-				m_bAirJump = true;
-				m_pMotion->Set(MOTIONTYPE_JUMPAIR);				// ジャンプモーション
+			if (CManager::GetInstance()->GetKeyboardInput()->GetPress(DIK_A) == true)
+			{//左キーが押された
+				m_move.x += sinf(D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
+				m_move.z += cosf(D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
+				m_rotDest.y = D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y);
+				if (m_bJump == false)
+				{
+					m_pMotion->Set(MOTIONTYPE_MOVE);				// 移動モーション設定
+				}
 			}
-			else
+			else if (CManager::GetInstance()->GetKeyboardInput()->GetPress(DIK_D) == true)
+			{//右キーが押された
+				m_move.x += sinf(D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
+				m_move.z += cosf(D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
+				m_rotDest.y = D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y);
+				if (m_bJump == false)
+				{
+					m_pMotion->Set(MOTIONTYPE_MOVE);				// 移動モーション設定
+				}
+			}
+			else if (m_bJump == false)
 			{
-				m_pMotion->Set(MOTIONTYPE_JUMP);				// ジャンプモーション
+				m_pMotion->Set(MOTIONTYPE_NEUTRAL);				// 待機モーション設定
 			}
 
-			m_move.y = JUMP_PLAYER;
-			m_bJump = true;
-		}
-	}
+			if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_SPACE) == true && m_bAirJump == false)
+			{// SPACEキーが押された
+				if (m_bJump == true)
+				{// 2段ジャンプ
+					m_bAirJump = true;
+					m_pMotion->Set(MOTIONTYPE_JUMPAIR);				// ジャンプモーション
+				}
+				else
+				{
+					m_pMotion->Set(MOTIONTYPE_JUMP);				// ジャンプモーション
+				}
 
-	// ヒップドロップ
-	if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_S) == true && m_bJump == true && m_state != STATE_HIPDROP)
-	{// Sキーが押された
-		m_state = STATE_HIPDROP;
-		m_move.y = JUMP_HIPDROP;
-		m_pMotion->Set(MOTIONTYPE_HIPDROP);				// ヒップドロップモーション
+				m_move.y = JUMP_PLAYER;
+				m_bJump = true;
+			}
+		}
+
+		// ヒップドロップ
+		if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_S) == true && m_bJump == true && m_state != STATE_HIPDROP)
+		{// Sキーが押された
+			m_state = STATE_HIPDROP;
+			m_move.y = JUMP_HIPDROP;
+			m_pMotion->Set(MOTIONTYPE_HIPDROP);				// ヒップドロップモーション
+		}
 	}
 
 	switch (m_state)
@@ -384,8 +390,7 @@ void CPlayer::Update(void)
 		{
 			m_state = STATE_NORMAL;
 		}
-		m_fSpeed = 0.9f;
-		m_move.z += cosf(D3DX_PI * ROT_DOWN + (ROT_CAMERA * m_rot.y)) * m_fSpeed;
+		m_pos.z += cosf(D3DX_PI * ROT_DOWN + (ROT_CAMERA * m_rot.y)) * 9.0f;
 
 		// エフェクトの生成
 		CEffect::Create(D3DXVECTOR3(m_pos.x, m_pos.y + 40.0f, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(0.0f, 0.8f, 1.0f, 1.0f), CEffect::TYPE_NORMAL, 25, 50, 3);
@@ -519,12 +524,15 @@ void CPlayer::Update(void)
 	// 地形との当たり判定
 	if (CObjectX::CollisionModel(&m_pos, &m_posOld, m_vtxMax, m_vtxMin) == true)
 	{// 着地している
-		SetJump(false);
+		SetJump(false);			// ジャンプフラグをリセット
 	}
 	else
 	{
 		m_bJump = true;
 	}
+
+	// 影の位置の設定
+	SetPosShadow();
 
 	// デバッグ表示
 	CManager::GetInstance()->GetDebugProc()->Print(" 移動          ：A D\n");
@@ -534,6 +542,7 @@ void CPlayer::Update(void)
 	CManager::GetInstance()->GetDebugProc()->Print(" リザルトへ    ：BACKSPACE\n\n");
 
 	CManager::GetInstance()->GetDebugProc()->Print(" プレイヤーの位置：（%f, %f, %f）\n", m_pos.x, m_pos.y, m_pos.z);
+	CManager::GetInstance()->GetDebugProc()->Print(" プレイヤーの移動量：（%f, %f, %f）\n", m_move.x, m_move.y, m_move.z);
 	CManager::GetInstance()->GetDebugProc()->Print(" プレイヤーの移動速度：%f\n", m_fSpeed);
 	CManager::GetInstance()->GetDebugProc()->Print(" プレイヤーの向き：%f\n\n", m_rot.y);
 	
@@ -580,7 +589,7 @@ void CPlayer::Draw(void)
 			}
 
 			// モデルの影の描画処理
-			m_apModel[nCntModel]->DrawShadowmtx(m_pos.y);
+			m_apModel[nCntModel]->DrawShadowmtx(m_posShadow.y);
 		}
 	}
 }
@@ -702,11 +711,13 @@ void CPlayer::SetState(EState state)
 		m_fLenthCamera = LEMTH_HIPDROP;
 		m_move.y = 0.0f;
 		SetJump(false);
+		m_state = state;
 	}
 	else if (state != STATE_LANDDROP && state != STATE_DAMAGE && state != STATE_DASH && m_state == STATE_NORMAL)
 	{// ヒップドロップ中以外で地形へ着地
 		m_move.y = 0.0f;
 		SetJump(false);
+		m_state = state;
 	}
 
 	if (m_state == STATE_HIPDROP && state == STATE_JUMPDROP)
@@ -715,19 +726,24 @@ void CPlayer::SetState(EState state)
 		m_move.y = JUMP_HIPDROP;
 		m_bAirJump = false;					// 空中ジャンプフラグリセット
 		m_pMotion->Set(MOTIONTYPE_JUMP);	// ジャンプモーション
+		m_state = state;
 
 		// パーティクルの生成
 		CParticle::Create(3)->Set(D3DXVECTOR3(m_pos.x - sinf(D3DX_PI * ROT_UP + (1.0f * m_rot.y) * 5.0f), m_pos.y,
 			m_pos.z - cosf(D3DX_PI * ROT_UP + (1.0f * m_rot.y) * 5.0f)), CParticle::TYPE_ENEMY);
 	}
-	else if (m_state != STATE_DAMAGE && m_state != STATE_JUMPDROP && m_state != STATE_DASH && state == STATE_DAMAGE)
+	else if (m_state != STATE_DAMAGE && m_state != STATE_JUMPDROP && m_state != STATE_DASH && state == STATE_DAMAGE && m_bInvincible == false)
 	{// 敵に当たった
 		m_pMotion->Set(MOTIONTYPE_DAMAGE);
 		m_nStateCounter = 30;
 		m_move.z += cosf(D3DX_PI * ROT_UP + (ROT_CAMERA * m_rot.y)) * 10.0f;
+		m_state = state;
 	}
 
-	m_state = state;
+	if (state != STATE_DAMAGE)
+	{
+		m_state = state;
+	}
 
 	switch (m_state)
 	{
@@ -766,4 +782,45 @@ void CPlayer::SetState(EState state)
 void CPlayer::SetMotion(MOTIONTYPE type)
 {
 	m_pMotion->Set(type);
+}
+
+//===============================================
+// 影の位置の設定
+//===============================================
+void CPlayer::SetPosShadow(void)
+{
+	float fPos = -500.0f;
+	m_posShadow.y = fPos;
+
+	for (int nCntPriority = 0; nCntPriority < PRIORITY_MAX; nCntPriority++)
+	{
+		CObject *pObject = CObject::GetTop(nCntPriority);		// 先頭のオブジェクトを代入
+
+		while (pObject != NULL)
+		{// 使用されている
+			CObject *pObjectNext = pObject->GetNext();		// 次のオブジェクトを保存
+			CObject::TYPE type = pObject->GetType();		// 種類を取得
+			D3DXVECTOR3 pos = pObject->GetPos();			// 位置
+			D3DXVECTOR3 posOld = pObject->GetPosOld();		// 前回の位置
+			D3DXVECTOR3 sizeMax = pObject->GetSize();		// 最大サイズ
+			D3DXVECTOR3 sizeMin = pObject->GetSizeMin();	// 最小サイズ
+
+			if (type == CObject::TYPE_BOXNORMAL || type == CObject::TYPE_BOXDAMAGE)
+			{// 地形
+				if (pos.x + sizeMin.x - m_vtxMax.x <= m_pos.x && pos.x + sizeMax.x - m_vtxMin.x >= m_pos.x
+					&& pos.z + sizeMin.z <= m_pos.z - m_vtxMin.z && pos.z + sizeMax.z >= m_pos.z + m_vtxMin.z)
+				{// 範囲内にある
+					if (m_pos.y > pos.y)
+					{// プレイヤーより下の位置
+						if (fPos <= pos.y)
+						{
+							fPos = pos.y;
+							m_posShadow.y = pos.y + sizeMax.y + 10.0f;
+						}
+					}
+				}
+			}
+			pObject = pObjectNext;		// 次のオブジェクトを代入
+		}
+	}
 }

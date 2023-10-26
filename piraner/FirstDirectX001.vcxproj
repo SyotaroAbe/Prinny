@@ -156,6 +156,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="bg.cpp" />
+    <ClCompile Include="boss.cpp" />
+    <ClCompile Include="bossBattle.cpp" />
     <ClCompile Include="bullet.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="debugproc.cpp" />
@@ -164,6 +166,7 @@
     <ClCompile Include="fade.cpp" />
     <ClCompile Include="fileload.cpp" />
     <ClCompile Include="game.cpp" />
+    <ClCompile Include="gamebg.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="light.cpp" />
     <ClCompile Include="main.cpp" />
@@ -198,6 +201,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bg.h" />
+    <ClInclude Include="boss.h" />
+    <ClInclude Include="bossBattle.h" />
     <ClInclude Include="bullet.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="debugproc.h" />
@@ -206,6 +211,7 @@
     <ClInclude Include="fade.h" />
     <ClInclude Include="fileload.h" />
     <ClInclude Include="game.h" />
+    <ClInclude Include="gamebg.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="light.h" />
     <ClInclude Include="main.h" />
