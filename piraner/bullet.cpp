@@ -16,6 +16,8 @@
 #include "objectBillboard.h"
 #include "texture.h"
 #include "game.h"
+#include "bossBattle.h"
+#include "boss.h"
 
 //===============================================
 // マクロ定義
@@ -190,14 +192,14 @@ bool CBullet::CollisionEnemy(D3DXVECTOR3 pos)
 			CObject *pObjectNext = pObject->GetNext();		// 次のオブジェクト
 			TYPE type = pObject->GetType();					// 種類を取得
 
-			if (type == TYPE_ENEMY || type == TYPE_BOXNORMAL || type == TYPE_BOXDAMAGE)
+			if (type == TYPE_ENEMY || type == TYPE_BOXNORMAL || type == TYPE_BOXDAMAGE || type == TYPE_BOSS)
 			{// 敵、地形
 				D3DXVECTOR3 ObjPos = pObject->GetPos();			// 位置を取得
 				D3DXVECTOR3 ObjSize = pObject->GetSize();		// サイズを取得
 				D3DXVECTOR3 ObjSizeMin = pObject->GetSizeMin();	// サイズを取得
 
-				if (pos.x >= ObjPos.x + ObjSizeMin.x && pos.x <= ObjPos.x + ObjSize.x
-					&& pos.z + BULLET_SIZEX >= ObjPos.z + ObjSizeMin.z && pos.z - BULLET_SIZEX <= ObjPos.z + ObjSize.z
+				if (/*pos.x >= ObjPos.x + ObjSizeMin.x && pos.x <= ObjPos.x + ObjSize.x
+					&&*/ pos.z + BULLET_SIZEX >= ObjPos.z + ObjSizeMin.z && pos.z - BULLET_SIZEX <= ObjPos.z + ObjSize.z
 					&& pos.y + BULLET_SIZEX >= ObjPos.y + ObjSizeMin.y && pos.y - BULLET_SIZEX <= ObjPos.y + ObjSize.y)
 				{// 敵と弾が当たった
 
@@ -209,6 +211,11 @@ bool CBullet::CollisionEnemy(D3DXVECTOR3 pos)
 						CParticle::Create(1)->Set(pObject->GetPos(), CParticle::TYPE_ENEMY);	// パーティクルの生成
 						pObject->Uninit();														// 敵の終了処理
 						//CGame::GetScore()->Add(ENEMY_SCORE);									// スコア加算
+					}
+					else if (type == TYPE_BOSS)
+					{// ボス
+						CParticle::Create(1)->Set(pObject->GetPos(), CParticle::TYPE_ENEMY);	// パーティクルの生成
+						CBossBattle::GetBoss()->HitDamage(1);
 					}
 					else
 					{

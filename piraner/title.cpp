@@ -13,6 +13,8 @@
 #include "meshfield.h"
 #include "manager.h"
 #include "camera.h"
+#include "logo.h"
+#include "pressenter.h"
 
 //===============================================
 // マクロ定義
@@ -23,6 +25,8 @@
 // 静的メンバ変数
 //===============================================
 CBg *CTitle::m_pBg = NULL;						// 背景クラスのポインタ
+CLogo *CTitle::m_pLogo = NULL;					// タイトルロゴ描画クラスのポインタ
+CPressEnter *CTitle::m_pPressEnter = NULL;		// PressEnter描画クラスのポインタ
 
 //===============================================
 // コンストラクタ
@@ -51,7 +55,13 @@ HRESULT CTitle::Init(HWND hWnd)
 	CManager::GetInstance()->GetCamera()->Init();
 
 	// 背景の生成
-	m_pBg = CBg::Create(CBg::TYPE_TITLE, 6);
+	m_pBg = CBg::Create(CBg::TYPE_TITLE, 4);
+
+	// タイトルロゴの生成
+	m_pLogo = CLogo::Create();
+
+	// PressEnterの生成
+	m_pPressEnter = CPressEnter::Create();
 
 	return S_OK;
 }
@@ -72,13 +82,16 @@ void CTitle::Update(void)
 {
 	m_nTimeFade++;		// 時間をカウント
 
-	if (/*m_pLogo->GetEndAnim() == true &&*/ (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_RETURN) == true
+	if (m_pLogo->GetEndAnim() == true && (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_RETURN) == true
 		|| CManager::GetInstance()->GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_A, 0) == true))
 	{
 		if (m_bFade == false)
 		{// フェードバグ防止
 			CRenderer::GetFade()->Set(CScene::MODE_TUTORIAL);	// ゲーム画面へ移行
 			m_bFade = true;
+
+			// 点滅設定
+			m_pPressEnter->SetBrightnessFade(true);
 
 			// サウンドの再生
 			CManager::GetInstance()->GetSound()->Play(CSound::LABEL_SE_TITLE_ENTER);

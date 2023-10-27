@@ -127,18 +127,23 @@ void CGame::Update(void)
 		}
 	}
 
-//#if _DEBUG
+#if _DEBUG
 	if (m_bPause == true && CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_F3) == true)
 	{// ポーズ中カメラ操作
 		m_bPauseCamera = m_bPauseCamera ? false : true;		// ポーズ状態切り替え
 	}
 
 	if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_BACKSPACE) == true
-		|| CManager::GetInstance()->GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_BACK, 0) == true || m_pPlayer->GetPos().z > 7500.0f)
+		|| CManager::GetInstance()->GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_BACK, 0) == true)
 	{// BackSpace
 		CRenderer::GetFade()->Set(CScene::MODE_BOSS);		// リザルト画面へ移動
 	}
-//#endif
+#endif
+
+	if (m_pPlayer->GetPos().z > 7500.0f)
+	{// BackSpace
+		CRenderer::GetFade()->Set(CScene::MODE_BOSS);		// リザルト画面へ移動
+	}
 
 	if (m_pPlayer->GetPos().y < -100.0f)
 	{// 落下死

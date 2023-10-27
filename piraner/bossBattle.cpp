@@ -18,6 +18,7 @@
 #include "player.h"
 #include "boss.h"
 #include "gamebg.h"
+#include "clear.h"
 
 //===============================================
 // ê√ìIÉÅÉìÉoïœêî
@@ -28,6 +29,7 @@ CObject3D *CBossBattle::m_pObject3D = NULL;					// ÉIÉuÉWÉFÉNÉg3DÉNÉâÉXÇÃÉ|ÉCÉìÉ
 CPause *CBossBattle::m_pPause = NULL;							// É|Å[ÉYÉNÉâÉXÇÃÉ|ÉCÉìÉ^
 CBoss *CBossBattle::m_pBoss = NULL;							// É{ÉXÉNÉâÉXÇÃÉ|ÉCÉìÉ^
 CGameBg *CBossBattle::m_pGameBg = NULL;						// îwåiÉNÉâÉXÇÃÉ|ÉCÉìÉ^
+CClear *CBossBattle::m_pClear = NULL;						// ÉNÉäÉAï\é¶ÉNÉâÉXÇÃÉ|ÉCÉìÉ^
 
 bool CBossBattle::m_bPause = false;				// É|Å[ÉYèÛë‘
 bool CBossBattle::m_bStateReady = false;			// GAMSESTATE_READYÇ©Ç«Ç§Ç©
@@ -67,13 +69,16 @@ HRESULT CBossBattle::Init(HWND hWnd)
 	CObjectX::Load(hWnd);
 
 	// ÉvÉåÉCÉÑÅ[ÇÃê∂ê¨
-	m_pPlayer = CPlayer::Create(D3DXVECTOR3(0.0f, 220.0f, -100.0f), 4);
+	m_pPlayer = CPlayer::Create(D3DXVECTOR3(0.0f, 330.0f, -100.0f), 4);
 
 	// îwåiÇÃê∂ê¨
 	m_pGameBg = CGameBg::Create(D3DXVECTOR3(m_pPlayer->GetPos().x, m_pPlayer->GetPos().y, CManager::GetInstance()->GetCamera()->GetPosR().z), CGameBg::TEX_BOSS, 0);
 
 	// É{ÉXÇÃê∂ê¨
-	m_pBoss = CBoss::Create(D3DXVECTOR3(0.0f, 320.0f, 900.0f), CBoss::TYPE_WALK, 4);
+	m_pBoss = CBoss::Create(D3DXVECTOR3(50.0f, 420.0f, 900.0f), CBoss::TYPE_WALK, 4);
+
+	// ÉNÉäÉAï\é¶ÇÃê∂ê¨
+	m_pClear = CClear::Create();
 
 	// É|Å[ÉYÇÃê∂ê¨
 	m_pPause = CPause::Create(6);

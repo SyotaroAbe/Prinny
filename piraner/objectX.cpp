@@ -420,7 +420,15 @@ bool CObjectX::CollisionModel(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTO
 					&& pos.z + sizeMin.z <= pPos->z - vtxMin.z && pos.z + sizeMax.z >= pPos->z + vtxMin.z
 					&& pos.y + sizeMin.y <= pPos->y + vtxMax.y && pos.y + sizeMax.y >= pPos->y + vtxMin.y)
 				{// ”ÍˆÍ“à‚É‚ ‚é
-					CPlayer::EState state = CGame::GetPlayer()->GetState();
+					CPlayer::EState state = CPlayer::STATE_NONE;
+					if (CManager::GetMode() == CScene::MODE_GAME)
+					{
+						state = CGame::GetPlayer()->GetState();
+					}
+					else
+					{
+						state = CBossBattle::GetPlayer()->GetState();
+					}
 
 					if (posOld.y + sizeMax.y <= pPosOld->y + vtxMin.y
 						&& pos.y + sizeMax.y >= pPos->y + vtxMin.y)
@@ -434,7 +442,7 @@ bool CObjectX::CollisionModel(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTO
 						else
 						{
 							CBossBattle::GetPlayer()->SetPos(D3DXVECTOR3(pPos->x, posOld.y - vtxMin.y + sizeMax.y, pPos->z));
-							CBossBattle::GetPlayer()->SetMove(D3DXVECTOR3(CGame::GetPlayer()->GetMove().x, 0.0f, CGame::GetPlayer()->GetMove().z));
+							CBossBattle::GetPlayer()->SetMove(D3DXVECTOR3(CBossBattle::GetPlayer()->GetMove().x, 0.0f, CBossBattle::GetPlayer()->GetMove().z));
 						}
 
 						if (pObject->GetType() == CObject::TYPE_BOXNORMAL)
@@ -502,7 +510,7 @@ bool CObjectX::CollisionModel(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTO
 						else
 						{
 							CBossBattle::GetPlayer()->SetPos(D3DXVECTOR3(pPos->x, posOld.y - vtxMax.y + sizeMin.y, pPos->z));
-							CBossBattle::GetPlayer()->SetMove(D3DXVECTOR3(CGame::GetPlayer()->GetMove().x, 0.0f, CGame::GetPlayer()->GetMove().z));
+							CBossBattle::GetPlayer()->SetMove(D3DXVECTOR3(CBossBattle::GetPlayer()->GetMove().x, 0.0f, CBossBattle::GetPlayer()->GetMove().z));
 						}
 
 						if (pObject->GetType() == CObject::TYPE_BOXDAMAGE)

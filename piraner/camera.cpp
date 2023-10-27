@@ -41,6 +41,8 @@ CCamera::CCamera()
 	m_posV = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_posR = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_vecU = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_posRDest = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_posVDest = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_fLength = 0.0f;
 	m_nViewMapCounter = 0;
@@ -63,6 +65,8 @@ HRESULT CCamera::Init(void)
 	m_posV = D3DXVECTOR3(666.6f, 500.0f, 0.0f);
 	m_posR = D3DXVECTOR3(0.0f, 150.0f, 0.0f);
 	m_vecU = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+	m_posRDest = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_posVDest = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_rot = D3DXVECTOR3(0.0f, D3DX_PI * -0.5f, 0.0f);
 	m_fLength = LENTH_NORMAL;
 	m_nViewMapCounter = MAPVIEW_TIME;
@@ -133,6 +137,13 @@ void CCamera::Update(void)
 		m_posV.z = 0.0f;
 		m_posR.z = 0.0f;
 	}
+
+	if (m_posR.z >= 6900.0f)
+	{
+		m_posV.z = 6900.0f;
+		m_posR.z = 6900.0f;
+	}
+
 }
 
 //===============================================

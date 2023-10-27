@@ -71,6 +71,7 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 	void Draw(void);
 
 	void CollisionObjX(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 vtxMax, D3DXVECTOR3 vtxMin);
+	void HitDamage(int nDamage);
 
 	void SetPos(const D3DXVECTOR3 pos);
 	D3DXVECTOR3 GetPos(void) { return m_pos; }
@@ -79,6 +80,7 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 	D3DXVECTOR3 GetMove(void) { return m_move; }
 	D3DXVECTOR3 GetRot(void) { return m_rot; }
 	void SetJump(const bool bJump);
+	int GetLife(void) { return m_nLife; }
 	void SetSize(D3DXVECTOR3 size);
 	D3DXVECTOR3 GetSize(void) { return m_vtxMax; }
 	void SetSizeMin(D3DXVECTOR3 size);
@@ -96,11 +98,14 @@ private:	// 自分のみアクセス可能 [アクセス指定子]
 	D3DXVECTOR3 m_vtxMax;					// モデルの最大値
 	D3DXVECTOR3 m_vtxMin;					// モデルの最小値
 
+	int m_nLife;							// 体力
 	float m_fSpeed;							// 移動速度変更用
 	bool m_bJump;							// ジャンプしたかどうか
 	float m_fRotDiff;						// 目的の向きまでの差分
 	int m_nStateCounter;					// 状態管理カウンター
 	bool m_bMoveRight;						// 進行方向変更フラグ
+	bool m_bDamage;							// ダメージ状態か
+	int m_nStateDamage;						// ダメージ状態管理カウンター
 
 	EType m_type;							// 種類
 	EState m_state;							// 状態

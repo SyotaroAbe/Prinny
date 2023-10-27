@@ -71,6 +71,7 @@ CPlayer::CPlayer() : CObject(4)
 	m_bInvincible = false;
 	m_nInvincibleCounter = 0;
 	m_posShadow = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_bDisp = true;
 }
 
 //===============================================
@@ -101,6 +102,7 @@ CPlayer::CPlayer(int nPriority) : CObject(nPriority)
 	m_bInvincible = false;
 	m_nInvincibleCounter = 0;
 	m_posShadow = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_bDisp = true;
 }
 
 //===============================================
@@ -121,11 +123,14 @@ CPlayer *CPlayer::Create(D3DXVECTOR3 pos, int nPriority)
 	// プレイヤーの生成
 	pPlayer = new CPlayer(nPriority);
 
-	// 種類の設定
-	pPlayer->SetType(CObject::TYPE_PLAYER);
-	
-	// 初期化処理
-	pPlayer->Init(pos);
+	if (pPlayer != NULL)
+	{
+		// 種類の設定
+		pPlayer->SetType(CObject::TYPE_PLAYER);
+
+		// 初期化処理
+		pPlayer->Init(pos);
+	}
 
 	return pPlayer;
 }
@@ -448,7 +453,7 @@ void CPlayer::Update(void)
 		{
 			m_state = STATE_NORMAL;
 			m_bInvincible = true;
-			m_nInvincibleCounter = 200;				// 状態カウンターを設定
+			m_nInvincibleCounter = 120;				// 状態カウンターを設定
 		}
 		break;
 
@@ -461,9 +466,15 @@ void CPlayer::Update(void)
 
 	if (m_bInvincible == true)
 	{
+		if ((m_nInvincibleCounter % 10) == 0)
+		{
+			m_bDisp = m_bDisp ? false : true;
+		}
+
 		if (m_nInvincibleCounter < 0)
 		{
 			m_bInvincible = false;
+			m_bDisp = true;
 		}
 	}
 
@@ -556,7 +567,7 @@ void CPlayer::Update(void)
 //===============================================
 void CPlayer::Draw(void)
 {
-	if (CManager::GetMode() != CScene::MODE_TITLE)
+	if (m_bDisp == true)
 	{// タイトルじゃない
 		LPDIRECT3DDEVICE9 pDevice = CManager::GetInstance()->GetRenderer()->GetDevice();	// デバイスの取得
 		D3DXMATRIX mtxRot, mtxTrans;										// 計算用マトリックス

@@ -24,9 +24,10 @@ class CObject3D;
 class CPause;
 class CBoss;
 class CGameBg;
+class CClear;
 
 //===============================================
-// ゲーム画面クラス
+// ボス画面クラス
 //===============================================
 class CBossBattle : public CScene
 {
@@ -55,6 +56,7 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 	static CPause *GetPause() { return m_pPause; }
 	static CBoss *GetBoss() { return m_pBoss; }
 	static CGameBg *GetGameBg() { return m_pGameBg; }
+	static CClear *GetClear() { return m_pClear; }
 
 	static void SetEnablePause(const bool bPause);
 	static bool GetPauseState(void) { return m_bPause; }
@@ -70,6 +72,7 @@ private:	// 自分のみアクセス可能 [アクセス指定子]
 	static CPause *m_pPause;						// ポーズクラスのポインタ
 	static CBoss *m_pBoss;							// ボスクラスのポインタ
 	static CGameBg *m_pGameBg;						// 背景クラスのポインタ
+	static CClear *m_pClear;						// クリア表示クラスのポインタ
 
 	static bool m_bStateReady;		// GAMSESTATE_READYかどうか
 	static bool m_bPause;			// 現在のポーズの状態

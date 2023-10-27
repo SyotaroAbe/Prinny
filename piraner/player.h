@@ -120,6 +120,7 @@ private:	// 自分のみアクセス可能 [アクセス指定子]
 	int m_nStateCounter;					// 状態管理カウンター
 	bool m_bInvincible;						// 無敵状態かどうか
 	int m_nInvincibleCounter;				// 無敵状態カウンター
+	bool m_bDisp;							// 画面に表示するか
 
 	EState m_state;							// 状態
 

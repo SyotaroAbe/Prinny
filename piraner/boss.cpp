@@ -61,6 +61,9 @@ CBoss::CBoss() : CObject(4)
 	m_state = STATE_NONE;
 	m_stateOld = STATE_NONE;
 	m_bMoveRight = false;
+	m_nLife = 0;
+	m_bDamage = false;
+	m_nStateDamage = 0;
 }
 
 //===============================================
@@ -87,6 +90,9 @@ CBoss::CBoss(int nPriority) : CObject(nPriority)
 	m_state = STATE_NONE;
 	m_stateOld = STATE_NONE;
 	m_bMoveRight = false;
+	m_nLife = 0;
+	m_bDamage = false;
+	m_nStateDamage = 0;
 }
 
 //===============================================
@@ -146,6 +152,9 @@ HRESULT CBoss::Init(D3DXVECTOR3 pos)
 
 	// 移動速度の初期化
 	m_fSpeed = MOVE_ENEMY;
+
+	// 体力の設定
+	m_nLife = 20;
 
 	const char *apModelFile[MAX_MODEL];		// モデルファイル名
 
@@ -274,7 +283,9 @@ void CBoss::Uninit(void)
 //===============================================
 void CBoss::Update(void)
 {
-	m_nStateCounter--;		// カウンタを更新
+	// カウンタを更新
+	m_nStateCounter--;
+	m_nStateDamage--;
 
 	// 前回の位置を保存
 	m_posOld = m_pos;
@@ -282,7 +293,10 @@ void CBoss::Update(void)
 	switch (m_state)
 	{
 	case STATE_NORMAL:		// 通常
-		m_pMotion->Set(MOTIONTYPE_NEUTRAL);
+		if (m_pMotion != NULL)
+		{
+			m_pMotion->Set(MOTIONTYPE_NEUTRAL);
+		}
 
 		if (m_nStateCounter <= 0)
 		{
@@ -304,7 +318,10 @@ void CBoss::Update(void)
 	case STATE_MOVERIGHT:	// 右移動
 		m_move.z += cosf(D3DX_PI * ROT_DOWN + (ROT_CAMERA * m_rot.y)) * m_fSpeed;
 		m_rotDest.y = D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y);
-		m_pMotion->Set(MOTIONTYPE_MOVE);				// 初期モーション設定
+		if (m_pMotion != NULL)
+		{
+			m_pMotion->Set(MOTIONTYPE_MOVE);				// 初期モーション設定
+		}
 
 		if (m_nStateCounter <= 0)
 		{
@@ -317,7 +334,10 @@ void CBoss::Update(void)
 	case STATE_MOVELEFT:	// 左移動
 		m_move.z += cosf(D3DX_PI * ROT_DOWN + (ROT_CAMERA * m_rot.y)) * m_fSpeed;
 		m_rotDest.y = D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y);
-		m_pMotion->Set(MOTIONTYPE_MOVE);				// 初期モーション設定
+		if (m_pMotion != NULL)
+		{
+			m_pMotion->Set(MOTIONTYPE_MOVE);				// 初期モーション設定
+		}
 
 		if (m_nStateCounter <= 0)
 		{
@@ -332,6 +352,14 @@ void CBoss::Update(void)
 
 	case STATE_ATTACK:		// 攻撃
 		break;
+	}
+
+	if (m_bDamage == true)
+	{// ダメージ状態
+		if (m_nStateDamage <= 0)
+		{
+			m_bDamage = false;
+		}
 	}
 
 	m_fRotDiff = m_rotDest.y - m_rot.y;	// 目的の向きまでの差分
@@ -378,7 +406,7 @@ void CBoss::Update(void)
 	}
 
 	// 当たり判定
-	CGame::GetPlayer()->CollisionEnemy(&m_pos, &m_posOld, m_vtxMax, m_vtxMin);
+	CBossBattle::GetPlayer()->CollisionEnemy(&m_pos, &m_posOld, m_vtxMax, m_vtxMin);
 
 	// 地形との当たり判定
 	if (CObjectX::CollisionEnemy(&m_pos, &m_posOld, &m_rotDest, &m_move, m_vtxMax, m_vtxMin) == true)
@@ -420,7 +448,14 @@ void CBoss::Draw(void)
 		for (int nCntModel = 0; nCntModel < m_nNumModel; nCntModel++)
 		{
 			// モデルの描画処理
-			m_apModel[nCntModel]->Draw();
+			if (m_bDamage == false)
+			{
+				m_apModel[nCntModel]->Draw();
+			}
+			else
+			{// ダメージ状態
+				m_apModel[nCntModel]->SetCol(D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
+			}
 
 			// モデルの影の描画処理
 			m_apModel[nCntModel]->DrawShadowmtx(m_pos.y);
@@ -472,6 +507,21 @@ void CBoss::CollisionObjX(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR3 v
 				m_state = STATE_MOVERIGHT;
 			}
 		}
+	}
+}
+
+//===============================================
+// ダメージ処理
+//===============================================
+void CBoss::HitDamage(int nDamage)
+{
+	m_nLife -= nDamage;
+	m_bDamage = true;
+	m_nStateDamage = 10;
+
+	if (m_nLife <= 0)
+	{// 体力が０
+		Uninit();
 	}
 }
 

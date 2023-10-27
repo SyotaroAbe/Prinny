@@ -9,6 +9,7 @@
 #include "manager.h"
 #include "camera.h"
 #include "game.h"
+#include "bossBattle.h"
 
 //=============================
 // ê√ìIÉÅÉìÉoïœêî 
@@ -220,7 +221,9 @@ void CObject::Reset()
 //===============================================
 void CObject::UpdateAll()
 {
-	if ((CScene::GetMode() == CScene::MODE_GAME && CGame::GetStateReady() == false) || CScene::GetMode() != CScene::MODE_GAME)
+	if ((CScene::GetMode() == CScene::MODE_GAME && CGame::GetStateReady() == false) 
+		|| (CScene::GetMode() == CScene::MODE_BOSS && CBossBattle::GetStateReady() == false) 
+		|| (CScene::GetMode() != CScene::MODE_GAME && CScene::GetMode() != CScene::MODE_BOSS))
 	{// ë“ã@èÛë‘
 		for (int nCntPriority = 0; nCntPriority < PRIORITY_MAX; nCntPriority++)
 		{
