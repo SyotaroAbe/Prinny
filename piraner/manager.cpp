@@ -23,6 +23,10 @@
 #include "meshfield.h"
 #include "fileload.h"
 #include "bossBattle.h"
+#include "game.h"
+#include "time.h"
+#include "result.h"
+#include "ranking.h"
 
 //===============================================
 // 静的メンバ変数
@@ -44,6 +48,7 @@ HWND CManager::m_hWnd = NULL;						// ウインドウ保存用
 CScene::MODE CScene::m_mode = CScene::MODE_TITLE;		// 現在の画面モード
 CScene::MODE CScene::m_modeOld = CScene::MODE_TITLE;	// 前回の画面モード
 CScene::MODE CManager::m_mode = CScene::MODE_TITLE;		// 現在の画面モード
+int CScene::m_nTime = 0;								// タイム
 
 //***********************************************************
 // シーンクラス
@@ -115,14 +120,14 @@ CScene *CScene::Create(HWND hWnd, MODE mode)
 	case MODE_RESULT:	// リザルト画面
 		pScene = new CResult;
 
-		if (m_mode != MODE_TITLE)
-		{
+		//if (m_mode != MODE_TITLE)
+		//{
 			// サウンドの停止
 			CManager::GetInstance()->GetSound()->Stop();
 
 			// サウンドの再生
 			CManager::GetInstance()->GetSound()->Play(CSound::LABEL_BGM_RANKING);
-		}
+		//}
 		break;
 	}
 
@@ -133,6 +138,30 @@ CScene *CScene::Create(HWND hWnd, MODE mode)
 
 		// シーンの初期化処理
 		pScene->Init(hWnd);
+
+		// タイムの情報を渡す
+		if (m_mode == MODE_GAME && m_modeOld == MODE_GAME)
+		{// ゲームからゲームへ
+			CGame::GetTime()->Set(m_nTime);
+		}
+		else if (m_mode == MODE_BOSS && m_modeOld == MODE_GAME)
+		{// ゲームからボスへ
+			CBossBattle::GetTime()->Set(m_nTime);
+		}
+		else if (m_mode == MODE_BOSS && m_modeOld == MODE_BOSS)
+		{// ボスからボスへ
+			CBossBattle::GetTime()->Set(m_nTime);
+		}
+		else if (m_mode == CScene::MODE_RESULT && m_modeOld == CScene::MODE_BOSS)
+		{// 次のモードがリザルト
+			// ランキングの設定
+			CResult::GetRanking()->Add(m_nTime);
+		}
+		else
+		{
+			m_nTime = 0;	// タイムを初期化
+		}
+
 	}
 
 	return pScene;
@@ -145,6 +174,14 @@ void CScene::SetMode(MODE mode)
 {
 	m_modeOld = m_mode;
 	m_mode = mode;
+}
+
+//===============================================
+// 時間設定処理
+//===============================================
+void CScene::SetTime(int nTime)
+{
+	m_nTime = nTime;
 }
 
 //***********************************************************
@@ -505,19 +542,24 @@ void CManager::SetMode(CScene::MODE mode)
 	CScene::MODE modeOld = m_mode;
 	m_mode = mode;
 
-	if (mode == CScene::MODE_TUTORIAL || mode == CScene::MODE_GAME)
-	{
+	//if (mode == CScene::MODE_TUTORIAL || mode == CScene::MODE_GAME)
+	//{
 		// サウンドの停止
 		GetInstance()->GetSound()->Stop();
-	}
+	//}
 
 	// シーンを代入
 	CScene *pScenePrev = m_pScene;
 
-	if (mode == CScene::MODE_RESULT && modeOld != CScene::MODE_TITLE)
+	if (m_mode == CScene::MODE_BOSS && modeOld != CScene::MODE_GAME)
 	{// 次のモードがリザルト
-		//nScore = CGame::GetScore()->Get();
+		//m_nTime = CGame::GetTime()->Get();
 	}
+
+	//if (mode == CScene::MODE_RESULT && modeOld != CScene::MODE_TITLE)
+	//{// 次のモードがリザルト
+	//	m_nTime = CGame::GetTime()->Get();
+	//}
 
 	// 現在のモードの破棄
 	if (pScenePrev != NULL)
@@ -527,12 +569,6 @@ void CManager::SetMode(CScene::MODE mode)
 
 	// 新しいモードの生成
 	m_pScene = CScene::Create(m_hWnd, mode);
-
-	if (mode == CScene::MODE_RESULT && modeOld != CScene::MODE_TITLE)
-	{// 次のモードがリザルト
-		// ランキングの設定
-		//CResult::GetRanking()->Add(nScore);
-	}
 
 	// メモリの開放
 	delete pScenePrev;

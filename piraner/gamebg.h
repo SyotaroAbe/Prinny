@@ -19,16 +19,18 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 	CGameBg(int nPriority = 2);		// オーバーロードされたコンストラクタ
 	~CGameBg();						// デストラクタ
 
+	// テクスチャの種類
 	enum ETex
 	{
 		TEX_GAME = 0,	// ゲーム
+		TEX_TUTORIAL,	// チュートリアル
 		TEX_BOSS,		// ボス
 		TEX_MAX
 	};
 
 	static CGameBg *Create(D3DXVECTOR3 pos, ETex tex, int nPriority = 3);
 
-	HRESULT Init(D3DXVECTOR3 pos);
+	HRESULT Init(D3DXVECTOR3 pos, ETex tex);
 	void Uninit(void);
 	void Update(void);
 	void Draw(void);
@@ -36,6 +38,7 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 
 private:	// 自分のみアクセス可能 [アクセス指定子]
 	static int m_nIdxTexture;			// 使用するテクスチャの番号
+	ETex m_tex;							// テクスチャの種類
 };
 
 #endif

@@ -10,6 +10,8 @@
 #include "renderer.h"
 #include "fade.h"
 #include "manager.h"
+#include "ranking.h"
+#include "rankIn.h"
 
 //===============================================
 // マクロ定義
@@ -49,6 +51,12 @@ HRESULT CResult::Init(HWND hWnd)
 	// 背景の生成
 	m_pBg = CBg::Create(CBg::TYPE_RESULT);
 
+	// ランキングの生成
+	m_pRanking = CRanking::Create(6);
+
+	// ランクインの生成
+	m_pRankIn = CRankIn::Create();
+	
 	return S_OK;
 }
 
@@ -57,6 +65,14 @@ HRESULT CResult::Init(HWND hWnd)
 //===============================================
 void CResult::Uninit(void)
 {
+	if (m_pRanking != NULL)
+	{
+		// ランキングの終了処理
+		m_pRanking->Uninit();
+		delete m_pRanking;
+		m_pRanking = NULL;
+	}
+
 	// 全てのオブジェクトの破棄
 	CObject::ReleaseAll();
 }
@@ -79,6 +95,12 @@ void CResult::Update(void)
 			m_bFade = true;
 		}
 	}
+
+	if (m_pRanking != NULL)
+	{
+		// ランキングの更新処理
+		m_pRanking->Update();
+	}
 }
 
 //===============================================
@@ -86,5 +108,9 @@ void CResult::Update(void)
 //===============================================
 void CResult::Draw(void)
 {
-	
+	if (m_pRanking != NULL)
+	{
+		// ランキングの描画処理
+		m_pRanking->Draw();
+	}
 }

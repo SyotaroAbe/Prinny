@@ -19,6 +19,7 @@
 #include "boss.h"
 #include "gamebg.h"
 #include "clear.h"
+#include "time.h"
 
 //===============================================
 // 静的メンバ変数
@@ -30,10 +31,12 @@ CPause *CBossBattle::m_pPause = NULL;							// ポーズクラスのポインタ
 CBoss *CBossBattle::m_pBoss = NULL;							// ボスクラスのポインタ
 CGameBg *CBossBattle::m_pGameBg = NULL;						// 背景クラスのポインタ
 CClear *CBossBattle::m_pClear = NULL;						// クリア表示クラスのポインタ
+CTime *CBossBattle::m_pTime = NULL;							// タイムクラスのポインタ
 
 bool CBossBattle::m_bPause = false;				// ポーズ状態
 bool CBossBattle::m_bStateReady = false;			// GAMSESTATE_READYかどうか
 bool CBossBattle::m_bPauseCamera = false;			// ポーズ時のカメラ操作可能か
+bool CBossBattle::m_bClear = false;			// クリアしているか
 
 //===============================================
 // コンストラクタ
@@ -77,6 +80,9 @@ HRESULT CBossBattle::Init(HWND hWnd)
 	// ボスの生成
 	m_pBoss = CBoss::Create(D3DXVECTOR3(50.0f, 420.0f, 900.0f), CBoss::TYPE_WALK, 4);
 
+	// タイムの生成
+	m_pTime = CTime::Create(5);
+
 	// クリア表示の生成
 	m_pClear = CClear::Create();
 
@@ -88,7 +94,7 @@ HRESULT CBossBattle::Init(HWND hWnd)
 	m_nCounterState = 0;
 
 	// サウンドの再生
-	CManager::GetInstance()->GetSound()->Play(CSound::LABEL_BGM_GAME);
+	CManager::GetInstance()->GetSound()->Play(CSound::LABEL_BGM_BOSS);
 
 	return S_OK;
 }
@@ -98,10 +104,21 @@ HRESULT CBossBattle::Init(HWND hWnd)
 //===============================================
 void CBossBattle::Uninit(void)
 {
+	// タイムの終了処理
+	if (m_pTime != NULL)
+	{
+		m_pTime->Uninit();
+		delete m_pTime;
+		m_pTime = NULL;
+	}
+
 	// ポーズの終了処理
-	m_pPause->Uninit();
-	delete m_pPause;
-	m_pPause = NULL;
+	if (m_pPause != NULL)
+	{
+		m_pPause->Uninit();
+		delete m_pPause;
+		m_pPause = NULL;
+	}
 
 	// 全てのオブジェクトの破棄
 	CObject::ReleaseAll();
@@ -139,6 +156,7 @@ void CBossBattle::Update(void)
 		|| CManager::GetInstance()->GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_BACK, 0) == true || m_pPlayer->GetPos().z > 7500.0f)
 	{// BackSpace
 		CRenderer::GetFade()->Set(CScene::MODE_RESULT);		// リザルト画面へ移動
+		SetTime(m_pTime->Get());		// 時間の設定
 	}
 //#endif
 
@@ -146,13 +164,21 @@ void CBossBattle::Update(void)
 	{// 落下死
 		GetPlayer()->SetState(CPlayer::STATE_DEATH);
 		CRenderer::GetFade()->Set(CScene::MODE_BOSS);		// リザルト画面へ移動
+		SetTime(m_pTime->Get());		// 時間の設定
 	}
 
 	if (m_bStateReady == false)
 	{// 待機状態じゃない
 		if (m_bPause == false)
 		{// ポーズ状態じゃない
-			
+			if (m_pTime != NULL)
+			{
+				if (m_bClear == false)
+				{// クリアしていない
+					// タイムの更新処理
+					m_pTime->Update();
+				}
+			}
 		}
 	}
 	else if (m_bStateReady == true)
@@ -168,7 +194,10 @@ void CBossBattle::Update(void)
 	if (m_bPause == true && m_bPauseCamera == false)
 	{// ポーズ状態
 		// ポーズの更新処理
-		m_pPause->Update();
+		if (m_pPause != NULL)
+		{
+			m_pPause->Update();
+		}
 	}
 
 	switch (m_state)
@@ -213,7 +242,11 @@ void CBossBattle::Update(void)
 //===============================================
 void CBossBattle::Draw(void)
 {
-	
+	// タイムの描画処理
+	if (m_pTime != NULL)
+	{
+		m_pTime->Draw();
+	}
 }
 
 //===============================================
@@ -222,4 +255,12 @@ void CBossBattle::Draw(void)
 void CBossBattle::SetEnablePause(const bool bPause)
 {
 	m_bPause = bPause;
+}
+
+//===============================================
+// クリア状態の設定
+//===============================================
+void CBossBattle::SetClear(bool bClear)
+{
+	m_bClear = bClear;
 }

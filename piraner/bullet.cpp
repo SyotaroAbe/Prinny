@@ -25,7 +25,7 @@
 #define BULLET_SIZEX		(8.0f)			// 幅（半分）
 #define BULLET_SIZEY		(8.0f)			// 高さ（半分）
 #define MOVE_BULLET			(5.0f)			// 動く速度
-#define BULLET_LIFE			(120)			// ライフ
+#define BULLET_LIFE			(50)			// ライフ
 
 //===============================================
 // 静的メンバ変数
@@ -146,14 +146,16 @@ void CBullet::Update(void)
 			m_nLife--;	//体力を減らす
 
 			// エフェクトの生成
-			CParticle::Create(1)->Set(D3DXVECTOR3(m_pos.x + cosf(m_rot.y) * 18.0f, m_pos.y, m_pos.z - sinf(m_rot.y) * 18.0f), CParticle::TYPE_CURVE);
+			CParticle::Create(1)->Set(D3DXVECTOR3(m_pos.x + cosf(m_rot.y) * 18.0f, m_pos.y, m_pos.z - sinf(m_rot.y) * 18.0f), CParticle::TYPE_FIRE);
 			CEffect::Create(m_pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(0.0f, 0.5f, 1.0f, 1.0f), CEffect::TYPE_NORMAL, 25, 25, 3);
-			CEffect::Create(m_pos, D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f), CEffect::TYPE_NORMAL, 15, 25, 3);
 		}
 	}
 	else
 	{// 弾が当たった
 		//CExplosion::Create(3)->SetPos(m_pos);	//爆発の生成
+		// サウンドの再生
+		CManager::GetInstance()->GetSound()->Play(CSound::LABEL_SE_EXPLOSION);
+
 		Uninit();				//自分の終了処理
 	}
 }

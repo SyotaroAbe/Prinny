@@ -25,6 +25,7 @@ class CPause;
 class CBoss;
 class CGameBg;
 class CClear;
+class CTime;
 
 //===============================================
 // ボス画面クラス
@@ -57,6 +58,7 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 	static CBoss *GetBoss() { return m_pBoss; }
 	static CGameBg *GetGameBg() { return m_pGameBg; }
 	static CClear *GetClear() { return m_pClear; }
+	static CTime *GetTime() { return m_pTime; }
 
 	static void SetEnablePause(const bool bPause);
 	static bool GetPauseState(void) { return m_bPause; }
@@ -64,6 +66,7 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 	static bool GetPauseCamera(void) { return m_bPauseCamera; }
 
 	STATE GetState(void) { return m_state; }
+	static void SetClear(bool bClear);
 
 private:	// 自分のみアクセス可能 [アクセス指定子]
 	static CPlayer *m_pPlayer;						// プレイヤークラスのポインタ
@@ -73,10 +76,12 @@ private:	// 自分のみアクセス可能 [アクセス指定子]
 	static CBoss *m_pBoss;							// ボスクラスのポインタ
 	static CGameBg *m_pGameBg;						// 背景クラスのポインタ
 	static CClear *m_pClear;						// クリア表示クラスのポインタ
+	static CTime *m_pTime;							// タイムクラスのポインタ
 
 	static bool m_bStateReady;		// GAMSESTATE_READYかどうか
 	static bool m_bPause;			// 現在のポーズの状態
 	static bool m_bPauseCamera;		// ポーズ時のカメラ操作可能か
+	static bool m_bClear;			// クリアしているか
 	STATE m_state;					// ゲームの状態
 	int m_nCounterState;			// 状態管理カウンター
 };

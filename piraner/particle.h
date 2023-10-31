@@ -28,6 +28,7 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 		TYPE_BULLET,		// 弾
 		TYPE_MOVE,			// 移動
 		TYPE_CURVE,			// カーブ
+		TYPE_FIRE,			// 炎
 		TYPE_MAX
 	}TYPE;
 

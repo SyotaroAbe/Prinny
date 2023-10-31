@@ -71,6 +71,12 @@ HRESULT CCamera::Init(void)
 	m_fLength = LENTH_NORMAL;
 	m_nViewMapCounter = MAPVIEW_TIME;
 
+	if (CManager::GetMode() == CScene::MODE_TUTORIAL)
+	{// チュートリアル用カメラ
+		m_posV = D3DXVECTOR3(666.6f, 1100.0f, 0.0f);
+		m_posR = D3DXVECTOR3(0.0f, 750.0f, 0.0f);
+	}
+
 	return S_OK;
 }
 
@@ -111,22 +117,36 @@ void CCamera::Update(void)
 		}
 	}
 
-	// カメラの追従
-	// 目的の視点・注視点を設定
-	m_posRDest.x = playerPos.x;
-	m_posRDest.y = playerPos.y + 400.0f;
-	m_posRDest.z = playerPos.z;
-	m_posVDest.x = playerPos.x;
-	m_posVDest.y = playerPos.y + 400.0f;
-	m_posVDest.z = playerPos.z;
+	if (CManager::GetMode() != CScene::MODE_TUTORIAL)
+	{
+		// カメラの追従
+		// 目的の視点・注視点を設定
+		m_posRDest.x = playerPos.x;
+		m_posRDest.y = playerPos.y + 400.0f;
+		m_posRDest.z = playerPos.z;
+		m_posVDest.x = playerPos.x;
+		m_posVDest.y = playerPos.y + 400.0f;
+		m_posVDest.z = playerPos.z;
 
-	// 移動量を更新（減衰させる）
-	m_posV.x += (m_posVDest.x - m_posV.x) * MOVEV_MINUS;
-	m_posV.y += (m_posVDest.y - m_posV.y) * MOVEV_MINUS;
-	m_posV.z += (m_posVDest.z - m_posV.z) * MOVEV_MINUS;
-	m_posR.x += (m_posRDest.x - m_posR.x) * MOVER_MINUS;
-	m_posR.y += (m_posRDest.y - m_posV.y) * MOVER_MINUS;
-	m_posR.z += (m_posRDest.z - m_posR.z) * MOVER_MINUS;
+		// 移動量を更新（減衰させる）
+		m_posV.x += (m_posVDest.x - m_posV.x) * MOVEV_MINUS;
+		m_posV.y += (m_posVDest.y - m_posV.y) * MOVEV_MINUS;
+		m_posV.z += (m_posVDest.z - m_posV.z) * MOVEV_MINUS;
+		m_posR.x += (m_posRDest.x - m_posR.x) * MOVER_MINUS;
+		m_posR.y += (m_posRDest.y - m_posV.y) * MOVER_MINUS;
+		m_posR.z += (m_posRDest.z - m_posR.z) * MOVER_MINUS;
+	}
+	else
+	{
+		// カメラの追従
+		// 目的の視点・注視点を設定
+		m_posVDest.x = playerPos.x;
+		m_posVDest.z = playerPos.z;
+
+		// 移動量を更新（減衰させる）
+		m_posV.x += (m_posVDest.x - m_posV.x) * MOVEV_MINUS;
+		m_posV.z += (m_posVDest.z - m_posV.z) * MOVEV_MINUS;
+	}
 
 	//注視点と一緒に視点も動かす
 	m_posV.x = m_posV.x + m_fLength;
@@ -143,7 +163,6 @@ void CCamera::Update(void)
 		m_posV.z = 6900.0f;
 		m_posR.z = 6900.0f;
 	}
-
 }
 
 //===============================================
@@ -176,11 +195,22 @@ void CCamera::Set(void)
 	D3DXMatrixIdentity(&m_mtxProjection);
 
 	// プロジェクションマトリックスを作成
-	D3DXMatrixPerspectiveFovLH(&m_mtxProjection,
-		D3DXToRadian(45.0f),
-		(float)SCREEN_WIDTH / (float)SCREEN_HEIGHT,
-		10.0f,
-		8000.0f);
+	//if (CManager::GetMode() == CScene::MODE_TUTORIAL)
+	//{
+	//	D3DXMatrixOrthoLH(&m_mtxProjection,
+	//		(float)SCREEN_WIDTH,
+	//		(float)SCREEN_HEIGHT,
+	//		10.0f,
+	//		8000.0f);
+	//}
+	//else
+	//{
+		D3DXMatrixPerspectiveFovLH(&m_mtxProjection,
+			D3DXToRadian(45.0f),
+			(float)SCREEN_WIDTH / (float)SCREEN_HEIGHT,
+			10.0f,
+			8000.0f);
+	//}
 
 	// プロジェクションマトリックスの設定
 	pDevice->SetTransform(D3DTS_PROJECTION, &m_mtxProjection);

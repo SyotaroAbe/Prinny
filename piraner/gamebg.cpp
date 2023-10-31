@@ -29,6 +29,7 @@ int CGameBg::m_nIdxTexture = 0;						// 使用するテクスチャの番号
 CGameBg::CGameBg() : CObjectBillboard(2)
 {
 	// 値をクリア
+	m_tex = TEX_GAME;
 }
 
 //===============================================
@@ -37,6 +38,7 @@ CGameBg::CGameBg() : CObjectBillboard(2)
 CGameBg::CGameBg(int nPriority) : CObjectBillboard(nPriority)
 {
 	// 値をクリア
+	m_tex = TEX_GAME;
 }
 
 //===============================================
@@ -60,11 +62,8 @@ CGameBg *CGameBg::Create(D3DXVECTOR3 pos, ETex tex, int nPriority)
 	// 種類の設定
 	pGameBg->SetType(TYPE_BG);
 
-	// サイズの設定
-	pGameBg->SetSize(SCREEN_WIDTH * 0.8f, SCREEN_HEIGHT * 0.8f);
-
 	// 初期化処理
-	pGameBg->Init(pos);
+	pGameBg->Init(pos, tex);
 
 	// テクスチャの割り当て
 	pGameBg->BindTexture(m_nIdxTexture);
@@ -75,13 +74,26 @@ CGameBg *CGameBg::Create(D3DXVECTOR3 pos, ETex tex, int nPriority)
 //===============================================
 // 初期化処理
 //===============================================
-HRESULT CGameBg::Init(D3DXVECTOR3 pos)
+HRESULT CGameBg::Init(D3DXVECTOR3 pos, ETex tex)
 {
-	// オブジェクト2Dの初期化処理
-	CObjectBillboard::Init(pos);
+	m_tex = tex;
 
-	// テクスチャの設定
-	m_nIdxTexture = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\game000.png");
+	if (m_tex == TEX_TUTORIAL)
+	{
+		m_nIdxTexture = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\tutorial000.png");			// テクスチャの設定
+		SetSize(SCREEN_WIDTH * 0.45f, SCREEN_HEIGHT * 0.45f);														// サイズの設定
+
+		// オブジェクト2Dの初期化処理
+		CObjectBillboard::Init(D3DXVECTOR3(pos.x, pos.y + 100.0f, pos.z));
+	}
+	else
+	{
+		m_nIdxTexture = CManager::GetInstance()->GetTexture()->Regist("data\\TEXTURE\\game000.png");				// テクスチャの設定
+		SetSize(SCREEN_WIDTH * 0.6f, SCREEN_HEIGHT * 0.6f);														// サイズの設定
+	
+		// オブジェクト2Dの初期化処理
+		CObjectBillboard::Init(D3DXVECTOR3(pos.x, pos.y, pos.z));
+	}
 
 	return S_OK;
 }
@@ -101,7 +113,10 @@ void CGameBg::Uninit(void)
 void CGameBg::Update(void)
 {
 	// 位置をカメラの注視点に設定
-	CObjectBillboard::SetPos(D3DXVECTOR3(m_pos.x, CManager::GetInstance()->GetCamera()->GetPosR().y, CManager::GetInstance()->GetCamera()->GetPosR().z));
+	if (m_tex != TEX_TUTORIAL)
+	{
+		CObjectBillboard::SetPos(D3DXVECTOR3(m_pos.x, CManager::GetInstance()->GetCamera()->GetPosR().y, CManager::GetInstance()->GetCamera()->GetPosR().z));
+	}
 }
 
 //===============================================

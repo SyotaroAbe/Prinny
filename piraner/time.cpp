@@ -21,8 +21,8 @@ int CTime::m_nTime = 0;								// タイムの値
 //===============================================
 // マクロ定義
 //===============================================
-#define SET_TIME		(120)		// 設定タイム
-#define NUM_PLACE		(3)			// タイムの桁数
+#define SET_TIME		(0)		// 設定タイム
+#define NUM_PLACE		(4)			// タイムの桁数
 #define TIME_SIZEX		(27)		// タイムの幅（半分）
 #define TIME_SIZEY		(60)		// タイムの高さ（半分）
 
@@ -123,23 +123,23 @@ void CTime::Update(void)
 {
 	m_dwtime = timeGetTime();	// 現在時刻を取得（保存）
 
-	if ((m_dwtime - m_dwTime) >= 1000)
+	if ((m_dwtime - m_dwTime) >= 100)
 	{// １秒経過
 		m_dwTime = m_dwtime;
 
-		if (m_nTime > 0)
+		if (m_nTime < 9999)
 		{// のこり時間が０秒じゃない
-			m_nTime--;
+			m_nTime++;
 			Set(m_nTime);
 		}
-		else if(m_nTime <= 0)
-		{
-			if (m_bFade == false)
-			{// フェードバグ防止
-				CRenderer::GetFade()->Set(CScene::MODE_RESULT);		// リザルト画面へ移動
-				m_bFade = true;
-			}
-		}
+		//else if(m_nTime <= 0)
+		//{
+		//	if (m_bFade == false)
+		//	{// フェードバグ防止
+		//		CRenderer::GetFade()->Set(CScene::MODE_RESULT);		// リザルト画面へ移動
+		//		m_bFade = true;
+		//	}
+		//}
 	}
 
 	// ナンバーの更新処理
@@ -176,9 +176,10 @@ void CTime::Set(const int nTime)
 
 	m_nTime = nTime;
 
-	aTexU[0] = m_nTime % 1000 / 100;
-	aTexU[1] = m_nTime % 100 / 10;
-	aTexU[2] = m_nTime % 10;
+	aTexU[0] = m_nTime % 10000 / 1000;
+	aTexU[1] = m_nTime % 1000 / 100;
+	aTexU[2] = m_nTime % 100 / 10;
+	aTexU[3] = m_nTime % 10;
 
 	for (int nCntScore = 0; nCntScore < NUM_PLACE; nCntScore++)
 	{

@@ -13,6 +13,10 @@
 #include "meshfield.h"
 #include "sound.h"
 #include "bg.h"
+#include "player.h"
+#include "objectX.h"
+#include "objectBillboard.h"
+#include "gamebg.h"
 
 //===============================================
 // マクロ定義
@@ -31,6 +35,7 @@ CPlayer *CTutorial::m_pPlayer = NULL;			// プレイヤークラスのポインタ
 CNumber *CTutorial::m_pNumber = NULL;			// ナンバークラスのポインタ
 CMeshField *CTutorial::m_pMeshField = NULL;		// メッシュフィールドクラスのポインタ
 CBg *CTutorial::m_pBg = NULL;						// 背景クラスのポインタ
+CGameBg *CTutorial::m_pGameBg = NULL;						// 背景クラスのポインタ
 
 //===============================================
 // コンストラクタ
@@ -58,8 +63,14 @@ HRESULT CTutorial::Init(HWND hWnd)
 	// カメラの初期化処理
 	CManager::GetInstance()->GetCamera()->Init();
 
+	// オブジェクトXファイルの生成
+	CObjectX::Load(hWnd);
+
+	// プレイヤーの生成
+	m_pPlayer = CPlayer::Create(D3DXVECTOR3(0.0f, 510.0f, -350.0f), 4);
+
 	// 背景の生成
-	m_pBg = CBg::Create(CBg::TYPE_TUTORIAL, 6);
+	m_pGameBg = CGameBg::Create(CManager::GetInstance()->GetCamera()->GetPosR(), CGameBg::TEX_TUTORIAL, 0);
 
 	// サウンドの再生
 	CManager::GetInstance()->GetSound()->Play(CSound::LABEL_BGM_TUTORIAL);
@@ -83,21 +94,12 @@ void CTutorial::Update(void)
 {
 	m_nTime++;	// 時間をカウント
 
-	if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_RETURN) == true
-		|| CManager::GetInstance()->GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_START, 0) == true)
-	{
-		if (m_bFade == false)
-		{// フェードバグ防止
-			CRenderer::GetFade()->Set(CScene::MODE_GAME);	// ゲーム画面へ移行
-			m_bFade = true;
-		}
-	}
-	else if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_BACKSPACE) == true
+	if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_BACKSPACE) == true
 		|| CManager::GetInstance()->GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_BACK, 0) == true)
 	{
 		if (m_bFade == false)
 		{// フェードバグ防止
-			CRenderer::GetFade()->Set(CScene::MODE_TUTORIAL);	// チュートリアル画面へ移行
+			CRenderer::GetFade()->Set(CScene::MODE_GAME);	// ゲーム画面へ移行
 			m_bFade = true;
 		}
 	}

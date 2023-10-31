@@ -154,7 +154,7 @@ HRESULT CBoss::Init(D3DXVECTOR3 pos)
 	m_fSpeed = MOVE_ENEMY;
 
 	// 体力の設定
-	m_nLife = 20;
+	m_nLife = 50;
 
 	const char *apModelFile[MAX_MODEL];		// モデルファイル名
 
@@ -521,6 +521,7 @@ void CBoss::HitDamage(int nDamage)
 
 	if (m_nLife <= 0)
 	{// 体力が０
+		CBossBattle::SetClear(true);
 		Uninit();
 	}
 }

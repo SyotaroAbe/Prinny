@@ -12,6 +12,7 @@
 #include "bossBattle.h"
 #include "renderer.h"
 #include "fade.h"
+#include "time.h"
 
 //===============================================
 //マクロ定義
@@ -111,6 +112,7 @@ void CClear::Update(void)
 		{// 位置補正終了
 			m_bEndAnim = true;		// アニメーション終了
 			CRenderer::GetFade()->Set(CScene::MODE_RESULT);		// リザルト画面へ移動
+			CScene::SetTime(CBossBattle::GetTime()->Get());		// 時間の設定
 		}
 		else if (m_bEndAnim == true)
 		{

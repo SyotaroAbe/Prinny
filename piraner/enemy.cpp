@@ -289,7 +289,10 @@ void CEnemy::Update(void)
 	switch (m_state)
 	{
 	case STATE_NORMAL:		// 通常
-		m_pMotion->Set(MOTIONTYPE_NEUTRAL);
+		if (m_pMotion != NULL)
+		{
+			m_pMotion->Set(MOTIONTYPE_NEUTRAL);
+		}
 
 		if (m_nStateCounter <= 0)
 		{
@@ -313,7 +316,10 @@ void CEnemy::Update(void)
 	case STATE_MOVELEFT:	// 左移動
 		m_move.z += cosf(D3DX_PI * ROT_DOWN + (ROT_CAMERA * m_rot.y)) * m_fSpeed;
 		//m_rotDest.y = D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y);
-		m_pMotion->Set(MOTIONTYPE_MOVE);				// 初期モーション設定
+		if (m_pMotion != NULL)
+		{
+			m_pMotion->Set(MOTIONTYPE_MOVE);				// 初期モーション設定
+		}
 
 		if (m_nStateCounter <= 0)
 		{

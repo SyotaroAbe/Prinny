@@ -24,6 +24,7 @@ class CUiOperation;
 class CJustDust;
 class CGageFull;
 class CBg;
+class CGameBg;
 
 //===============================================
 // 前方宣言
@@ -56,6 +57,7 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 	static CJustDust *GetJustDust() { return m_pJustDust; }
 	static CGageFull *GetGageFull() { return m_pGageFull; }
 	static CBg *GetBg() { return m_pBg; }
+	static CGameBg *GetGameBg() { return m_pGameBg; }
 
 private:	// 自分のみアクセス可能 [アクセス指定子]
 	static CPlayer *m_pPlayer;				// プレイヤークラスのポインタ
@@ -70,6 +72,7 @@ private:	// 自分のみアクセス可能 [アクセス指定子]
 	static CJustDust *m_pJustDust;			// JustDust表示クラスのポインタ
 	static CGageFull *m_pGageFull;			// ゲージフル表示クラスのポインタ
 	static CBg *m_pBg;						// 背景クラスのポインタ
+	static CGameBg *m_pGameBg;						// 背景クラスのポインタ
 
 	int m_nTime;		// 経過時間をカウント
 	bool m_bFade;		// フェードに入ったか

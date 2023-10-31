@@ -18,6 +18,7 @@
 #include "player.h"
 #include "enemy.h"
 #include "gamebg.h"
+#include "time.h"
 
 //===============================================
 // 静的メンバ変数
@@ -28,6 +29,7 @@ CObject3D *CGame::m_pObject3D = NULL;					// オブジェクト3Dクラスのポインタ
 CPause *CGame::m_pPause = NULL;							// ポーズクラスのポインタ
 CEnemy *CGame::m_pEnemy = NULL;							// 敵クラスのポインタ
 CGameBg *CGame::m_pGameBg = NULL;						// 背景クラスのポインタ
+CTime *CGame::m_pTime = NULL;							// タイムクラスのポインタ
 
 bool CGame::m_bPause = false;				// ポーズ状態
 bool CGame::m_bStateReady = false;			// GAMSESTATE_READYかどうか
@@ -71,12 +73,15 @@ HRESULT CGame::Init(HWND hWnd)
 
 	// プレイヤーの生成
 	m_pPlayer = CPlayer::Create(D3DXVECTOR3(0.0f, 210.0f, -350.0f), 4);
-
+	
 	// 背景の生成
-	m_pGameBg = CGameBg::Create(D3DXVECTOR3(m_pPlayer->GetPos().x, m_pPlayer->GetPos().y, CManager::GetInstance()->GetCamera()->GetPosR().z), CGameBg::TEX_GAME, 0);
+	m_pGameBg = CGameBg::Create(D3DXVECTOR3(m_pPlayer->GetPos().x, 201.0f, CManager::GetInstance()->GetCamera()->GetPosR().z), CGameBg::TEX_GAME, 0);
 
 	// 敵の生成
 	CEnemy::Load(hWnd);
+
+	// タイムの生成
+	m_pTime = CTime::Create(5);
 
 	// ポーズの生成
 	m_pPause = CPause::Create(6);
@@ -96,10 +101,21 @@ HRESULT CGame::Init(HWND hWnd)
 //===============================================
 void CGame::Uninit(void)
 {
+	// タイムの終了処理
+	if (m_pTime != NULL)
+	{
+		m_pTime->Uninit();
+		delete m_pTime;
+		m_pTime = NULL;
+	}
+
 	// ポーズの終了処理
-	m_pPause->Uninit();
-	delete m_pPause;
-	m_pPause = NULL;
+	if (m_pPause != NULL)
+	{
+		m_pPause->Uninit();
+		delete m_pPause;
+		m_pPause = NULL;
+	}
 
 	// 全てのオブジェクトの破棄
 	CObject::ReleaseAll();
@@ -137,12 +153,14 @@ void CGame::Update(void)
 		|| CManager::GetInstance()->GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_BACK, 0) == true)
 	{// BackSpace
 		CRenderer::GetFade()->Set(CScene::MODE_BOSS);		// リザルト画面へ移動
+		SetTime(m_pTime->Get());		// 時間の設定
 	}
 #endif
 
 	if (m_pPlayer->GetPos().z > 7500.0f)
 	{// BackSpace
 		CRenderer::GetFade()->Set(CScene::MODE_BOSS);		// リザルト画面へ移動
+		SetTime(m_pTime->Get());		// 時間の設定
 	}
 
 	if (m_pPlayer->GetPos().y < -100.0f)
@@ -151,13 +169,18 @@ void CGame::Update(void)
 		CManager::GetInstance()->AddCountDeath(CManager::GetMode());			// 死亡回数をカウント
 		CRenderer::GetFade()->Set(CScene::MODE_GAME);							// リザルト画面へ移動
 		//Reset();	// リセット
+		SetTime(m_pTime->Get());		// 時間の設定
 	}
 
 	if (m_bStateReady == false)
 	{// 待機状態じゃない
 		if (m_bPause == false)
 		{// ポーズ状態じゃない
-			
+			// タイムの更新処理
+			if (m_pTime != NULL)
+			{
+				m_pTime->Update();
+			}
 		}
 	}
 	else if (m_bStateReady == true)
@@ -173,7 +196,10 @@ void CGame::Update(void)
 	if (m_bPause == true && m_bPauseCamera == false)
 	{// ポーズ状態
 		// ポーズの更新処理
-		m_pPause->Update();
+		if (m_pPause != NULL)
+		{
+			m_pPause->Update();
+		}
 	}
 
 	switch (m_state)
@@ -218,7 +244,11 @@ void CGame::Update(void)
 //===============================================
 void CGame::Draw(void)
 {
-	
+	// タイムの描画処理
+	if (m_pTime != NULL)
+	{
+		m_pTime->Draw();
+	}
 }
 
 //===============================================
@@ -226,50 +256,50 @@ void CGame::Draw(void)
 //===============================================
 void CGame::Reset(void)
 {
-	CRenderer::GetFade()->Set(CScene::MODE_GAME, false);
+	//CRenderer::GetFade()->Set(CScene::MODE_GAME, false);
 
-	//if (CRenderer::GetFade()->Get() == CFade::STATE_IN)
-	//{
-		// サウンドの停止
-		CManager::GetInstance()->GetSound()->Stop(CSound::LABEL_BGM_GAME);
+	////if (CRenderer::GetFade()->Get() == CFade::STATE_IN)
+	////{
+	//	// サウンドの停止
+	//	CManager::GetInstance()->GetSound()->Stop(CSound::LABEL_BGM_GAME);
 
-		// ポーズの終了処理
-		m_pPause->Uninit();
-		delete m_pPause;
-		m_pPause = NULL;
+	//	// ポーズの終了処理
+	//	m_pPause->Uninit();
+	//	delete m_pPause;
+	//	m_pPause = NULL;
 
-		// オブジェクトのリセット
-		CObject::Reset();
+	//	// オブジェクトのリセット
+	//	CObject::Reset();
 
-		m_bPause = false;
-		m_bStateReady = true;		// 待機状態にする
-		m_bPauseCamera = false;
+	//	m_bPause = false;
+	//	m_bStateReady = true;		// 待機状態にする
+	//	m_bPauseCamera = false;
 
-		// カメラの初期化処理
-		CManager::GetInstance()->GetCamera()->Init();
+	//	// カメラの初期化処理
+	//	CManager::GetInstance()->GetCamera()->Init();
 
-		//// オブジェクトXファイルの生成
-		//CObjectX::Load(m_hWnd);
+	//	//// オブジェクトXファイルの生成
+	//	//CObjectX::Load(m_hWnd);
 
-		// プレイヤーの初期化
-		m_pPlayer->Init(D3DXVECTOR3(0.0f, 210.0f, -350.0f));
+	//	// プレイヤーの初期化
+	//	m_pPlayer->Init(D3DXVECTOR3(0.0f, 210.0f, -350.0f));
 
-		// 背景の初期化
-		m_pGameBg->Init(D3DXVECTOR3(m_pPlayer->GetPos().x, m_pPlayer->GetPos().y, CManager::GetInstance()->GetCamera()->GetPosR().z));
+	//	// 背景の初期化
+	//	m_pGameBg->Init(D3DXVECTOR3(m_pPlayer->GetPos().x, m_pPlayer->GetPos().y, CManager::GetInstance()->GetCamera()->GetPosR().z));
 
-		// 敵の生成
-		CEnemy::Load(m_hWnd);
+	//	// 敵の生成
+	//	CEnemy::Load(m_hWnd);
 
-		// ポーズの生成
-		m_pPause = CPause::Create(6);
+	//	// ポーズの生成
+	//	m_pPause = CPause::Create(6);
 
-		// 通常状態に設定
-		m_state = STATE_NORMAL;
-		m_nCounterState = 0;
+	//	// 通常状態に設定
+	//	m_state = STATE_NORMAL;
+	//	m_nCounterState = 0;
 
-		// サウンドの再生
-		CManager::GetInstance()->GetSound()->Play(CSound::LABEL_BGM_GAME);
-	//}
+	//	// サウンドの再生
+	//	CManager::GetInstance()->GetSound()->Play(CSound::LABEL_BGM_GAME);
+	////}
 }
 
 //===============================================

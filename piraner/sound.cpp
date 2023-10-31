@@ -15,12 +15,18 @@ const CSound::INFO CSound::m_aInfo[LABEL_MAX] =
 	{ "data/BGM/title.wav", -1 },				// BGM（タイトル）
 	{ "data/BGM/tutorial.wav", -1 },			// BGM（チュートリアル）
 	{ "data/BGM/game.wav", -1 },				// BGM（ゲーム）
+	{ "data/BGM/boss.wav", -1 },				// BGM（ボス）
 	{ "data/BGM/ranking.wav", -1 },				// BGM（ランキング）
 	{ "data/SE/pause.wav", 0 },					// ポーズ起動
 	{ "data/SE/pause_cancel.wav", 0 },			// ポーズキャンセル
 	{ "data/SE/pause_cursor.wav", 0 },			// ポーズのカーソル移動
 	{ "data/SE/pause_enter.wav", 0 },			// ポーズ決定
 	{ "data/SE/title_enter.wav", 0 },			// タイトル決定
+	{ "data/SE/bullet.wav", 0 },			// タイトル決定
+	{ "data/SE/dash.wav", 0 },			// タイトル決定
+	{ "data/SE/explosion.wav", 0 },			// タイトル決定
+	{ "data/SE/hipdrop.wav", 0 },			// タイトル決定
+	{ "data/SE/jump.wav", 0 },			// タイトル決定
 };
 
 //=============================================================================

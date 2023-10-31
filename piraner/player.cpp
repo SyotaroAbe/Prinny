@@ -34,7 +34,8 @@
 #define MOVE_GRAVITY		(0.75f)		// 重力
 #define LAND_POS			(0.0f)		// 地面
 
-#define JUMP_HIPDROP		(12.0f)		// ヒップドロップ初動の浮力
+#define JUMP_PREHIPDROP		(12.0f)		// ヒップドロップ初動の浮力
+#define JUMP_HIPDROP		(12.0f)		// ヒップドロップの浮力
 #define MOVE_HIPDROP		(1.2f)		// ヒップドロップ中重力
 
 #define JUMP_ATTACK			(0.75f)		// 空中攻撃時の浮力
@@ -309,7 +310,8 @@ void CPlayer::Update(void)
 
 		if (m_state == STATE_NORMAL)
 		{
-			if (CManager::GetInstance()->GetKeyboardInput()->GetPress(DIK_A) == true)
+			if (CManager::GetInstance()->GetKeyboardInput()->GetPress(DIK_A) == true
+				|| CManager::GetInstance()->GetInputGamePad()->GetJoyStickLX(0) < 0)
 			{//左キーが押された
 				m_move.x += sinf(D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
 				m_move.z += cosf(D3DX_PI * ROT_LEFT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
@@ -319,7 +321,8 @@ void CPlayer::Update(void)
 					m_pMotion->Set(MOTIONTYPE_MOVE);				// 移動モーション設定
 				}
 			}
-			else if (CManager::GetInstance()->GetKeyboardInput()->GetPress(DIK_D) == true)
+			else if (CManager::GetInstance()->GetKeyboardInput()->GetPress(DIK_D) == true
+				|| CManager::GetInstance()->GetInputGamePad()->GetJoyStickLX(0) > 0)
 			{//右キーが押された
 				m_move.x += sinf(D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
 				m_move.z += cosf(D3DX_PI * ROT_RIGHT + (ROT_CAMERA * CManager::GetInstance()->GetCamera()->GetRot().y)) * m_fSpeed;
@@ -334,7 +337,8 @@ void CPlayer::Update(void)
 				m_pMotion->Set(MOTIONTYPE_NEUTRAL);				// 待機モーション設定
 			}
 
-			if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_SPACE) == true && m_bAirJump == false)
+			if ((CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_SPACE) == true 
+				|| CManager::GetInstance()->GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_A, 0)) && m_bAirJump == false)
 			{// SPACEキーが押された
 				if (m_bJump == true)
 				{// 2段ジャンプ
@@ -346,18 +350,29 @@ void CPlayer::Update(void)
 					m_pMotion->Set(MOTIONTYPE_JUMP);				// ジャンプモーション
 				}
 
+				// サウンドの再生
+				CManager::GetInstance()->GetSound()->Play(CSound::LABEL_SE_JUMP);
+
 				m_move.y = JUMP_PLAYER;
 				m_bJump = true;
 			}
 		}
 
 		// ヒップドロップ
-		if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_S) == true && m_bJump == true && m_state != STATE_HIPDROP)
+		if ((CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_S) == true || CManager::GetInstance()->GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_B, 0))
+			&& m_bJump == true && m_state != STATE_HIPDROP && m_state != STATE_DAMAGE)
 		{// Sキーが押された
 			m_state = STATE_HIPDROP;
-			m_move.y = JUMP_HIPDROP;
+			m_move.y = JUMP_PLAYER;
 			m_pMotion->Set(MOTIONTYPE_HIPDROP);				// ヒップドロップモーション
 		}
+	}
+
+	if (m_state == STATE_NORMAL || m_state == STATE_DAMAGE || m_state == STATE_DASH)
+	{
+		// カメラ距離を一定に設定
+		m_fLenthCamera = LENTH_NORMAL;
+		CManager::GetInstance()->GetCamera()->ScalingLenth(m_fLenthCamera, 0.15f);
 	}
 
 	switch (m_state)
@@ -366,7 +381,8 @@ void CPlayer::Update(void)
 		m_fSpeed = MOVE_PLAYER;
 
 		// 攻撃前動作
-		if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_RETURN) == true)
+		if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_RETURN) == true
+			|| CManager::GetInstance()->GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_X, 0))
 		{
 			if (m_bJump == true && m_pMotion->GetType() != MOTIONTYPE_PREATTACK)
 			{
@@ -381,13 +397,12 @@ void CPlayer::Update(void)
 					m_pMotion->Set(MOTIONTYPE_DASH);	// ダッシュ
 					m_state = STATE_DASH;
 					m_nStateCounter = 20;				// 状態カウンターを設定
+
+														// サウンドの再生
+					CManager::GetInstance()->GetSound()->Play(CSound::LABEL_SE_DASH);
 				//}
 			}
 		}
-
-		// カメラ距離を一定に設定
-		m_fLenthCamera = LENTH_NORMAL;
-		CManager::GetInstance()->GetCamera()->ScalingLenth(m_fLenthCamera, 0.15f);
 		break;
 
 	case STATE_DASH:		// ダッシュ
@@ -400,11 +415,12 @@ void CPlayer::Update(void)
 		// エフェクトの生成
 		CEffect::Create(D3DXVECTOR3(m_pos.x, m_pos.y + 40.0f, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(0.0f, 0.8f, 1.0f, 1.0f), CEffect::TYPE_NORMAL, 25, 50, 3);
 		CEffect::Create(D3DXVECTOR3(m_pos.x, m_pos.y + 40.0f, m_pos.z), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f), CEffect::TYPE_NORMAL, 20, 50, 3);
-		CParticle::Create(1)->Set(D3DXVECTOR3(m_pos.x + cosf(m_rot.y) * 18.0f, m_pos.y, m_pos.z - sinf(m_rot.y) * 18.0f), CParticle::TYPE_CURVE);
+		CParticle::Create(1)->Set(D3DXVECTOR3(m_pos.x + cosf(m_rot.y) * 18.0f, m_pos.y, m_pos.z - sinf(m_rot.y) * 18.0f), CParticle::TYPE_CURVE);		
 		break;
 
 	case STATE_AIRSLASH:	// 空中攻撃
-		if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_RETURN) == true)
+		if (CManager::GetInstance()->GetKeyboardInput()->GetTrigger(DIK_RETURN) == true
+			|| CManager::GetInstance()->GetInputGamePad()->GetTrigger(CInputGamePad::BUTTON_X, 0))
 		{
 			// 攻撃モーションを交互に出す
 			if (m_pMotion->GetType() == MOTIONTYPE_PREATTACK || m_pMotion->GetType() == MOTIONTYPE_ATTACKL)
@@ -423,13 +439,16 @@ void CPlayer::Update(void)
 				// 弾の生成
 				CBullet::Create(m_pos)->Set(m_pos, D3DXVECTOR3(0.0f, -sinf(m_rot.x + ROT_BULLET) * 10.0f, -cosf(m_rot.y + ROT_BULLET) * 10.0f));
 			}
+
+			// サウンドの再生
+			CManager::GetInstance()->GetSound()->Play(CSound::LABEL_SE_BULLET);
 		}
 		
 		fGravity = 0.45f;
 		break;
 
 	case STATE_HIPDROP:		// ヒップドロップ
-		m_move.y -= MOVE_HIPDROP;		// 降下速度を上げる
+		m_move.y -= MOVE_HIPDROP;		// 降下速度を上げる		
 		break;
 
 	case STATE_LANDDROP:	// ヒップドロップ着地
@@ -518,13 +537,26 @@ void CPlayer::Update(void)
 	m_move.x += (0.0f - m_move.x) * MOVE_MINUS;
 	m_move.z += (0.0f - m_move.z) * MOVE_MINUS;
 
-	//if (m_pos.y < LAND_POS)
+	//if (m_pos.y < LAND_POS && CManager::GetMode() == CScene::MODE_TUTORIAL)
 	//{// 着地した
 	//	m_pos.y = LAND_POS;
 	//	m_move.y = 0.0f;
 	//	m_bJump = false;
 	//	m_bAirJump = false;
 	//}
+
+	// チュートリアル画面の画面範囲設定
+	if (CManager::GetMode() == CScene::MODE_TUTORIAL)
+	{
+		if (m_pos.z < -600.0f)
+		{
+			m_pos.z = -600.0f;
+		}
+		if (m_pos.z > 600.0f)
+		{
+			m_pos.z = 600.0f;
+		}
+	}
 
 	// モーションの更新処理
 	if (m_pMotion != NULL)
@@ -662,6 +694,10 @@ void CPlayer::CollisionEnemy(D3DXVECTOR3 *pPos, D3DXVECTOR3 *pPosOld, D3DXVECTOR
 	{// 範囲内にある
 		if (m_state == STATE_HIPDROP)
 		{// ヒップドロップ中に敵の頭上へ着地
+
+		 // サウンドの再生
+			CManager::GetInstance()->GetSound()->Play(CSound::LABEL_SE_HIPDROP);
+
 			SetState(STATE_JUMPDROP);
 		}
 		else if (m_state != STATE_DAMAGE && m_state != STATE_JUMPDROP && m_state != STATE_DASH && m_bInvincible == false)

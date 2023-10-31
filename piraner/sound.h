@@ -24,12 +24,18 @@ public:		// 誰でもアクセス可能 [アクセス指定子]
 		LABEL_BGM_TITLE = 0,	// BGM（タイトル）
 		LABEL_BGM_TUTORIAL,		// BGM（チュートリアル）
 		LABEL_BGM_GAME,			// BGM（ゲーム）
+		LABEL_BGM_BOSS,			// BGM（ボス）
 		LABEL_BGM_RANKING,		// BGM（ランキング）
 		LABEL_SE_PAUSE,			// ポーズ起動
 		LABEL_SE_PAUSE_CANCEL,	// ポーズキャンセル
 		LABEL_SE_PAUSE_CURSOR,	// ポーズのカーソル移動
 		LABEL_SE_PAUSE_ENTER,	// ポーズ決定
 		LABEL_SE_TITLE_ENTER,	// タイトル決定
+		LABEL_SE_BULLET,	// タイトル決定
+		LABEL_SE_DASH,	// タイトル決定
+		LABEL_SE_EXPLOSION,	// タイトル決定
+		LABEL_SE_HIPDROP,	// タイトル決定
+		LABEL_SE_JUMP,	// タイトル決定
 		LABEL_MAX,
 	} LABEL;
 

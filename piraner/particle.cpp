@@ -144,7 +144,15 @@ void CParticle::Set(D3DXVECTOR3 pos, TYPE type)
 		m_col = D3DXCOLOR(1.0f, 0.3f, 0.2f, 1.0f);
 		m_nMaxApeear = 12;
 		m_nRadius = 7;
-		m_nLife = 30;
+		m_nLife = 25;
+		break;
+
+	case TYPE_FIRE:			// ‰Š
+		m_tex = CEffect::TYPE_FIRE;
+		m_col = D3DXCOLOR(1.0f, 0.3f, 0.2f, 1.0f);
+		m_nMaxApeear = 3;
+		m_nRadius = 7;
+		m_nLife = 10;
 		break;
 	}
 }
